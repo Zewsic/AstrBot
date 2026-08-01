@@ -911,8 +911,12 @@
                             "description": "Список эмодзи (Unicode)",
                             "hint": "Telegram поддерживает ограниченный набор реакций."
                         }
+                    },
+                    "use_rich_messages": {
+                      "description": "[Telegram] Использовать Rich Messages",
+                      "hint": "Использовать Telegram Rich Markdown и Rich Message Draft API. Включено по умолчанию."
                     }
-                },
+        },
                 "discord": {
                     "pre_ack_emoji": {
                         "enable": {

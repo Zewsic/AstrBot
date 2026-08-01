@@ -80,9 +80,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
         platform_meta: PlatformMetadata,
         session_id: str,
         client: ExtBot,
+        use_rich_messages: bool = True,
     ) -> None:
         super().__init__(message_str, message_obj, platform_meta, session_id)
         self.client = client
+        self.use_rich_messages = use_rich_messages
 
     @classmethod
     def _split_message(cls, text: str) -> list[str]:
@@ -327,6 +329,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
         client: ExtBot,
         message: MessageChain,
         user_name: str,
+        use_rich_messages: bool = True,
     ) -> None:
         image_path = None
 
@@ -371,7 +374,10 @@ class TelegramPlatformEvent(AstrMessageEvent):
                     rich_payload["reply_parameters"] = {
                         "message_id": int(reply_message_id)
                     }
-                await cls._send_rich_text_chunks(client, i.text, rich_payload)
+                if use_rich_messages:
+                    await cls._send_rich_text_chunks(client, i.text, rich_payload)
+                else:
+                    await cls._send_text_chunks(client, i.text, payload)
             elif isinstance(i, Image):
                 image_path = await i.convert_to_file_path()
                 if _is_gif(image_path):
@@ -406,9 +412,16 @@ class TelegramPlatformEvent(AstrMessageEvent):
 
     async def send(self, message: MessageChain) -> None:
         if self.get_message_type() == MessageType.GROUP_MESSAGE:
-            await self.send_with_client(self.client, message, self.message_obj.group_id)
+            await self.send_with_client(
+                self.client,
+                message,
+                self.message_obj.group_id,
+                self.use_rich_messages,
+            )
         else:
-            await self.send_with_client(self.client, message, self.get_sender_id())
+            await self.send_with_client(
+                self.client, message, self.get_sender_id(), self.use_rich_messages
+            )
         await super().send(message)
 
     async def react(self, emoji: str | None, big: bool = False) -> None:
@@ -532,8 +545,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 logger.warning(f"不支持的消息类型: {type(i)}")
 
     async def _send_final_segment(self, delta: str, payload: dict[str, Any]) -> None:
-        """Persist accumulated text as a Rich Markdown message."""
-        await self._send_rich_text_chunks(self.client, delta, payload)
+        """Persist accumulated text in the configured Telegram message format."""
+        if self.use_rich_messages:
+            await self._send_rich_text_chunks(self.client, delta, payload)
+        else:
+            await self._send_text_chunks(self.client, delta, payload)
 
     async def send_streaming(self, generator, use_fallback: bool = False):
         message_thread_id = None
@@ -555,14 +571,17 @@ class TelegramPlatformEvent(AstrMessageEvent):
         # sendRichMessageDraft 仅支持私聊（显式检查 FRIEND_MESSAGE）
         is_private = self.get_message_type() == MessageType.FRIEND_MESSAGE
 
-        if is_private:
+        if not self.use_rich_messages:
+            logger.info("[Telegram] Rich Messages disabled; using regular streaming")
+            await self._send_streaming_regular(user_name, message_thread_id, payload, generator)
+        elif is_private:
             logger.info("[Telegram] 流式输出: 使用 sendRichMessageDraft (私聊)")
             await self._send_streaming_draft(
                 user_name, message_thread_id, payload, generator
             )
         else:
             logger.info("[Telegram] 流式输出: 使用 edit_message_text fallback (群聊)")
-            await self._send_streaming_edit(
+            await self._send_streaming_regular(
                 user_name, message_thread_id, payload, generator
             )
 
@@ -646,7 +665,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
         if delta:
             await self._send_final_segment(delta, payload)
 
-    async def _send_streaming_edit(
+    async def _send_streaming_regular(
         self,
         user_name: str,
         message_thread_id: str | None,

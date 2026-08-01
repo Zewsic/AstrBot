@@ -286,6 +286,7 @@ DEFAULT_CONFIG = {
         },
         "telegram": {
             "pre_ack_emoji": {"enable": False, "emojis": ["✍️"]},
+            "use_rich_messages": True,
         },
         "discord": {
             "pre_ack_emoji": {"enable": False, "emojis": ["🤔"]},
@@ -4115,6 +4116,11 @@ CONFIG_METADATA_3 = {
                     "platform_specific.telegram.pre_ack_emoji.enable": {
                         "description": "[Telegram] 启用预回应表情",
                         "type": "bool",
+                    },
+                    "platform_specific.telegram.use_rich_messages": {
+                        "description": "[Telegram] 使用 Rich Messages",
+                        "type": "bool",
+                        "hint": "启用后使用 Telegram 的 Rich Markdown 和 Rich Message Draft API；默认启用。",
                     },
                     "platform_specific.telegram.pre_ack_emoji.emojis": {
                         "description": "表情列表（Unicode）",

@@ -5,6 +5,7 @@ import sys
 import uuid
 from contextlib import suppress
 from typing import cast
+from urllib.parse import urlparse
 
 from apscheduler.events import EVENT_JOB_ERROR
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -16,6 +17,7 @@ from telegram.ext import MessageHandler as TelegramMessageHandler
 
 import astrbot.api.message_components as Comp
 from astrbot.api import logger
+from astrbot.core import astrbot_config
 from astrbot.api.event import MessageChain
 from astrbot.api.platform import (
     AstrBotMessage,
@@ -31,7 +33,6 @@ from astrbot.core.star.filter.command_group import CommandGroupFilter
 from astrbot.core.star.star import star_map
 from astrbot.core.star.star_handler import star_handlers_registry
 from astrbot.core.utils.astrbot_path import get_astrbot_temp_path
-from astrbot.core.utils.io import download_file
 from astrbot.core.utils.media_utils import MediaResolver
 
 from .tg_event import TelegramPlatformEvent
@@ -69,6 +70,11 @@ class TelegramPlatformAdapter(Platform):
 
         self.base_url = base_url
         self.file_base_url = file_base_url
+        self.local_mode = urlparse(base_url).hostname in {
+            "127.0.0.1",
+            "::1",
+            "localhost",
+        }
 
         self.enable_command_register = self.config.get(
             "telegram_command_register",
@@ -135,6 +141,7 @@ class TelegramPlatformAdapter(Platform):
             .token(self.config["telegram_token"])
             .base_url(self.base_url)
             .base_file_url(self.file_base_url)
+            .local_mode(self.local_mode)
             .build()
         )
         message_handler = TelegramMessageHandler(
@@ -575,9 +582,8 @@ class TelegramPlatformAdapter(Platform):
             file = await update.message.voice.get_file()
 
             file_basename = os.path.basename(cast(str, file.file_path))
-            temp_dir = get_astrbot_temp_path()
-            temp_path = os.path.join(temp_dir, file_basename)
-            await download_file(cast(str, file.file_path), path=temp_path)
+            temp_path = os.path.join(get_astrbot_temp_path(), file_basename)
+            await file.download_to_drive(custom_path=temp_path)
             path_wav = await MediaResolver(
                 temp_path,
                 media_type="audio",
@@ -758,6 +764,9 @@ class TelegramPlatformAdapter(Platform):
             platform_meta=self.meta(),
             session_id=message.session_id,
             client=self.client,
+            use_rich_messages=astrbot_config.get("platform_specific", {})
+            .get("telegram", {})
+            .get("use_rich_messages", True),
         )
 
     async def handle_msg(self, message: AstrBotMessage) -> None:
