@@ -40,8 +40,8 @@ class TelegramPlatformEvent(AstrMessageEvent):
     MAX_MESSAGE_LENGTH = 4096
     # Rich messages accept up to 32,768 UTF-8 characters.
     MAX_RICH_MESSAGE_LENGTH = 32768
-    # Telegram may rate-limit frequent draft updates.
-    DRAFT_UPDATE_INTERVAL = 3.0
+# Keep draft updates responsive without aggressively hitting Telegram rate limits.
+    DRAFT_UPDATE_INTERVAL = 1.0
 
     SPLIT_PATTERNS = {
         "paragraph": re.compile(r"\n\n"),
@@ -646,12 +646,25 @@ class TelegramPlatformEvent(AstrMessageEvent):
                     continue
 
                 if chain.type == "break":
-                    # 分割符：发送真实消息保留内容，重置缓冲区
+                    # A break is a hard MessageDraft boundary. Stop and join the
+                    # current sender before changing captured state; otherwise a
+                    # coalesced update can use the next segment's draft_id.
+                    done = True
+                    text_changed.set()
+                    await sender_task
+
                     if delta:
                         await self._send_final_segment(delta, payload)
+
+                    # Each MessageDraft owns independent sender state and a
+                    # Telegram draft_id, so it cannot merge into the next draft.
+                    draft_id = self._allocate_draft_id()
                     delta = ""
                     last_sent_text = ""
-                    draft_id = self._allocate_draft_id()
+                    last_sent_at = float("-inf")
+                    done = False
+                    text_changed = asyncio.Event()
+                    sender_task = asyncio.create_task(_draft_sender_loop())
                     continue
 
                 await self._process_chain_items(

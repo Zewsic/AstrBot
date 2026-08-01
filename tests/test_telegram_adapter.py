@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 import astrbot.api.message_components as Comp
+from astrbot.api.event import MessageChain
 from astrbot.core.platform.register import unregister_platform_adapters_by_module
 from tests.fixtures.helpers import (
     NoopAwaitable,
@@ -575,3 +576,34 @@ async def test_telegram_run_rebuilds_fresh_application_after_recreate_init_failu
     app_two.shutdown.assert_awaited()
     app_three.initialize.assert_awaited()
     app_three.start.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_telegram_rich_drafts_do_not_cross_streaming_break_boundaries():
+    """Each logical MessageDraft must retain its own Telegram draft_id."""
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event._send_rich_message_draft = AsyncMock()
+    event._send_final_segment = AsyncMock()
+
+    async def generator():
+        yield MessageChain(chain=[Comp.Plain("first")])
+        await asyncio.sleep(0)
+        yield MessageChain(chain=[], type="break")
+        yield MessageChain(chain=[Comp.Plain("second")])
+        await asyncio.sleep(0)
+
+    initial_draft_id = TelegramPlatformEvent._next_draft_id
+    await event._send_streaming_draft("123", None, {"chat_id": "123"}, generator())
+
+    draft_calls = event._send_rich_message_draft.await_args_list
+    assert [call.args[1] for call in draft_calls] == [
+        initial_draft_id + 1,
+        initial_draft_id + 2,
+    ]
+    assert [call.args[2] for call in draft_calls] == ["first", "second"]
+    assert [call.args[0] for call in event._send_final_segment.await_args_list] == [
+        "first",
+        "second",
+    ]
