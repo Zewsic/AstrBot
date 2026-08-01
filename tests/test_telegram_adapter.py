@@ -82,6 +82,69 @@ def _build_context() -> MagicMock:
     return context
 
 
+def test_telegram_enables_local_mode_for_loopback_bot_api():
+    TelegramPlatformAdapter = _load_telegram_adapter()
+    adapter = TelegramPlatformAdapter(
+        make_platform_config(
+            "telegram",
+            telegram_api_base_url="http://127.0.0.1:8081/bot",
+            telegram_file_base_url="http://127.0.0.1:8081/file/bot",
+        ),
+        {},
+        asyncio.Queue(),
+    )
+
+    assert adapter.local_mode is True
+
+
+def test_telegram_disables_local_mode_for_remote_bot_api():
+    TelegramPlatformAdapter = _load_telegram_adapter()
+    adapter = TelegramPlatformAdapter(
+        make_platform_config("telegram"),
+        {},
+        asyncio.Queue(),
+    )
+
+    assert adapter.local_mode is False
+
+
+@pytest.mark.asyncio
+async def test_telegram_voice_uses_file_download_to_drive(tmp_path):
+    TelegramPlatformAdapter = _load_telegram_adapter()
+    adapter = TelegramPlatformAdapter(
+        make_platform_config("telegram"),
+        {},
+        asyncio.Queue(),
+    )
+    voice = create_mock_file("/var/lib/telegram-bot-api/token/voice/file.oga")
+    file = MagicMock()
+    file.file_path = "/var/lib/telegram-bot-api/token/voice/file.oga"
+    file.download_to_drive = AsyncMock()
+    voice.get_file = AsyncMock(return_value=file)
+    update = create_mock_update(message_text=None, voice=voice)
+    wav_path = tmp_path / "voice.wav"
+
+    with (
+        patch(
+            "astrbot.core.platform.sources.telegram.tg_adapter.get_astrbot_temp_path",
+            return_value=str(tmp_path),
+        ),
+        patch(
+            "astrbot.core.platform.sources.telegram.tg_adapter.MediaResolver.to_path",
+            AsyncMock(return_value=str(wav_path)),
+        ),
+    ):
+        result = await adapter.convert_message(update, _build_context())
+
+    voice.get_file.assert_awaited_once()
+    file.download_to_drive.assert_awaited_once_with(
+        custom_path=str(tmp_path / "file.oga")
+    )
+    assert result is not None
+    assert isinstance(result.message[0], Comp.Record)
+    assert result.message[0].file == str(wav_path)
+
+
 @pytest.mark.asyncio
 async def test_telegram_partial_quote_uses_exact_quote_text():
     TelegramPlatformAdapter = _load_telegram_adapter()
