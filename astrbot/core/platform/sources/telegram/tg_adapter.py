@@ -70,11 +70,15 @@ class TelegramPlatformAdapter(Platform):
 
         self.base_url = base_url
         self.file_base_url = file_base_url
-        self.local_mode = urlparse(base_url).hostname in {
+        inferred_local_mode = urlparse(base_url).hostname in {
             "127.0.0.1",
             "::1",
             "localhost",
         }
+        # A local Bot API server may run under a different OS user and therefore
+        # be unable to access AstrBot paths passed as file:// URIs. Allow an
+        # explicit override so files can be uploaded as regular multipart data.
+        self.local_mode = self.config.get("telegram_local_mode", inferred_local_mode)
 
         self.enable_command_register = self.config.get(
             "telegram_command_register",
