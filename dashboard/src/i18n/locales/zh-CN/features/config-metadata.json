@@ -916,6 +916,10 @@
           "use_rich_messages": {
             "description": "[Telegram] 使用 Rich Messages",
             "hint": "启用 Telegram Rich Markdown 和 Rich Message Draft API，默认启用。"
+          },
+          "show_tool_calling_execution": {
+            "description": "[Telegram] 显示工具调用执行情况",
+            "hint": "在聊天中显示 AI 工具调用的实时汇总，默认启用。"
           }
         },
         "discord": {
@@ -1800,5 +1804,13 @@
     "helpPrefix": "不了解配置？请见",
     "helpMiddle": "或",
     "helpSuffix": "。"
+  },
+  "telegram_group": {
+    "name": "Telegram",
+    "metadata": {
+      "telegram": {
+        "description": "Telegram 配置"
+      }
+    }
   }
 }

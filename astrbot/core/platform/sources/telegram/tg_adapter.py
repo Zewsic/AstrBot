@@ -771,6 +771,9 @@ class TelegramPlatformAdapter(Platform):
             use_rich_messages=astrbot_config.get("platform_specific", {})
             .get("telegram", {})
             .get("use_rich_messages", True),
+            show_tool_calling_execution=astrbot_config.get("platform_specific", {})
+            .get("telegram", {})
+            .get("show_tool_calling_execution", True),
         )
 
     async def handle_msg(self, message: AstrBotMessage) -> None:

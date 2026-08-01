@@ -287,6 +287,7 @@ DEFAULT_CONFIG = {
         "telegram": {
             "pre_ack_emoji": {"enable": False, "emojis": ["✍️"]},
             "use_rich_messages": True,
+            "show_tool_calling_execution": True,
         },
         "discord": {
             "pre_ack_emoji": {"enable": False, "emojis": ["🤔"]},
@@ -4113,24 +4114,6 @@ CONFIG_METADATA_3 = {
                             "platform_specific.lark.pre_ack_emoji.enable": True,
                         },
                     },
-                    "platform_specific.telegram.pre_ack_emoji.enable": {
-                        "description": "[Telegram] 启用预回应表情",
-                        "type": "bool",
-                    },
-                    "platform_specific.telegram.use_rich_messages": {
-                        "description": "[Telegram] 使用 Rich Messages",
-                        "type": "bool",
-                        "hint": "启用后使用 Telegram 的 Rich Markdown 和 Rich Message Draft API；默认启用。",
-                    },
-                    "platform_specific.telegram.pre_ack_emoji.emojis": {
-                        "description": "表情列表（Unicode）",
-                        "type": "list",
-                        "items": {"type": "string"},
-                        "hint": "Telegram 仅支持固定反应集合，参考：https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9",
-                        "condition": {
-                            "platform_specific.telegram.pre_ack_emoji.enable": True,
-                        },
-                    },
                     "platform_specific.discord.pre_ack_emoji.enable": {
                         "description": "[Discord] 启用预回应表情",
                         "type": "bool",
@@ -4142,6 +4125,40 @@ CONFIG_METADATA_3 = {
                         "hint": "填写 Unicode 表情符号，例如：👍、🤔、⏳",
                         "condition": {
                             "platform_specific.discord.pre_ack_emoji.enable": True,
+                        },
+                    },
+                },
+            },
+        },
+    },
+    "telegram_group": {
+        "name": "Telegram",
+        "metadata": {
+            "telegram": {
+                "description": "Telegram 配置",
+                "type": "object",
+                "items": {
+                    "platform_specific.telegram.pre_ack_emoji.enable": {
+                        "description": "[Telegram] 启用预回应表情",
+                        "type": "bool",
+                    },
+                    "platform_specific.telegram.use_rich_messages": {
+                        "description": "[Telegram] 使用 Rich Messages",
+                        "type": "bool",
+                        "hint": "启用后使用 Telegram 的 Rich Markdown 和 Rich Message Draft API；默认启用。",
+                    },
+                    "platform_specific.telegram.show_tool_calling_execution": {
+                        "description": "[Telegram] 显示工具调用执行情况",
+                        "type": "bool",
+                        "hint": "在聊天中汇总并显示 AI 调用工具的过程；默认启用。",
+                    },
+                    "platform_specific.telegram.pre_ack_emoji.emojis": {
+                        "description": "表情列表（Unicode）",
+                        "type": "list",
+                        "items": {"type": "string"},
+                        "hint": "Telegram 仅支持固定反应集合，参考：https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9",
+                        "condition": {
+                            "platform_specific.telegram.pre_ack_emoji.enable": True,
                         },
                     },
                 },

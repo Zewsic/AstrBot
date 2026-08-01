@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import re
 from collections.abc import Callable
@@ -40,7 +41,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
     MAX_MESSAGE_LENGTH = 4096
     # Rich messages accept up to 32,768 UTF-8 characters.
     MAX_RICH_MESSAGE_LENGTH = 32768
-# Keep draft updates responsive without aggressively hitting Telegram rate limits.
+    # Keep draft updates responsive without aggressively hitting Telegram rate limits.
     DRAFT_UPDATE_INTERVAL = 1.0
 
     SPLIT_PATTERNS = {
@@ -81,10 +82,14 @@ class TelegramPlatformEvent(AstrMessageEvent):
         session_id: str,
         client: ExtBot,
         use_rich_messages: bool = True,
+        show_tool_calling_execution: bool = True,
     ) -> None:
         super().__init__(message_str, message_obj, platform_meta, session_id)
         self.client = client
         self.use_rich_messages = use_rich_messages
+        self.show_tool_calling_execution = show_tool_calling_execution
+        self._tool_call_groups: list[dict[str, Any]] = []
+        self._tool_status_message_id: int | None = None
 
     @classmethod
     def _split_message(cls, text: str) -> list[str]:
@@ -411,6 +416,12 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 )
 
     async def send(self, message: MessageChain) -> None:
+        if message.type == "tool_call":
+            await self._update_tool_call_status(message)
+            await super().send(message)
+            return
+
+        await self._close_tool_call_status()
         if self.get_message_type() == MessageType.GROUP_MESSAGE:
             await self.send_with_client(
                 self.client,
@@ -423,6 +434,103 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 self.client, message, self.get_sender_id(), self.use_rich_messages
             )
         await super().send(message)
+
+    def _tool_status_payload(self) -> str:
+        """Build the current tool execution status in Telegram Rich Markdown."""
+        calls_count = sum(group["count"] for group in self._tool_call_groups)
+        if not self.use_rich_messages:
+            lines = [f"🛠 Tool calls: {calls_count}"]
+            lines.extend(
+                f"- {group['name']} ({group['count']})"
+                for group in self._tool_call_groups
+            )
+            return "\n".join(lines)
+
+        blocks = []
+        for group in self._tool_call_groups:
+            details = "\n".join(f"- {group['name']} ({args})" for args in group["args"])
+            blocks.append(
+                f"<details><summary>{group['name']} ({group['count']})</summary>\n\n"
+                f"{details}\n\n</details>"
+            )
+        return f"🛠 **Tool calls: {calls_count}**\n\n" + "\n\n".join(blocks)
+
+    def _tool_status_payload_args(self) -> dict[str, Any]:
+        """Build chat identifiers for tool status send and edit requests."""
+        user_name = (
+            self.message_obj.group_id
+            if self.get_message_type() == MessageType.GROUP_MESSAGE
+            else self.get_sender_id()
+        )
+        payload: dict[str, Any] = {"chat_id": user_name}
+        if "#" in user_name:
+            user_name, message_thread_id = user_name.split("#")
+            payload["chat_id"] = user_name
+            payload["message_thread_id"] = message_thread_id
+        return payload
+
+    async def _update_tool_call_status(self, message: MessageChain) -> None:
+        """Create or edit the one message that summarizes consecutive tool calls."""
+        if not self.show_tool_calling_execution or not message.chain:
+            return
+        tool_info = getattr(message.chain[0], "data", None)
+        if not isinstance(tool_info, dict):
+            return
+        tool_name = str(tool_info.get("name", "unknown"))
+        try:
+            tool_args = json.dumps(tool_info.get("args", {}), ensure_ascii=False)
+        except (TypeError, ValueError):
+            tool_args = str(tool_info.get("args", {}))
+        tool_args = tool_args[:100]
+
+        if self._tool_call_groups and self._tool_call_groups[-1]["name"] == tool_name:
+            self._tool_call_groups[-1]["count"] += 1
+            self._tool_call_groups[-1]["args"].append(tool_args)
+        else:
+            self._tool_call_groups.append(
+                {"name": tool_name, "count": 1, "args": [tool_args]}
+            )
+
+        text = self._tool_status_payload()
+        payload = self._tool_status_payload_args()
+        try:
+            if self._tool_status_message_id is None:
+                if self.use_rich_messages:
+                    sent_message = await self._call_rich_api(
+                        self.client,
+                        "sendRichMessage",
+                        {**payload, "rich_message": {"markdown": text}},
+                    )
+                else:
+                    sent_message = await self.client.send_message(text=text, **payload)
+                if isinstance(sent_message, dict):
+                    self._tool_status_message_id = int(sent_message["message_id"])
+                else:
+                    self._tool_status_message_id = sent_message.message_id
+            elif self.use_rich_messages:
+                await self._call_rich_api(
+                    self.client,
+                    "editMessageText",
+                    {
+                        **payload,
+                        "message_id": self._tool_status_message_id,
+                        "rich_message": {"markdown": text},
+                    },
+                )
+            else:
+                await self.client.edit_message_text(
+                    message_id=self._tool_status_message_id,
+                    text=text,
+                    **payload,
+                )
+        except Exception as e:
+            logger.warning("[Telegram] Failed to update tool call status: %s", e)
+
+    async def _close_tool_call_status(self) -> None:
+        """Stop editing the current tool status before a new assistant response."""
+        if self._tool_status_message_id is not None:
+            self._tool_status_message_id = None
+            self._tool_call_groups.clear()
 
     async def react(self, emoji: str | None, big: bool = False) -> None:
         """给原消息添加 Telegram 反应：
@@ -488,6 +596,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
     ) -> None:
         """处理 MessageChain 中的各类组件，文本通过 on_text 回调追加，媒体直接发送。"""
         for i in chain.chain:
+            await self._close_tool_call_status()
             if isinstance(i, Plain):
                 on_text(i.text)
             elif isinstance(i, Image):
@@ -573,7 +682,9 @@ class TelegramPlatformEvent(AstrMessageEvent):
 
         if not self.use_rich_messages:
             logger.info("[Telegram] Rich Messages disabled; using regular streaming")
-            await self._send_streaming_regular(user_name, message_thread_id, payload, generator)
+            await self._send_streaming_regular(
+                user_name, message_thread_id, payload, generator
+            )
         elif is_private:
             logger.info("[Telegram] 流式输出: 使用 sendRichMessageDraft (私聊)")
             await self._send_streaming_draft(

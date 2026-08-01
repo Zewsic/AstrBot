@@ -228,7 +228,8 @@ async def run_agent(
                     )
                     _record_tool_call_name(tool_info, tool_name_by_call_id)
 
-                    if astr_event.get_platform_name() == "webchat":
+                    if astr_event.get_platform_name() in {"webchat", "telegram"}:
+                        # Telegram aggregates the raw call metadata into one live status.
                         await astr_event.send(resp.data["chain"])
                     elif show_tool_use:
                         if show_tool_call_result and isinstance(tool_info, dict):

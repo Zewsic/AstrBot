@@ -288,6 +288,10 @@ async def test_telegram_voice_message_creates_record_component(tmp_path):
         asyncio.Queue(),
     )
     voice = create_mock_file("https://api.telegram.org/file/test/voice.oga")
+    downloaded_file = MagicMock()
+    downloaded_file.file_path = "https://api.telegram.org/file/test/voice.oga"
+    downloaded_file.download_to_drive = AsyncMock()
+    voice.get_file = AsyncMock(return_value=downloaded_file)
     update = create_mock_update(
         message_text=None,
         voice=voice,
@@ -607,3 +611,72 @@ async def test_telegram_rich_drafts_do_not_cross_streaming_break_boundaries():
         "first",
         "second",
     ]
+
+
+@pytest.mark.asyncio
+async def test_telegram_rich_tool_status_uses_one_rich_message():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client._post = AsyncMock(return_value={"message_id": 700})
+    event.use_rich_messages = True
+    event.show_tool_calling_execution = True
+    event._tool_call_groups = []
+    event._tool_status_message_id = None
+    event.get_message_type = MagicMock(return_value=1)
+    event.get_sender_id = MagicMock(return_value="1001")
+
+    await event._update_tool_call_status(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "web_search", "args": {"q": "first"}})],
+        )
+    )
+    await event._update_tool_call_status(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "web_search", "args": {"q": "second"}})],
+        )
+    )
+
+    assert event.client._post.await_count == 2
+    assert event.client._post.await_args_list[0].args[0] == "sendRichMessage"
+    assert event.client._post.await_args_list[1].args[0] == "editMessageText"
+    assert (
+        event.client._post.await_args_list[1]
+        .args[1]["rich_message"]["markdown"]
+        .count("web_search")
+        == 3
+    )
+
+
+@pytest.mark.asyncio
+async def test_telegram_regular_tool_status_updates_plain_message():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client.send_message = AsyncMock(return_value=MagicMock(message_id=701))
+    event.client.edit_message_text = AsyncMock()
+    event.use_rich_messages = False
+    event.show_tool_calling_execution = True
+    event._tool_call_groups = []
+    event._tool_status_message_id = None
+    event.get_message_type = MagicMock(return_value=1)
+    event.get_sender_id = MagicMock(return_value="1001")
+
+    await event._update_tool_call_status(
+        MessageChain(
+            type="tool_call", chain=[MagicMock(data={"name": "shell", "args": {}})]
+        )
+    )
+    await event._update_tool_call_status(
+        MessageChain(
+            type="tool_call", chain=[MagicMock(data={"name": "shell", "args": {}})]
+        )
+    )
+
+    event.client.send_message.assert_awaited_once()
+    event.client.edit_message_text.assert_awaited_once()
+    assert event.client.edit_message_text.await_args.kwargs["text"] == (
+        "🛠 Tool calls: 2\n- shell (2)"
+    )

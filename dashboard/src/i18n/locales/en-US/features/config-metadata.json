@@ -914,6 +914,10 @@
           "use_rich_messages": {
             "description": "[Telegram] Use Rich Messages",
             "hint": "Use Telegram Rich Markdown and Rich Message Draft API. Enabled by default."
+          },
+          "show_tool_calling_execution": {
+            "description": "[Telegram] Show Tool Calling Execution",
+            "hint": "Show a running summary of AI tool calls in the chat. Enabled by default."
           }
         },
         "discord": {
@@ -1798,5 +1802,13 @@
     "helpPrefix": "Don't understand the configuration? See",
     "helpMiddle": "or",
     "helpSuffix": "."
+  },
+  "telegram_group": {
+    "name": "Telegram",
+    "metadata": {
+      "telegram": {
+        "description": "Telegram Settings"
+      }
+    }
   }
 }
