@@ -129,6 +129,9 @@ class MockTelegramBuilder:
         bot.set_message_reaction = AsyncMock()
         bot.edit_message_text = AsyncMock()
         bot.send_message_draft = AsyncMock()
+        # Rich Message API is newer than the pinned PTB version. Production
+        # calls Bot._post until PTB exposes public wrappers for it.
+        bot._post = AsyncMock()
         return bot
 
     @staticmethod
