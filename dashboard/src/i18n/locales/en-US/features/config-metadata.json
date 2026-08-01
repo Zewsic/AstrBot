@@ -910,6 +910,10 @@
               "description": "Emoji List (Unicode)",
               "hint": "Telegram only supports a fixed reaction set, reference: [https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9](https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9)"
             }
+          },
+          "use_rich_messages": {
+            "description": "[Telegram] Use Rich Messages",
+            "hint": "Use Telegram Rich Markdown and Rich Message Draft API. Enabled by default."
           }
         },
         "discord": {

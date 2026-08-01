@@ -20,6 +20,8 @@ class _FakeEvent:
     def get_platform_name(self) -> str:
         return "test"
 
+    trace = SimpleNamespace(record=lambda *args, **kwargs: None)
+
 
 class _StreamingErrorRunner:
     """Agent runner that finishes with one provider error response."""
@@ -72,3 +74,38 @@ async def test_run_agent_replaces_malformed_streaming_provider_error():
 
     assert len(chains) == 1
     assert chains[0].get_plain_text() == "Error occurred during AI execution."
+
+
+class _StreamingToolCallRunner:
+    """Runner that emits text, calls a tool, then emits more text."""
+
+    streaming = True
+    req = None
+
+    def __init__(self) -> None:
+        self.finished = False
+        self.run_context = SimpleNamespace(context=SimpleNamespace(event=_FakeEvent()))
+
+    async def step(self):
+        yield AgentResponse(
+            type="streaming_delta", data={"chain": MessageChain().message("before")}
+        )
+        yield AgentResponse(type="tool_call", data={"chain": MessageChain()})
+        self.finished = True
+        yield AgentResponse(
+            type="streaming_delta", data={"chain": MessageChain().message("after")}
+        )
+
+    def done(self) -> bool:
+        return self.finished
+
+
+@pytest.mark.asyncio
+async def test_run_agent_breaks_stream_at_tool_call_when_tool_status_is_hidden():
+    chains = [
+        chain
+        async for chain in run_agent(_StreamingToolCallRunner(), show_tool_use=False)
+    ]
+
+    assert [chain.type for chain in chains] == [None, "break", None]
+    assert [chain.get_plain_text() for chain in chains] == ["before", "", "after"]

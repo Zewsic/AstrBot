@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 import astrbot.api.message_components as Comp
+from astrbot.api.event import MessageChain
 from astrbot.core.platform.register import unregister_platform_adapters_by_module
 from tests.fixtures.helpers import (
     NoopAwaitable,
@@ -318,49 +319,96 @@ async def test_telegram_voice_message_creates_record_component(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_telegram_final_segment_splits_long_markdown_messages():
+async def test_telegram_sends_plain_messages_with_rich_markdown():
     TelegramPlatformEvent = _load_telegram_platform_event()
     client = MagicMock()
-    client.send_message = AsyncMock()
-    event = TelegramPlatformEvent("msg", MagicMock(), MagicMock(), "session", client)
+    client._post = AsyncMock()
 
-    delta = "A" * (TelegramPlatformEvent.MAX_MESSAGE_LENGTH + 32)
-    payload = {"chat_id": "123456"}
+    await TelegramPlatformEvent._send_rich_text_chunks(
+        client, "# Heading\n\n**rich** text", {"chat_id": "123456"}
+    )
 
-    await event._send_final_segment(delta, payload)
-
-    assert client.send_message.await_count == 2
-    first_call = client.send_message.await_args_list[0].kwargs
-    second_call = client.send_message.await_args_list[1].kwargs
-    assert len(first_call["text"]) == TelegramPlatformEvent.MAX_MESSAGE_LENGTH
-    assert len(second_call["text"]) == 32
-    assert first_call["parse_mode"] == "MarkdownV2"
-    assert second_call["parse_mode"] == "MarkdownV2"
+    client._post.assert_awaited_once_with(
+        "sendRichMessage",
+        {
+            "chat_id": "123456",
+            "rich_message": {"markdown": "# Heading\n\n**rich** text"},
+        },
+    )
 
 
 @pytest.mark.asyncio
-async def test_telegram_final_segment_splits_long_plaintext_when_markdown_fails():
+async def test_telegram_final_segment_splits_long_rich_messages():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    client = MagicMock()
+    client._post = AsyncMock()
+    event = TelegramPlatformEvent("msg", MagicMock(), MagicMock(), "session", client)
+
+    delta = "A" * (TelegramPlatformEvent.MAX_RICH_MESSAGE_LENGTH + 32)
+    await event._send_final_segment(delta, {"chat_id": "123456"})
+
+    assert client._post.await_count == 2
+    first_call = client._post.await_args_list[0].args
+    second_call = client._post.await_args_list[1].args
+    assert first_call[0] == "sendRichMessage"
+    assert second_call[0] == "sendRichMessage"
+    assert len(first_call[1]["rich_message"]["markdown"]) == (
+        TelegramPlatformEvent.MAX_RICH_MESSAGE_LENGTH
+    )
+    assert len(second_call[1]["rich_message"]["markdown"]) == 32
+
+
+@pytest.mark.asyncio
+async def test_telegram_rich_draft_uses_rich_api():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    client = MagicMock()
+    client._post = AsyncMock()
+    event = TelegramPlatformEvent("msg", MagicMock(), MagicMock(), "session", client)
+
+    await event._send_rich_message_draft("123456", 7, "**partial**")
+
+    client._post.assert_awaited_once_with(
+        "sendRichMessageDraft",
+        {
+            "chat_id": 123456,
+            "draft_id": 7,
+            "rich_message": {"markdown": "**partial**"},
+        },
+    )
+
+
+@pytest.mark.asyncio
+async def test_telegram_regular_messages_are_used_when_rich_messages_disabled():
     TelegramPlatformEvent = _load_telegram_platform_event()
     client = MagicMock()
     client.send_message = AsyncMock()
-    event = TelegramPlatformEvent("msg", MagicMock(), MagicMock(), "session", client)
+    chain = MagicMock()
+    chain.chain = [Comp.Plain("regular text")]
 
-    delta = "B" * (TelegramPlatformEvent.MAX_MESSAGE_LENGTH + 18)
-    payload = {"chat_id": "123456"}
+    await TelegramPlatformEvent.send_with_client(
+        client, chain, "123456", use_rich_messages=False
+    )
 
-    with patch(
-        "astrbot.core.platform.sources.telegram.tg_event.telegramify_markdown.markdownify",
-        side_effect=Exception("boom"),
-    ):
-        await event._send_final_segment(delta, payload)
+    client._post.assert_not_called()
+    client.send_message.assert_awaited_once_with(
+        text="regular text", parse_mode="MarkdownV2", chat_id="123456"
+    )
 
-    assert client.send_message.await_count == 2
-    first_call = client.send_message.await_args_list[0].kwargs
-    second_call = client.send_message.await_args_list[1].kwargs
-    assert len(first_call["text"]) == TelegramPlatformEvent.MAX_MESSAGE_LENGTH
-    assert len(second_call["text"]) == 18
-    assert "parse_mode" not in first_call
-    assert "parse_mode" not in second_call
+
+@pytest.mark.asyncio
+async def test_telegram_rich_message_falls_back_when_api_call_fails():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    client = MagicMock()
+    client._post = AsyncMock(side_effect=RuntimeError("unsupported"))
+    client.send_message = AsyncMock()
+
+    await TelegramPlatformEvent._send_rich_text_chunks(
+        client, "fallback", {"chat_id": "123456"}
+    )
+
+    client.send_message.assert_awaited_once_with(
+        text="fallback", parse_mode="MarkdownV2", chat_id="123456"
+    )
 
 
 @pytest.mark.asyncio
@@ -528,3 +576,34 @@ async def test_telegram_run_rebuilds_fresh_application_after_recreate_init_failu
     app_two.shutdown.assert_awaited()
     app_three.initialize.assert_awaited()
     app_three.start.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_telegram_rich_drafts_do_not_cross_streaming_break_boundaries():
+    """Each logical MessageDraft must retain its own Telegram draft_id."""
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event._send_rich_message_draft = AsyncMock()
+    event._send_final_segment = AsyncMock()
+
+    async def generator():
+        yield MessageChain(chain=[Comp.Plain("first")])
+        await asyncio.sleep(0)
+        yield MessageChain(chain=[], type="break")
+        yield MessageChain(chain=[Comp.Plain("second")])
+        await asyncio.sleep(0)
+
+    initial_draft_id = TelegramPlatformEvent._next_draft_id
+    await event._send_streaming_draft("123", None, {"chat_id": "123"}, generator())
+
+    draft_calls = event._send_rich_message_draft.await_args_list
+    assert [call.args[1] for call in draft_calls] == [
+        initial_draft_id + 1,
+        initial_draft_id + 2,
+    ]
+    assert [call.args[2] for call in draft_calls] == ["first", "second"]
+    assert [call.args[0] for call in event._send_final_segment.await_args_list] == [
+        "first",
+        "second",
+    ]

@@ -38,6 +38,10 @@ def _is_gif(path: str) -> bool:
 class TelegramPlatformEvent(AstrMessageEvent):
     # Telegram 的最大消息长度限制
     MAX_MESSAGE_LENGTH = 4096
+    # Rich messages accept up to 32,768 UTF-8 characters.
+    MAX_RICH_MESSAGE_LENGTH = 32768
+# Keep draft updates responsive without aggressively hitting Telegram rate limits.
+    DRAFT_UPDATE_INTERVAL = 1.0
 
     SPLIT_PATTERNS = {
         "paragraph": re.compile(r"\n\n"),
@@ -46,7 +50,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
         "word": re.compile(r"\s"),
     }
 
-    # sendMessageDraft 的 draft_id 类级递增计数器
+    # sendRichMessageDraft 的 draft_id 类级递增计数器
     _TELEGRAM_DRAFT_ID_MAX = 2_147_483_647
     _next_draft_id: int = 0
 
@@ -76,9 +80,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
         platform_meta: PlatformMetadata,
         session_id: str,
         client: ExtBot,
+        use_rich_messages: bool = True,
     ) -> None:
         super().__init__(message_str, message_obj, platform_meta, session_id)
         self.client = client
+        self.use_rich_messages = use_rich_messages
 
     @classmethod
     def _split_message(cls, text: str) -> list[str]:
@@ -106,22 +112,74 @@ class TelegramPlatformEvent(AstrMessageEvent):
         return chunks
 
     @classmethod
+    def _split_rich_message(cls, text: str) -> list[str]:
+        """Split Rich Markdown while preserving the largest practical blocks."""
+        if len(text) <= cls.MAX_RICH_MESSAGE_LENGTH:
+            return [text]
+
+        chunks = []
+        while text:
+            if len(text) <= cls.MAX_RICH_MESSAGE_LENGTH:
+                chunks.append(text)
+                break
+            segment = text[: cls.MAX_RICH_MESSAGE_LENGTH]
+            split_point = cls.MAX_RICH_MESSAGE_LENGTH
+            for pattern in cls.SPLIT_PATTERNS.values():
+                matches = list(pattern.finditer(segment))
+                if matches:
+                    split_point = matches[-1].end()
+                    break
+            chunks.append(text[:split_point])
+            text = text[split_point:].lstrip()
+        return chunks
+
+    @classmethod
+    async def _call_rich_api(
+        cls, client: ExtBot, method: str, data: dict[str, Any]
+    ) -> Any:
+        """Call a new Bot API method not yet wrapped by python-telegram-bot.
+
+        PTB serializes the nested ``rich_message`` object and multipart media in
+        ``_post`` exactly as it does for its public Bot methods. Keeping this in
+        one place makes the workaround removable once PTB exposes these methods.
+        """
+        post = getattr(client, "_post", None)
+        if post is None:
+            raise RuntimeError("Installed python-telegram-bot lacks Bot._post")
+        return await post(method, data)
+
+    @classmethod
+    async def _send_rich_text_chunks(
+        cls, client: ExtBot, text: str, payload: dict[str, Any]
+    ) -> None:
+        """Send Rich Markdown text, falling back to a regular message if needed."""
+        for chunk in cls._split_rich_message(text):
+            try:
+                await cls._call_rich_api(
+                    client,
+                    "sendRichMessage",
+                    {**payload, "rich_message": {"markdown": chunk}},
+                )
+            except Exception as e:
+                logger.warning(
+                    "[Telegram] sendRichMessage failed; falling back to sendMessage: %s",
+                    e,
+                )
+                await cls._send_text_chunks(client, chunk, payload)
+
+    @classmethod
     async def _send_text_chunks(
         cls,
         client: ExtBot,
         text: str,
         payload: dict[str, Any],
     ) -> None:
-        """按 Telegram 限制切分文本后逐段发送。"""
+        """Legacy fallback: split and send MarkdownV2 text."""
         for chunk in cls._split_message(text):
             try:
-                markdown_text = telegramify_markdown.markdownify(
-                    chunk,
-                )
+                markdown_text = telegramify_markdown.markdownify(chunk)
                 await client.send_message(
-                    text=markdown_text,
-                    parse_mode="MarkdownV2",
-                    **cast(Any, payload),
+                    text=markdown_text, parse_mode="MarkdownV2", **cast(Any, payload)
                 )
             except (ValueError, BadRequest) as e:
                 logger.warning(
@@ -271,6 +329,7 @@ class TelegramPlatformEvent(AstrMessageEvent):
         client: ExtBot,
         message: MessageChain,
         user_name: str,
+        use_rich_messages: bool = True,
     ) -> None:
         image_path = None
 
@@ -307,7 +366,18 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 if at_user_id and not at_flag:
                     i.text = f"@{at_user_id} {i.text}"
                     at_flag = True
-                await cls._send_text_chunks(client, i.text, payload)
+                rich_payload = dict(payload)
+                # sendRichMessage uses ReplyParameters rather than the legacy
+                # sendMessage reply_to_message_id field.
+                if reply_message_id is not None:
+                    rich_payload.pop("reply_to_message_id", None)
+                    rich_payload["reply_parameters"] = {
+                        "message_id": int(reply_message_id)
+                    }
+                if use_rich_messages:
+                    await cls._send_rich_text_chunks(client, i.text, rich_payload)
+                else:
+                    await cls._send_text_chunks(client, i.text, payload)
             elif isinstance(i, Image):
                 image_path = await i.convert_to_file_path()
                 if _is_gif(image_path):
@@ -342,9 +412,16 @@ class TelegramPlatformEvent(AstrMessageEvent):
 
     async def send(self, message: MessageChain) -> None:
         if self.get_message_type() == MessageType.GROUP_MESSAGE:
-            await self.send_with_client(self.client, message, self.message_obj.group_id)
+            await self.send_with_client(
+                self.client,
+                message,
+                self.message_obj.group_id,
+                self.use_rich_messages,
+            )
         else:
-            await self.send_with_client(self.client, message, self.get_sender_id())
+            await self.send_with_client(
+                self.client, message, self.get_sender_id(), self.use_rich_messages
+            )
         await super().send(message)
 
     async def react(self, emoji: str | None, big: bool = False) -> None:
@@ -379,46 +456,27 @@ class TelegramPlatformEvent(AstrMessageEvent):
         except Exception as e:
             logger.error(f"[Telegram] 添加反应失败: {e}")
 
-    async def _send_message_draft(
+    async def _send_rich_message_draft(
         self,
         chat_id: str,
         draft_id: int,
-        text: str,
+        markdown: str,
         message_thread_id: str | None = None,
-        parse_mode: str | None = None,
     ) -> None:
-        """通过 Bot.send_message_draft 发送草稿消息（流式推送部分消息）。
-
-        该 API 仅支持私聊。
-
-        Args:
-            chat_id: 目标私聊的 chat_id
-            draft_id: 草稿唯一标识，非零整数；相同 draft_id 的变更会以动画展示
-            text: 消息文本，1-4096 字符
-            message_thread_id: 可选，目标消息线程 ID
-            parse_mode: 可选，消息文本的解析模式
-        """
-        if not text or not text.strip():
+        """Update an ephemeral Rich Markdown draft in a private chat."""
+        if not markdown or not markdown.strip():
             return
-
-        kwargs: dict[str, Any] = {}
+        data: dict[str, Any] = {
+            "chat_id": int(chat_id),
+            "draft_id": draft_id,
+            "rich_message": {"markdown": markdown},
+        }
         if message_thread_id:
-            kwargs["message_thread_id"] = int(message_thread_id)
-        if parse_mode:
-            kwargs["parse_mode"] = parse_mode
-
+            data["message_thread_id"] = int(message_thread_id)
         try:
-            logger.debug(
-                f"[Telegram] sendMessageDraft: chat_id={chat_id}, draft_id={draft_id}, text_len={len(text)}"
-            )
-            await self.client.send_message_draft(
-                chat_id=int(chat_id),
-                draft_id=draft_id,
-                text=text,
-                **kwargs,
-            )
+            await self._call_rich_api(self.client, "sendRichMessageDraft", data)
         except Exception as e:
-            logger.warning(f"[Telegram] sendMessageDraft 失败: {e!s}")
+            logger.warning("[Telegram] sendRichMessageDraft failed: %s", e)
 
     async def _process_chain_items(
         self,
@@ -487,8 +545,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 logger.warning(f"不支持的消息类型: {type(i)}")
 
     async def _send_final_segment(self, delta: str, payload: dict[str, Any]) -> None:
-        """将累积文本作为 MarkdownV2 真实消息发送，失败时回退到纯文本。"""
-        await self._send_text_chunks(self.client, delta, payload)
+        """Persist accumulated text in the configured Telegram message format."""
+        if self.use_rich_messages:
+            await self._send_rich_text_chunks(self.client, delta, payload)
+        else:
+            await self._send_text_chunks(self.client, delta, payload)
 
     async def send_streaming(self, generator, use_fallback: bool = False):
         message_thread_id = None
@@ -507,17 +568,20 @@ class TelegramPlatformEvent(AstrMessageEvent):
         if message_thread_id:
             payload["message_thread_id"] = message_thread_id
 
-        # sendMessageDraft 仅支持私聊（显式检查 FRIEND_MESSAGE）
+        # sendRichMessageDraft 仅支持私聊（显式检查 FRIEND_MESSAGE）
         is_private = self.get_message_type() == MessageType.FRIEND_MESSAGE
 
-        if is_private:
-            logger.info("[Telegram] 流式输出: 使用 sendMessageDraft (私聊)")
+        if not self.use_rich_messages:
+            logger.info("[Telegram] Rich Messages disabled; using regular streaming")
+            await self._send_streaming_regular(user_name, message_thread_id, payload, generator)
+        elif is_private:
+            logger.info("[Telegram] 流式输出: 使用 sendRichMessageDraft (私聊)")
             await self._send_streaming_draft(
                 user_name, message_thread_id, payload, generator
             )
         else:
             logger.info("[Telegram] 流式输出: 使用 edit_message_text fallback (群聊)")
-            await self._send_streaming_edit(
+            await self._send_streaming_regular(
                 user_name, message_thread_id, payload, generator
             )
 
@@ -534,9 +598,9 @@ class TelegramPlatformEvent(AstrMessageEvent):
         payload: dict[str, Any],
         generator,
     ) -> None:
-        """使用 sendMessageDraft API 进行流式推送（私聊专用）。
+        """使用 sendRichMessageDraft API 进行流式推送（私聊专用）。
 
-        流式过程中使用 sendMessageDraft 推送草稿动画，
+        流式过程中使用 sendRichMessageDraft 推送草稿动画，
         流式结束后发送一条真实消息保留最终内容（draft 是临时的，会消失）。
         使用信号驱动的发送循环：每次有新 token 到达时唤醒发送，
         发送频率由网络 RTT 自然限制（最多一个请求 in-flight）。
@@ -544,45 +608,30 @@ class TelegramPlatformEvent(AstrMessageEvent):
         draft_id = self._allocate_draft_id()
         delta = ""
         last_sent_text = ""
+        last_sent_at = float("-inf")
         done = False  # 信号：生成器已结束
         text_changed = asyncio.Event()  # 有新 token 到达时触发
 
         async def _draft_sender_loop() -> None:
             """信号驱动的草稿发送循环，有新内容就发，RTT 自然限流。"""
-            nonlocal last_sent_text
+            nonlocal last_sent_at, last_sent_text
             while not done:
                 await text_changed.wait()
                 text_changed.clear()
-                # 发送最新的缓冲区内容（MarkdownV2 渲染，与真实消息一致）
+                # Coalesce arriving tokens and update the draft at most once every
+                # DRAFT_UPDATE_INTERVAL seconds. This deliberately uses the latest
+                # buffer after sleeping, rather than queueing stale intermediate drafts.
                 if delta and delta != last_sent_text:
-                    draft_text = delta[: self.MAX_MESSAGE_LENGTH]
+                    elapsed = asyncio.get_running_loop().time() - last_sent_at
+                    if elapsed < self.DRAFT_UPDATE_INTERVAL:
+                        await asyncio.sleep(self.DRAFT_UPDATE_INTERVAL - elapsed)
+                    draft_text = delta[: self.MAX_RICH_MESSAGE_LENGTH]
                     if draft_text != last_sent_text:
-                        try:
-                            md = telegramify_markdown.markdownify(
-                                draft_text,
-                            )
-                            await self._send_message_draft(
-                                user_name,
-                                draft_id,
-                                md,
-                                message_thread_id,
-                                parse_mode="MarkdownV2",
-                            )
-                            last_sent_text = draft_text
-                        except Exception:
-                            # markdownify 对未闭合语法可能失败，回退纯文本
-                            try:
-                                await self._send_message_draft(
-                                    user_name,
-                                    draft_id,
-                                    draft_text,
-                                    message_thread_id,
-                                )
-                                last_sent_text = draft_text
-                            except Exception as e2:
-                                logger.debug(
-                                    f"[Telegram] sendMessageDraft failed (ignored): {e2!s}"
-                                )
+                        await self._send_rich_message_draft(
+                            user_name, draft_id, draft_text, message_thread_id
+                        )
+                        last_sent_text = draft_text
+                        last_sent_at = asyncio.get_running_loop().time()
 
         sender_task = asyncio.create_task(_draft_sender_loop())
 
@@ -597,19 +646,25 @@ class TelegramPlatformEvent(AstrMessageEvent):
                     continue
 
                 if chain.type == "break":
-                    # 分割符：发送真实消息保留内容，重置缓冲区
+                    # A break is a hard MessageDraft boundary. Stop and join the
+                    # current sender before changing captured state; otherwise a
+                    # coalesced update can use the next segment's draft_id.
+                    done = True
+                    text_changed.set()
+                    await sender_task
+
                     if delta:
-                        # 用 emoji 清空 draft 显示，避免 draft 和真实消息同时可见
-                        await self._send_message_draft(
-                            user_name,
-                            draft_id,
-                            "\u23f3",
-                            message_thread_id,
-                        )
                         await self._send_final_segment(delta, payload)
+
+                    # Each MessageDraft owns independent sender state and a
+                    # Telegram draft_id, so it cannot merge into the next draft.
+                    draft_id = self._allocate_draft_id()
                     delta = ""
                     last_sent_text = ""
-                    draft_id = self._allocate_draft_id()
+                    last_sent_at = float("-inf")
+                    done = False
+                    text_changed = asyncio.Event()
+                    sender_task = asyncio.create_task(_draft_sender_loop())
                     continue
 
                 await self._process_chain_items(
@@ -619,117 +674,46 @@ class TelegramPlatformEvent(AstrMessageEvent):
             done = True
             text_changed.set()  # 唤醒循环使其退出
             await sender_task
-
-        # 流式结束：用 emoji 清空 draft，然后发真实消息持久化
+        # The draft is ephemeral; persist the completed Rich Message instead.
         if delta:
-            await self._send_message_draft(
-                user_name,
-                draft_id,
-                "\u23f3",
-                message_thread_id,
-            )
             await self._send_final_segment(delta, payload)
 
-    async def _send_streaming_edit(
+    async def _send_streaming_regular(
         self,
         user_name: str,
         message_thread_id: str | None,
         payload: dict[str, Any],
         generator,
     ) -> None:
-        """使用 send_message + edit_message_text 进行流式推送（群聊 fallback）。"""
+        """Buffer group output and persist each segment as a Rich Message.
+
+        Telegram only permits ``sendRichMessageDraft`` in private chats. In
+        groups we keep the typing indicator alive and send completed segments
+        through ``sendRichMessage`` instead of emitting regular-message edits.
+        """
         delta = ""
-        current_content = ""
-        message_id = None
-        last_edit_time = 0  # 上次编辑消息的时间
-        throttle_interval = 0.6  # 编辑消息的间隔时间 (秒)
-        last_chat_action_time = 0  # 上次发送 chat action 的时间
-        chat_action_interval = 0.5  # chat action 的节流间隔 (秒)
+        last_typing_at = float("-inf")
 
-        # 发送初始 typing 状态
-        await self._ensure_typing(user_name, message_thread_id)
-        last_chat_action_time = asyncio.get_running_loop().time()
-
-        def _append_text(t: str) -> None:
+        def _append_text(text: str) -> None:
             nonlocal delta
-            delta += t
+            delta += text
 
         async for chain in generator:
             if not isinstance(chain, MessageChain):
                 continue
-
             if chain.type == "break":
-                # 分割符
-                if message_id:
-                    try:
-                        await self.client.edit_message_text(
-                            text=delta,
-                            chat_id=payload["chat_id"],
-                            message_id=message_id,
-                        )
-                    except Exception as e:
-                        logger.warning(f"编辑消息失败(streaming-break): {e!s}")
-                message_id = None
-                delta = ""
+                if delta:
+                    await self._send_final_segment(delta, payload)
+                    delta = ""
                 continue
 
             await self._process_chain_items(
                 chain, payload, user_name, message_thread_id, _append_text
             )
+            now = asyncio.get_running_loop().time()
+            if now - last_typing_at >= 3.0:
+                await self._ensure_typing(user_name, message_thread_id)
+                last_typing_at = now
 
-            # 编辑或发送消息
-            if message_id and len(delta) <= self.MAX_MESSAGE_LENGTH:
-                current_time = asyncio.get_running_loop().time()
-                time_since_last_edit = current_time - last_edit_time
-
-                if time_since_last_edit >= throttle_interval:
-                    current_time = asyncio.get_running_loop().time()
-                    if current_time - last_chat_action_time >= chat_action_interval:
-                        await self._ensure_typing(user_name, message_thread_id)
-                        last_chat_action_time = current_time
-                    try:
-                        await self.client.edit_message_text(
-                            text=delta,
-                            chat_id=payload["chat_id"],
-                            message_id=message_id,
-                        )
-                        current_content = delta
-                    except Exception as e:
-                        logger.warning(f"编辑消息失败(streaming): {e!s}")
-                    last_edit_time = asyncio.get_running_loop().time()
-            else:
-                current_time = asyncio.get_running_loop().time()
-                if current_time - last_chat_action_time >= chat_action_interval:
-                    await self._ensure_typing(user_name, message_thread_id)
-                    last_chat_action_time = current_time
-                try:
-                    msg = await self.client.send_message(
-                        text=delta, **cast(Any, payload)
-                    )
-                    current_content = delta
-                except Exception as e:
-                    logger.warning(f"发送消息失败(streaming): {e!s}")
-                message_id = msg.message_id
-                last_edit_time = asyncio.get_running_loop().time()
-
-        try:
-            if delta and current_content != delta:
-                try:
-                    markdown_text = telegramify_markdown.markdownify(
-                        delta,
-                    )
-                    await self.client.edit_message_text(
-                        text=markdown_text,
-                        chat_id=payload["chat_id"],
-                        message_id=message_id,
-                        parse_mode="MarkdownV2",
-                    )
-                except Exception as e:
-                    logger.warning(f"Markdown转换失败，使用普通文本: {e!s}")
-                    await self.client.edit_message_text(
-                        text=delta,
-                        chat_id=payload["chat_id"],
-                        message_id=message_id,
-                    )
-        except Exception as e:
-            logger.warning(f"编辑消息失败(streaming): {e!s}")
+        if delta:
+            await self._send_final_segment(delta, payload)

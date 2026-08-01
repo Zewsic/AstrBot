@@ -17,6 +17,7 @@ from telegram.ext import MessageHandler as TelegramMessageHandler
 
 import astrbot.api.message_components as Comp
 from astrbot.api import logger
+from astrbot.core import astrbot_config
 from astrbot.api.event import MessageChain
 from astrbot.api.platform import (
     AstrBotMessage,
@@ -763,6 +764,9 @@ class TelegramPlatformAdapter(Platform):
             platform_meta=self.meta(),
             session_id=message.session_id,
             client=self.client,
+            use_rich_messages=astrbot_config.get("platform_specific", {})
+            .get("telegram", {})
+            .get("use_rich_messages", True),
         )
 
     async def handle_msg(self, message: AstrBotMessage) -> None:
