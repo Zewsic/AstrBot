@@ -1185,7 +1185,13 @@
           "configSaveCode": "Verification Code",
           "configSaveConfirm": "Continue",
           "configSaveCancel": "Cancel",
-          "configSaveError": "Verification failed. Please try again."
+          "configSaveError": "Verification failed. Please try again.",
+          "verifyTitle": "Verify current TOTP",
+          "verifySubtitle": "Enter the code from your authenticator app to confirm your identity.",
+          "verifyCode": "Current code",
+          "verifyCancel": "Cancel",
+          "verifySubmit": "Verify",
+          "verifyFailed": "Verification failed"
         }
       },
       "timezone": {

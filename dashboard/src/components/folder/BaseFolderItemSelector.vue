@@ -3,13 +3,13 @@
         <!-- 触发按钮区域 -->
         <div class="d-flex align-center justify-space-between">
             <span v-if="!modelValue" style="color: rgb(var(--v-theme-primaryText));">
-                {{ labels.notSelected || '未选择' }}
+                {{ labels.notSelected || t('core.shared.folder.notSelected') }}
             </span>
             <span v-else>
                 {{ displayValue }}
             </span>
             <v-btn size="small" color="primary" variant="tonal" @click="openDialog">
-                {{ labels.buttonText || '选择...' }}
+                {{ labels.buttonText || t('core.shared.folder.buttonText') }}
             </v-btn>
         </div>
 
@@ -22,7 +22,7 @@
             <v-card class="selector-dialog-card">
                 <v-card-title class="text-h3 pa-4 pb-0 pl-6 d-flex align-center">
                     <v-icon class="mr-3" color="primary">mdi-account-circle</v-icon>
-                    <span>{{ labels.dialogTitle || '选择项目' }}</span>
+                    <span>{{ labels.dialogTitle || t('core.shared.folder.dialogTitle') }}</span>
                 </v-card-title>
 
                 <v-divider />
@@ -44,7 +44,7 @@
                                     <template v-slot:prepend>
                                         <v-icon size="20" :color="currentFolderId === null ? 'primary' : ''">mdi-home</v-icon>
                                     </template>
-                                    <v-list-item-title class="text-body-2">{{ labels.rootFolder || '根目录' }}</v-list-item-title>
+                                    <v-list-item-title class="text-body-2">{{ labels.rootFolder || t('core.shared.folder.rootFolder') }}</v-list-item-title>
                                 </v-list-item>
 
                                 <!-- 文件夹树 -->
@@ -67,7 +67,7 @@
                                     :disabled="currentFolderId === null" @click="navigateToParentFolder" />
                                 <v-btn size="small" variant="tonal" color="primary" prepend-icon="mdi-home"
                                     @click="navigateToFolder(null)">
-                                    {{ labels.rootFolder || '根目录' }}
+                                    {{ labels.rootFolder || t('core.shared.folder.rootFolder') }}
                                 </v-btn>
                                 <span class="text-caption text-medium-emphasis text-truncate mobile-folder-label">
                                     {{ currentFolderLabel }}
@@ -104,7 +104,7 @@
                                 <!-- 子文件夹 -->
                                 <v-list v-if="!itemsLoading" lines="two" class="pa-3 items-content">
                                     <template v-if="currentSubFolders.length > 0">
-                                        <div class="section-label text-caption text-medium-emphasis mb-2 px-2">子文件夹</div>
+                                        <div class="section-label text-caption text-medium-emphasis mb-2 px-2">{{ t('core.shared.folder.subfolders') }}</div>
                                         <v-list-item v-for="folder in currentSubFolders" :key="'folder-' + folder.folder_id"
                                             @click="navigateToFolder(folder.folder_id)" rounded="lg" class="mb-1 folder-item">
                                             <template v-slot:prepend>
@@ -121,7 +121,7 @@
 
                                     <!-- 项目列表 -->
                                     <template v-if="currentItems.length > 0">
-                                        <div class="section-label text-caption text-medium-emphasis mb-2 px-2" :class="{ 'mt-4': currentSubFolders.length > 0 }">可选项目</div>
+                                        <div class="section-label text-caption text-medium-emphasis mb-2 px-2" :class="{ 'mt-4': currentSubFolders.length > 0 }">{{ t('core.shared.folder.availableItems') }}</div>
                                         <v-list-item v-for="item in currentItems" :key="'item-' + getItemId(item)"
                                             :value="getItemId(item)" @click="selectItem(item)"
                                             :active="selectedItemId === getItemId(item)" rounded="lg" class="mb-1 persona-item"
@@ -156,7 +156,7 @@
                                     <div v-if="currentSubFolders.length === 0 && currentItems.length === 0"
                                         class="empty-state text-center py-12">
                                         <v-icon size="64" color="grey-lighten-2">mdi-folder-open-outline</v-icon>
-                                        <p class="text-grey mt-4 text-body-2">{{ labels.emptyFolder || labels.noItems || '此文件夹为空' }}</p>
+                                        <p class="text-grey mt-4 text-body-2">{{ labels.emptyFolder || labels.noItems || t('core.shared.folder.emptyFolder') }}</p>
                                     </div>
                                 </v-list>
                             </div>
@@ -167,12 +167,12 @@
                 <v-card-actions class="pa-4">
                     <v-btn v-if="showCreateButton" variant="text" color="primary" prepend-icon="mdi-plus"
                         @click="$emit('create')">
-                        {{ labels.createButton || '新建' }}
+                        {{ labels.createButton || t('core.shared.folder.createButton') }}
                     </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn variant="text" @click="cancelSelection">{{ labels.cancelButton || '取消' }}</v-btn>
+                    <v-btn variant="text" @click="cancelSelection">{{ labels.cancelButton || t('core.shared.folder.cancelButton') }}</v-btn>
                     <v-btn color="primary" variant="tonal" @click="confirmSelection" :disabled="!selectedItemId">
-                        {{ labels.confirmButton || '确认' }}
+                        {{ labels.confirmButton || t('core.shared.folder.confirmButton') }}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -184,6 +184,9 @@
 import { defineComponent, type PropType } from 'vue';
 import BaseMoveTargetNode from './BaseMoveTargetNode.vue';
 import type { FolderTreeNode, FolderItemSelectorLabels, SelectableItem } from './types';
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 export default defineComponent({
     name: 'BaseFolderItemSelector',
@@ -254,6 +257,9 @@ export default defineComponent({
         }
     },
     emits: ['update:modelValue', 'navigate', 'create', 'edit'],
+    setup() {
+        return { t };
+    },
     data() {
         return {
             dialog: false,
@@ -269,10 +275,10 @@ export default defineComponent({
 
         currentFolderLabel(): string {
             if (this.currentFolderId === null) {
-                return this.labels.rootFolder || '根目录';
+                return this.labels.rootFolder || t('core.shared.folder.rootFolder');
             }
             const currentFolder = this.breadcrumbPath[this.breadcrumbPath.length - 1];
-            return currentFolder?.name || this.labels.rootFolder || '根目录';
+            return currentFolder?.name || this.labels.rootFolder || t('core.shared.folder.rootFolder');
         },
 
         displayValue(): string {
@@ -311,7 +317,7 @@ export default defineComponent({
         breadcrumbItems(): any[] {
             const items: any[] = [
                 {
-                    title: this.labels.rootFolder || '根目录',
+                    title: this.labels.rootFolder || t('core.shared.folder.rootFolder'),
                     folderId: null,
                     disabled: this.currentFolderId === null,
                     isRoot: true

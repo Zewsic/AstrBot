@@ -17,12 +17,12 @@
       <v-card-text class="pa-4">
         <template v-if="step === 'verify'">
           <div class="totp-dialog-subtitle mb-3">
-            输入当前认证器应用中的验证码以验证身份。
+            {{ tm('system_group.system.dashboard.totp.verifySubtitle') }}
           </div>
           <div class="text-center">
             <v-text-field
               v-model="verifyCode"
-              label="当前验证码"
+              :label="tm('system_group.system.dashboard.totp.verifyCode')"
               variant="outlined"
               density="compact"
               class="totp-code-input"
@@ -40,7 +40,7 @@
               :disabled="verifyingIdentity"
               @click="onCancel"
             >
-              取消
+              {{ tm('system_group.system.dashboard.totp.verifyCancel') }}
             </v-btn>
             <v-btn
               color="primary"
@@ -49,7 +49,7 @@
               :disabled="!verifyCode || verifyCode.length < 6"
               @click="verifyIdentity"
             >
-              验证
+              {{ tm('system_group.system.dashboard.totp.verifySubmit') }}
             </v-btn>
           </div>
         </template>
@@ -151,7 +151,7 @@ const verifyingIdentity = ref(false)
 
 const cardTitle = computed(() => {
   if (step.value === 'verify') {
-    return '验证当前 TOTP'
+    return tm('system_group.system.dashboard.totp.verifyTitle')
   }
   return props.mode === 'rotate'
     ? tm('system_group.system.dashboard.totp.rotateTitle')
@@ -240,13 +240,13 @@ async function verifyIdentity() {
   try {
     const res = await authApi.setupTotp({ code: verifyCode.value })
     if (res.data.status !== 'ok') {
-      verifyError.value = res.data.message || '验证失败'
+      verifyError.value = res.data.message || tm('system_group.system.dashboard.totp.verifyFailed')
       return
     }
     newSecret.value = res.data.data?.secret || ''
     step.value = 'setup'
   } catch {
-    verifyError.value = '验证失败'
+    verifyError.value = tm('system_group.system.dashboard.totp.verifyFailed')
   } finally {
     verifyingIdentity.value = false
   }

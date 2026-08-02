@@ -47,7 +47,10 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import { useI18n } from '@/i18n/composables';
 import type { Folder } from './types';
+
+const { t } = useI18n();
 
 interface DefaultLabels {
     open: string;
@@ -56,12 +59,12 @@ interface DefaultLabels {
     delete: string;
 }
 
-const defaultLabels: DefaultLabels = {
-    open: '打开',
-    rename: '重命名',
-    moveTo: '移动到...',
-    delete: '删除'
-};
+const defaultLabels = (): DefaultLabels => ({
+    open: t('core.shared.folder.contextMenu.open'),
+    rename: t('core.shared.folder.contextMenu.rename'),
+    moveTo: t('core.shared.folder.contextMenu.moveTo'),
+    delete: t('core.shared.folder.contextMenu.delete')
+});
 
 export default defineComponent({
     name: 'BaseFolderCard',
@@ -87,7 +90,7 @@ export default defineComponent({
     },
     computed: {
         mergedLabels(): DefaultLabels {
-            return { ...defaultLabels, ...this.labels };
+            return { ...defaultLabels(), ...this.labels };
         }
     },
     methods: {

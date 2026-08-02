@@ -1185,7 +1185,13 @@
           "configSaveCode": "Код подтверждения",
           "configSaveConfirm": "Продолжить",
           "configSaveCancel": "Отмена",
-          "configSaveError": "Проверка не пройдена. Повторите попытку."
+          "configSaveError": "Проверка не пройдена. Повторите попытку.",
+          "verifyTitle": "Подтверждение текущего TOTP",
+          "verifySubtitle": "Введите код из приложения-аутентификатора, чтобы подтвердить личность.",
+          "verifyCode": "Текущий код",
+          "verifyCancel": "Отмена",
+          "verifySubmit": "Подтвердить",
+          "verifyFailed": "Проверка не пройдена"
         }
       },
       "timezone": {

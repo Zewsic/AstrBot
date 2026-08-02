@@ -5,7 +5,7 @@
       <v-btn prepend-icon="mdi-upload" color="primary" variant="outlined" @click="showUploadDialog = true">
         {{ t('documents.upload') }}
       </v-btn>
-      <v-text-field v-model="searchQuery" prepend-inner-icon="mdi-magnify" :placeholder="'搜索文档...'" variant="outlined"
+      <v-text-field v-model="searchQuery" prepend-inner-icon="mdi-magnify" :placeholder="t('documents.searchPlaceholder')" variant="outlined"
         density="compact" hide-details clearable style="max-width: 300px" />
     </div>
 
@@ -86,15 +86,15 @@
                 <p class="mt-4 text-h6">{{ t('upload.dropzone') }}</p>
                 <p class="text-caption text-medium-emphasis mt-2">{{ t('upload.supportedFormats') }}</p>
                 <p class="text-caption text-medium-emphasis">{{ t('upload.maxSize') }}</p>
-                <p class="text-caption text-medium-emphasis">最多可上传 10 个文件</p>
+                <p class="text-caption text-medium-emphasis">{{ t('documents.maxFiles') }}</p>
                 <input ref="fileInput" type="file" multiple hidden accept=".txt,.md,.markdown,.rst,.adoc,.pdf,.docx,.epub,.xls,.xlsx"
                   @change="handleFileSelect" />
               </div>
 
               <div v-if="selectedFiles.length > 0" class="mt-4">
                 <div class="d-flex align-center justify-space-between mb-2">
-                  <span class="text-subtitle-2">已选择 {{ selectedFiles.length }} 个文件</span>
-                  <v-btn variant="text" size="small" @click="selectedFiles = []">清空</v-btn>
+                  <span class="text-subtitle-2">{{ t('documents.selectedFiles', { count: selectedFiles.length }) }}</span>
+                  <v-btn variant="text" size="small" @click="selectedFiles = []">{{ t('documents.clearSelection') }}</v-btn>
                 </div>
                 <div class="files-list">
                   <div v-for="(file, index) in selectedFiles" :key="index"
@@ -121,10 +121,10 @@
                 <v-alert :type="tavilyConfigStatus === 'error' ? 'error' : 'info'" variant="tonal" density="compact">
                   <div class="d-flex align-center justify-space-between">
                     <span>
-                      {{ tavilyConfigStatus === 'error' ? '检查网页搜索配置失败' : '使用此功能需要配置 Tavily Key' }}
+                      {{ tavilyConfigStatus === 'error' ? t('documents.tavilyCheckFailed') : t('documents.tavilyRequired') }}
                     </span>
                     <v-btn size="small" variant="tonal" @click="showTavilyDialog = true">
-                      配置
+                      {{ t('documents.configure') }}
                     </v-btn>
                   </div>
                 </v-alert>
@@ -175,16 +175,16 @@
             <h3 class="text-h6 mb-4">{{ t('upload.batchSettings') }}</h3>
             <v-row>
               <v-col cols="12" sm="4">
-                <v-text-field v-model.number="uploadSettings.batch_size" :label="t('upload.batchSize')" hint="每批处理的文本数量"
+                <v-text-field v-model.number="uploadSettings.batch_size" :label="t('upload.batchSize')" :hint="t('upload.batchSizeHint')"
                   persistent-hint type="number" variant="outlined" density="compact" />
               </v-col>
               <v-col cols="12" sm="4">
                 <v-text-field v-model.number="uploadSettings.tasks_limit" :label="t('upload.tasksLimit')"
-                  hint="并发任务数量限制" persistent-hint type="number" variant="outlined" density="compact" />
+                  :hint="t('upload.tasksLimitHint')" persistent-hint type="number" variant="outlined" density="compact" />
               </v-col>
               <v-col cols="12" sm="4">
                 <v-text-field v-model.number="uploadSettings.max_retries" :label="t('upload.maxRetries')"
-                  hint="失败时的最大重试次数" persistent-hint type="number" variant="outlined" density="compact" />
+                  :hint="t('upload.maxRetriesHint')" persistent-hint type="number" variant="outlined" density="compact" />
               </v-col>
             </v-row>
           </div>
@@ -218,9 +218,9 @@
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer />
-          <v-btn variant="text" @click="showDeleteDialog = false">取消</v-btn>
+          <v-btn variant="text" @click="showDeleteDialog = false">{{ t('documents.deleteCancel') }}</v-btn>
           <v-btn color="error" variant="tonal" @click="deleteDocument" :loading="deleting">
-            删除
+            {{ t('documents.deleteConfirmButton') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -357,7 +357,7 @@ const loadDocuments = async () => {
     }
   } catch (error) {
     console.error('Failed to load documents:', error)
-    showSnackbar('加载文档列表失败', 'error')
+    showSnackbar(t('documents.loadFailed'), 'error')
   } finally {
     loading.value = false
   }
@@ -389,7 +389,7 @@ const handleFileSelect = (event: Event) => {
 const addFiles = (files: File[]) => {
   const totalFiles = selectedFiles.value.length + files.length
   if (totalFiles > 10) {
-    showSnackbar('最多只能选择 10 个文件', 'warning')
+    showSnackbar(t('documents.tooManyFiles'), 'warning')
     return
   }
   selectedFiles.value.push(...files)
@@ -452,7 +452,7 @@ const uploadFiles = async () => {
       const result = response.data.data
       const taskId = result.task_id
 
-      showSnackbar(`正在后台上传 ${result.file_count} 个文件...`, 'info')
+      showSnackbar(t('documents.uploadingInBackground', { count: result.file_count }), 'info')
 
       // 为每个文件添加占位条目到文档列表
       const uploadingDocs = selectedFiles.value.map((file, index) => ({
@@ -529,7 +529,7 @@ const uploadFromUrl = async () => {
       const result = response.data.data
       const taskId = result.task_id
 
-      showSnackbar(`正在从 URL 后台提取内容...`, 'info')
+      showSnackbar(t('documents.extractingInBackground'), 'info')
 
       // 添加占位条目
       const uploadingDoc = {
@@ -619,9 +619,9 @@ const startProgressPolling = (taskId: string) => {
           emit('refresh')
 
           if (failedCount === 0) {
-            showSnackbar(`成功上传 ${successCount} 个文档`)
+            showSnackbar(t('documents.uploadedCount', { count: successCount }))
           } else {
-            showSnackbar(`上传完成: ${successCount} 个成功, ${failedCount} 个失败`, 'warning')
+            showSnackbar(t('documents.uploadPartial', { success: successCount, failed: failedCount }), 'warning')
           }
         } else if (status === 'failed') {
           // 任务失败
@@ -630,7 +630,7 @@ const startProgressPolling = (taskId: string) => {
           // 移除上传中的占位文档
           documents.value = documents.value.filter(doc => doc.taskId !== taskId)
 
-          showSnackbar(`上传失败: ${data.error || '未知错误'}`, 'error')
+          showSnackbar(t('documents.uploadFailedWith', { error: data.error || t('documents.unknownError') }), 'error')
         }
       } else {
         // 任务不存在，停止轮询
@@ -662,15 +662,8 @@ const getUploadPercentage = (item: any) => {
 
 // 获取阶段文本
 const getStageText = (stage: string) => {
-  const stageMap: Record<string, string> = {
-    'waiting': '等待中...',
-    'extracting': '提取内容...',
-    'cleaning': '清洗内容...',
-    'parsing': '解析文档...',
-    'chunking': '文本分块...',
-    'embedding': '生成向量...'
-  }
-  return stageMap[stage] || stage
+  const known = ['waiting', 'extracting', 'cleaning', 'parsing', 'chunking', 'embedding']
+  return known.includes(stage) ? t(`upload.stages.${stage}`) : stage
 }
 
 // 关闭上传对话框
@@ -805,7 +798,7 @@ const checkTavilyConfig = async () => {
 }
 
 const onTavilyKeySet = () => {
-  showSnackbar('Tavily API Key 配置成功', 'success')
+  showSnackbar(t('documents.tavilyKeySaved'), 'success')
   checkTavilyConfig()
 }
 

@@ -11,14 +11,16 @@
     "documents": "Documents",
     "chunks": "Chunks",
     "sessionConfig": "Session Config",
-    "initError": "Initialization Failed"
+    "initError": "Initialization Failed",
+    "switchToLegacy": "Switch to the legacy knowledge base"
   },
   "card": {
     "edit": "Edit",
     "delete": "Delete",
     "open": "Open",
     "docCount": "{count} Documents",
-    "chunkCount": "{count} Chunks"
+    "chunkCount": "{count} Chunks",
+    "noDescription": "No description"
   },
   "create": {
     "title": "Create Knowledge Base",
@@ -33,7 +35,9 @@
     "rerankProviderInfo": "Provider: {id}",
     "cancel": "Cancel",
     "submit": "Create",
-    "nameRequired": "Please enter knowledge base name"
+    "nameRequired": "Please enter knowledge base name",
+    "nameHint": "If you rename the knowledge base later, update it in the config file too.",
+    "embeddingHint": "The embedding model cannot be changed later. Create a new knowledge base to use a different one."
   },
   "edit": {
     "title": "Edit Knowledge Base",
@@ -63,6 +67,8 @@
     "updateFailed": "Failed to update",
     "deleteSuccess": "Knowledge base deleted successfully",
     "deleteFailed": "Failed to delete",
-    "loadError": "Failed to load knowledge base list"
+    "loadError": "Failed to load knowledge base list",
+    "loadDetailFailed": "Failed to load knowledge base details",
+    "loadFailedShort": "Failed to load"
   }
 }

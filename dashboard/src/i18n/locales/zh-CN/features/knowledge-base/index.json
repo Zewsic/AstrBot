@@ -11,14 +11,16 @@
     "documents": "文档",
     "chunks": "分块",
     "sessionConfig": "会话配置",
-    "initError": "初始化失败"
+    "initError": "初始化失败",
+    "switchToLegacy": "切换到旧版知识库"
   },
   "card": {
     "edit": "编辑",
     "delete": "删除",
     "open": "打开",
     "docCount": "{count} 个文档",
-    "chunkCount": "{count} 个分块"
+    "chunkCount": "{count} 个分块",
+    "noDescription": "暂无描述"
   },
   "create": {
     "title": "创建知识库",
@@ -33,7 +35,9 @@
     "rerankProviderInfo": "提供商: {id}",
     "cancel": "取消",
     "submit": "创建",
-    "nameRequired": "请输入知识库名称"
+    "nameRequired": "请输入知识库名称",
+    "nameHint": "后续如修改知识库名称，需重新在配置文件更新。",
+    "embeddingHint": "嵌入模型选择后无法修改，如需更换请创建新的知识库。"
   },
   "edit": {
     "title": "编辑知识库",
@@ -63,6 +67,8 @@
     "updateFailed": "更新失败",
     "deleteSuccess": "知识库删除成功",
     "deleteFailed": "删除失败",
-    "loadError": "加载知识库列表失败"
+    "loadError": "加载知识库列表失败",
+    "loadDetailFailed": "加载知识库详情失败",
+    "loadFailedShort": "加载失败"
   }
 }

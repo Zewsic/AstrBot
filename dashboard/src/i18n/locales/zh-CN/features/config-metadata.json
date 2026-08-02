@@ -1185,7 +1185,13 @@
           "configSaveCode": "验证码",
           "configSaveConfirm": "继续",
           "configSaveCancel": "取消",
-          "configSaveError": "验证失败，请重试。"
+          "configSaveError": "验证失败，请重试。",
+          "verifyTitle": "验证当前 TOTP",
+          "verifySubtitle": "输入当前认证器应用中的验证码以验证身份。",
+          "verifyCode": "当前验证码",
+          "verifyCancel": "取消",
+          "verifySubmit": "验证",
+          "verifyFailed": "验证失败"
         }
       },
       "timezone": {

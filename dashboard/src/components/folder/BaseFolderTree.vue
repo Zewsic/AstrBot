@@ -75,6 +75,9 @@
 import { defineComponent, type PropType } from 'vue';
 import type { FolderTreeNode, ContextMenuEvent } from './types';
 import BaseFolderTreeNode from './BaseFolderTreeNode.vue';
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 interface ContextMenuState {
     show: boolean;
@@ -104,17 +107,17 @@ interface DefaultLabels {
     };
 }
 
-const defaultLabels: DefaultLabels = {
-    searchPlaceholder: '搜索文件夹...',
-    rootFolder: '根目录',
-    noFolders: '暂无文件夹',
+const defaultLabels = (): DefaultLabels => ({
+    searchPlaceholder: t('core.shared.folder.searchPlaceholder'),
+    rootFolder: t('core.shared.folder.rootFolder'),
+    noFolders: t('core.shared.folder.noFolders'),
     contextMenu: {
-        open: '打开',
-        rename: '重命名',
-        moveTo: '移动到...',
-        delete: '删除'
+        open: t('core.shared.folder.contextMenu.open'),
+        rename: t('core.shared.folder.contextMenu.rename'),
+        moveTo: t('core.shared.folder.contextMenu.moveTo'),
+        delete: t('core.shared.folder.contextMenu.delete')
     }
-};
+});
 
 export default defineComponent({
     name: 'BaseFolderTree',

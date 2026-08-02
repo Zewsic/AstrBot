@@ -118,7 +118,7 @@
 
             <template #item.char_count="{ item }">
               <v-chip size="small" variant="outlined">
-                {{ item.char_count }} 字符
+                {{ item.char_count }} {{ t('chunks.charCountSuffix') }}
               </v-chip>
             </template>
 
@@ -199,7 +199,7 @@
                 <v-icon>mdi-text</v-icon>
               </template>
               <v-list-item-title>{{ t('view.charCount') }}</v-list-item-title>
-              <v-list-item-subtitle>{{ selectedChunk?.char_count || 0 }} 字符</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ selectedChunk?.char_count || 0 }} {{ t('chunks.charCountSuffix') }}</v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item>
@@ -300,7 +300,7 @@ const loadDocument = async () => {
     }
   } catch (error) {
     console.error('Failed to load document:', error)
-    showSnackbar('加载文档详情失败', 'error')
+    showSnackbar(t('chunks.loadDetailFailed'), 'error')
   } finally {
     loading.value = false
   }
@@ -321,7 +321,7 @@ const loadChunks = async () => {
     }
   } catch (error) {
     console.error('Failed to load chunks:', error)
-    showSnackbar('加载分块列表失败', 'error')
+    showSnackbar(t('chunks.loadChunksFailed'), 'error')
   } finally {
     loadingChunks.value = false
   }

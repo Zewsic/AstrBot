@@ -108,5 +108,37 @@
     "confirmDeleteButton": "Confirm Delete",
     "confirmAction": "Confirm Action",
     "confirmApplyMessage": "Are you sure you want to save changes to '{name}' and set it as the active template?"
+  },
+  "folder": {
+    "notSelected": "Not selected",
+    "buttonText": "Select...",
+    "dialogTitle": "Select Item",
+    "rootFolder": "Root",
+    "emptyFolder": "This folder is empty",
+    "createButton": "New",
+    "cancelButton": "Cancel",
+    "confirmButton": "Confirm",
+    "searchPlaceholder": "Search folders...",
+    "noFolders": "No folders yet",
+    "contextMenu": {
+      "open": "Open",
+      "rename": "Rename",
+      "moveTo": "Move to...",
+      "delete": "Delete"
+    },
+    "moveDialog": {
+      "title": "Move to Folder",
+      "description": "Select a destination folder",
+      "moveButton": "Move"
+    },
+    "createDialog": {
+      "title": "Create Folder",
+      "nameLabel": "Name",
+      "descriptionLabel": "Description",
+      "nameRequired": "Please enter a folder name",
+      "createButton": "Create"
+    },
+    "subfolders": "Subfolders",
+    "availableItems": "Available Items"
   }
 }

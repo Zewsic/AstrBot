@@ -108,5 +108,37 @@
     "confirmDeleteButton": "Удалить",
     "confirmAction": "Подтвердите действие",
     "confirmApplyMessage": "Сохранить изменения в шаблоне «{name}» и сделать его активным?"
+  },
+  "folder": {
+    "notSelected": "Не выбрано",
+    "buttonText": "Выбрать…",
+    "dialogTitle": "Выбор элемента",
+    "rootFolder": "Корневая папка",
+    "emptyFolder": "Папка пуста",
+    "createButton": "Создать",
+    "cancelButton": "Отмена",
+    "confirmButton": "Выбрать",
+    "searchPlaceholder": "Поиск папок…",
+    "noFolders": "Папок пока нет",
+    "contextMenu": {
+      "open": "Открыть",
+      "rename": "Переименовать",
+      "moveTo": "Переместить в…",
+      "delete": "Удалить"
+    },
+    "moveDialog": {
+      "title": "Перемещение в папку",
+      "description": "Выберите папку назначения",
+      "moveButton": "Переместить"
+    },
+    "createDialog": {
+      "title": "Создание папки",
+      "nameLabel": "Название",
+      "descriptionLabel": "Описание",
+      "nameRequired": "Укажите название папки",
+      "createButton": "Создать"
+    },
+    "subfolders": "Вложенные папки",
+    "availableItems": "Доступные элементы"
   }
 }

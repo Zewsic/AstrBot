@@ -239,40 +239,42 @@
     <v-dialog v-model="showSyncMcpServerDialog" max-width="500px" persistent>
       <v-card>
         <v-card-title class="text-h3 pa-4 pb-0 pl-6">
-          <span>同步外部平台 MCP 服务器</span>
+          <span>{{ tm('syncProvider.title') }}</span>
         </v-card-title>
 
         <v-card-text class="py-4">
           <v-select v-model="selectedMcpServerProvider" :items="mcpServerProviderList"
-            label="选择平台" variant="outlined" required></v-select>
+            :label="tm('syncProvider.fields.provider')" variant="outlined" required></v-select>
           <div v-if="selectedMcpServerProvider === 'modelscope'">
             <v-timeline align="start" side="end">
               <v-timeline-item icon="mdi-numeric-1" icon-color="rgb(var(--v-theme-background))">
                 <div>
-                  <div class="text-h4">发现 MCP 服务器</div>
+                  <div class="text-h4">{{ tm('syncProvider.guide.discoverTitle') }}</div>
                   <p class="mt-2">
-                    访问 <a href="https://www.modelscope.cn/mcp" target="_blank">ModelScope 平台</a> 浏览需要的 MCP 服务器。
+                    {{ tm('syncProvider.guide.discoverBefore') }}<a href="https://www.modelscope.cn/mcp"
+                      target="_blank">{{ tm('syncProvider.guide.discoverLink') }}</a>{{ tm('syncProvider.guide.discoverAfter') }}
                   </p>
                 </div>
               </v-timeline-item>
 
               <v-timeline-item icon="mdi-numeric-2" icon-color="rgb(var(--v-theme-background))">
                 <div>
-                  <div class="text-h4">获取访问令牌</div>
+                  <div class="text-h4">{{ tm('syncProvider.guide.tokenTitle') }}</div>
                   <p class="mt-2">
-                    从<a href="https://modelscope.cn/my/myaccesstoken" target="_blank">账户设置</a>中获取个人访问令牌。
+                    {{ tm('syncProvider.guide.tokenBefore') }}<a href="https://modelscope.cn/my/myaccesstoken"
+                      target="_blank">{{ tm('syncProvider.guide.tokenLink') }}</a>{{ tm('syncProvider.guide.tokenAfter') }}
                   </p>
                 </div>
               </v-timeline-item>
 
               <v-timeline-item icon="mdi-numeric-3" icon-color="rgb(var(--v-theme-background))">
                 <div>
-                  <div class="text-h4">输入您的访问令牌</div>
+                  <div class="text-h4">{{ tm('syncProvider.guide.enterTitle') }}</div>
                   <p class="mt-2">
-                    输入您的访问令牌以同步 MCP 服务器。
+                    {{ tm('syncProvider.guide.enterText') }}
                   </p>
                   <v-text-field v-model="mcpProviderToken" type="password" variant="outlined"
-                    label="访问令牌" class="mt-2" hide-details/>
+                    :label="tm('syncProvider.fields.accessToken')" class="mt-2" hide-details/>
                 </div>
               </v-timeline-item>
             </v-timeline>
@@ -629,7 +631,7 @@ export default {
         }
       } catch (error) {
         this.showError(this.tm('syncProvider.messages.syncError', {
-          error: error.response?.data?.message || error.message || '网络连接或访问令牌问题'
+          error: error.response?.data?.message || error.message || this.tm('syncProvider.messages.networkOrTokenIssue')
         }));
       } finally {
         this.loading = false;

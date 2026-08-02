@@ -77,12 +77,16 @@
       "add": "Added successfully!",
       "delete": "Deleted successfully!",
       "statusUpdate": "Status updated successfully!",
-      "sessionSeparation": "Session isolation settings updated"
+      "sessionSeparation": "Session isolation settings updated",
+      "copy": "Copied and created {id}"
     },
     "error": {
       "sessionSeparation": "Failed to get session isolation configuration",
       "fetchStatus": "Failed to get service provider status",
-      "testError": "Test failed for {id}: {error}"
+      "testError": "Test failed for {id}: {error}",
+      "providerDisabled": "This provider is not enabled",
+      "update": "Failed to update",
+      "add": "Failed to add"
     },
     "confirm": {
       "delete": "Are you sure you want to delete service provider {id}?"
@@ -162,5 +166,19 @@
       "providerId": "Provider ID",
       "modelId": "Model ID"
     }
+  },
+  "agentRunnerDialog": {
+    "title": "Test the Agent Runner on the Config page",
+    "intro": "Agent Runner testing is done on the Config page.",
+    "step1": "Open the relevant config file.",
+    "step2": "Find the Agent Runner section, choose a runner and save.",
+    "step3": "Click the 💬 chat button in the bottom-right corner to test it.",
+    "note": "To make the bot use this Agent Runner, you also need to change it there.",
+    "dismiss": "Got it",
+    "goToConfig": "Open Config"
+  },
+  "manualModelDialog": {
+    "cancel": "Cancel",
+    "add": "Add"
   }
 }

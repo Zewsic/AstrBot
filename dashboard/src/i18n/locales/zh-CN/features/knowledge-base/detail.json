@@ -43,7 +43,25 @@
     "uploadSuccess": "文档上传成功",
     "uploadFailed": "文档上传失败",
     "deleteSuccess": "文档删除成功",
-    "deleteFailed": "文档删除失败"
+    "deleteFailed": "文档删除失败",
+    "searchPlaceholder": "搜索文档...",
+    "maxFiles": "最多可上传 10 个文件",
+    "selectedFiles": "已选择 {count} 个文件",
+    "clearSelection": "清空",
+    "tavilyCheckFailed": "检查网页搜索配置失败",
+    "tavilyRequired": "使用此功能需要配置 Tavily Key",
+    "configure": "配置",
+    "deleteCancel": "取消",
+    "deleteConfirmButton": "删除",
+    "loadFailed": "加载文档列表失败",
+    "tooManyFiles": "最多只能选择 10 个文件",
+    "uploadingInBackground": "正在后台上传 {count} 个文件...",
+    "extractingInBackground": "正在从 URL 后台提取内容...",
+    "uploadedCount": "成功上传 {count} 个文档",
+    "uploadPartial": "上传完成: {success} 个成功, {failed} 个失败",
+    "uploadFailedWith": "上传失败: {error}",
+    "unknownError": "未知错误",
+    "tavilyKeySaved": "Tavily API Key 配置成功"
   },
   "upload": {
     "title": "上传文档",
@@ -62,11 +80,11 @@
     "chunkOverlap": "分块重叠",
     "chunkOverlapHint": "相邻文本块之间的重叠字符数 (默认: 50)",
     "batchSize": "批处理大小",
-    "batchSizeHint": "每批处理的文本块数量 (默认: 32)",
+    "batchSizeHint": "每批处理的文本数量",
     "tasksLimit": "并发任务限制",
-    "tasksLimitHint": "最大并发上传任务数 (默认: 3)",
+    "tasksLimitHint": "并发任务数量限制",
     "maxRetries": "最大重试次数",
-    "maxRetriesHint": "上传失败任务的重试次数 (默认: 3)",
+    "maxRetriesHint": "失败时的最大重试次数",
     "cancel": "取消",
     "submit": "上传",
     "fileRequired": "请选择要上传的文件",
@@ -75,7 +93,15 @@
     "urlPlaceholder": "请输入要提取内容的网页 URL",
     "urlRequired": "请输入 URL",
     "urlHint": "将自动从目标 URL 提取主要内容作为文档。目前支持 {supported} 页面，请确保目标网页允许爬虫访问。",
-    "beta": "测试版"
+    "beta": "测试版",
+    "stages": {
+      "waiting": "等待中...",
+      "extracting": "提取内容...",
+      "cleaning": "清洗内容...",
+      "parsing": "解析文档...",
+      "chunking": "文本分块...",
+      "embedding": "生成向量..."
+    }
   },
   "retrieval": {
     "title": "知识库检索",
@@ -116,6 +142,31 @@
     "save": "保存设置",
     "saveSuccess": "设置保存成功",
     "saveFailed": "设置保存失败",
-    "tips": "提示: 修改检索设置后,将影响后续的知识库查询效果。"
+    "tips": "提示: 修改检索设置后,将影响后续的知识库查询效果。",
+    "embeddingWarningLabel": "注意:",
+    "embeddingWarning": "修改嵌入模型会导致现有的向量数据失效，建议重新上传文档。不同的嵌入模型生成的向量不兼容，可能导致检索结果不准确。",
+    "confirmTitle": "确认修改嵌入模型",
+    "confirmWarningLabel": "警告:",
+    "confirmWarning": "修改嵌入模型将导致以下影响:",
+    "consequence1": "现有的向量数据将失效",
+    "consequence2": "检索功能可能无法正常工作",
+    "consequence3": "建议删除现有文档后重新上传",
+    "consequence4": "不同嵌入模型生成的向量不兼容",
+    "confirmQuestion": "您确定要将嵌入模型从 {from} 修改为 {to} 吗?",
+    "confirmCancel": "取消",
+    "confirmSubmit": "确认修改"
+  },
+  "tavilyKey": {
+    "title": "配置 Tavily API Key",
+    "descriptionBefore": "为了使用基于网页的知识库功能，需要提供 Tavily API Key。您可以从 ",
+    "descriptionLink": "Tavily 官网",
+    "descriptionAfter": " 获取。",
+    "keyLabel": "Tavily API Key",
+    "cancel": "取消",
+    "save": "保存",
+    "keyRequired": "API Key 不能为空",
+    "loadConfigFailed": "获取当前配置失败",
+    "saveFailed": "保存失败，请检查 Key 是否正确",
+    "saveUnknownError": "保存失败，发生未知错误"
   }
 }

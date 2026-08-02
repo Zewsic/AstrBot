@@ -129,5 +129,10 @@
       "confirm": "confirm",
       "cancel": "cancel"
     }
+  },
+  "testChat": {
+    "testConfig": "Test Config",
+    "testCurrentConfig": "Test the current config",
+    "selectConfigFirst": "Select a config file first"
   }
 }

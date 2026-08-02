@@ -172,7 +172,8 @@
     "sourceResolved": "Source resolved successfully",
     "installPlugin": "Install Plugin",
     "randomPlugins": "🎲 Random Plugins",
-    "sourceSafetyWarning": "Even with the default source, plugin stability and security cannot be fully guaranteed. Please verify carefully before use."
+    "sourceSafetyWarning": "Even with the default source, plugin stability and security cannot be fully guaranteed. Please verify carefully before use.",
+    "sourceNamePlaceholder": "My plugin source"
   },
   "sort": {
     "by": "Sort by",

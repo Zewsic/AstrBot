@@ -111,7 +111,12 @@
     "websocket": "WebSocket"
   },
   "config": {
-    "title": "Config"
+    "title": "Config",
+    "dialogTitle": "Select Config File",
+    "empty": "No configs available. Create one on the Config page first.",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "applyFailed": "Failed to apply the config file"
   },
   "reasoning": {
     "thinking": "Thinking Process",

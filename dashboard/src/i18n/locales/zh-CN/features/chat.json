@@ -111,7 +111,12 @@
     "websocket": "WebSocket"
   },
   "config": {
-    "title": "配置文件"
+    "title": "配置",
+    "dialogTitle": "选择配置文件",
+    "empty": "暂无可选配置，请先在配置页创建。",
+    "cancel": "取消",
+    "apply": "应用",
+    "applyFailed": "配置文件应用失败"
   },
   "reasoning": {
     "thinking": "思考过程",

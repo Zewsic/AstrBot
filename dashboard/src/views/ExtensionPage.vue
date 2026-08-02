@@ -1153,7 +1153,7 @@ const updateDialogPluginLogo = computed(() => {
             prepend-inner-icon="mdi-rename-box"
             hide-details
             class="mt-4"
-            placeholder="我的插件源"
+            :placeholder="tm('market.sourceNamePlaceholder')"
           ></v-text-field>
         </div>
       </v-card-text>

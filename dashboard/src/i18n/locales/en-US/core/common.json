@@ -139,5 +139,8 @@
       "title": "No first notice content available",
       "subtitle": "FIRST_NOTICE.md was not found or is empty."
     }
-  }
+  },
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "unauthorized": "Not signed in. Please sign in again."
 }

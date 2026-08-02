@@ -172,7 +172,8 @@
     "sourceResolved": "插件源可用",
     "installPlugin": "安装插件",
     "randomPlugins": "🎲 随机插件",
-    "sourceSafetyWarning": "即使是默认插件源，我们也不能完全保证插件的稳定性和安全性，使用前请谨慎核查。"
+    "sourceSafetyWarning": "即使是默认插件源，我们也不能完全保证插件的稳定性和安全性，使用前请谨慎核查。",
+    "sourceNamePlaceholder": "我的插件源"
   },
   "sort": {
     "by": "排序方式",

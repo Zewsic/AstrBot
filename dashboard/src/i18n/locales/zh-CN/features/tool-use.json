@@ -157,7 +157,20 @@
     "messages": {
       "syncSuccess": "MCP 服务器同步成功!",
       "syncError": "同步失败: {error}",
-      "tokenHelp": "如何获取 ModelScope 访问令牌？点击右侧按钮查看说明"
+      "tokenHelp": "如何获取 ModelScope 访问令牌？点击右侧按钮查看说明",
+      "networkOrTokenIssue": "网络连接或访问令牌问题"
+    },
+    "guide": {
+      "discoverTitle": "发现 MCP 服务器",
+      "discoverBefore": "访问 ",
+      "discoverLink": "ModelScope 平台",
+      "discoverAfter": " 浏览需要的 MCP 服务器。",
+      "tokenTitle": "获取访问令牌",
+      "tokenBefore": "从",
+      "tokenLink": "账户设置",
+      "tokenAfter": "中获取个人访问令牌。",
+      "enterTitle": "输入您的访问令牌",
+      "enterText": "输入您的访问令牌以同步 MCP 服务器。"
     }
   },
   "messages": {

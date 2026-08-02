@@ -3,7 +3,7 @@
         <v-card>
             <v-card-title class="text-h3 pa-4 pb-0 pl-6">
                 <v-icon class="mr-2">mdi-folder-plus</v-icon>
-                {{ labels.title }}
+                {{ mergedLabels.title }}
             </v-card-title>
             <v-card-text>
                 <v-form ref="form" v-model="formValid" @submit.prevent="submitForm" :disabled="loading">
@@ -11,17 +11,17 @@
                         :rules="[(v: any) => !!v || mergedLabels.nameRequired]" variant="outlined"
                         density="comfortable" autofocus class="mb-3" />
 
-                    <v-textarea v-model="formData.description" :label="labels.descriptionLabel" variant="outlined"
+                    <v-textarea v-model="formData.description" :label="mergedLabels.descriptionLabel" variant="outlined"
                         rows="3" density="comfortable" hide-details />
                 </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-spacer />
                 <v-btn variant="text" @click="closeDialog">
-                    {{ labels.cancelButton }}
+                    {{ mergedLabels.cancelButton }}
                 </v-btn>
                 <v-btn color="primary" variant="tonal" @click="submitForm" :loading="loading" :disabled="!formValid">
-                    {{ labels.createButton }}
+                    {{ mergedLabels.createButton }}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -30,7 +30,10 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import { useI18n } from '@/i18n/composables';
 import type { CreateFolderData } from './types';
+
+const { t } = useI18n();
 
 interface DefaultLabels {
     title: string;
@@ -41,14 +44,14 @@ interface DefaultLabels {
     createButton: string;
 }
 
-const defaultLabels: DefaultLabels = {
-    title: '创建文件夹',
-    nameLabel: '名称',
-    descriptionLabel: '描述',
-    nameRequired: '请输入文件夹名称',
-    cancelButton: '取消',
-    createButton: '创建'
-};
+const defaultLabels = (): DefaultLabels => ({
+    title: t('core.shared.folder.createDialog.title'),
+    nameLabel: t('core.shared.folder.createDialog.nameLabel'),
+    descriptionLabel: t('core.shared.folder.createDialog.descriptionLabel'),
+    nameRequired: t('core.shared.folder.createDialog.nameRequired'),
+    cancelButton: t('core.shared.folder.cancelButton'),
+    createButton: t('core.shared.folder.createDialog.createButton')
+});
 
 export default defineComponent({
     name: 'BaseCreateFolderDialog',
@@ -87,7 +90,7 @@ export default defineComponent({
             }
         },
         mergedLabels(): DefaultLabels {
-            return { ...defaultLabels, ...this.labels };
+            return { ...defaultLabels(), ...this.labels };
         }
     },
     watch: {

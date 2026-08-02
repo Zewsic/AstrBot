@@ -157,7 +157,20 @@
     "messages": {
       "syncSuccess": "Серверы MCP синхронизированы",
       "syncError": "Не удалось синхронизировать: {error}",
-      "tokenHelp": "Не знаете, где взять токен ModelScope? Нажмите кнопку справа — там инструкция"
+      "tokenHelp": "Не знаете, где взять токен ModelScope? Нажмите кнопку справа — там инструкция",
+      "networkOrTokenIssue": "проблема с подключением или токеном доступа"
+    },
+    "guide": {
+      "discoverTitle": "Найдите нужные серверы MCP",
+      "discoverBefore": "Откройте ",
+      "discoverLink": "каталог ModelScope",
+      "discoverAfter": " и выберите подходящие серверы MCP.",
+      "tokenTitle": "Получите токен доступа",
+      "tokenBefore": "Личный токен доступа можно получить в разделе ",
+      "tokenLink": "настроек учётной записи",
+      "tokenAfter": ".",
+      "enterTitle": "Введите токен доступа",
+      "enterText": "Введите токен доступа, чтобы синхронизировать серверы MCP."
     }
   },
   "messages": {
