@@ -304,7 +304,7 @@ const syncPreviewVersion = async () => {
 }
 
 const previewData = computed(() => ({
-  text: tm('t2iTemplateEditor.previewText') || '这是一个示例文本，用于预览模板效果。\n\n这里可以包含多行文本，支持换行和各种格式。',
+  text: tm('t2iTemplateEditor.previewText'),
   version: previewVersion.value
 }))
 
@@ -380,7 +380,7 @@ const previewContent = computed(() => {
     return usedExistingShikiPlaceholder ? content : injectShikiRuntime(content)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    return `<div style="color: red; padding: 20px;">模板渲染错误: ${errorMessage}</div>`
+    return `<div style="color: red; padding: 20px;">${tm('t2iTemplateEditor.renderError', { error: errorMessage })}</div>`
   }
 })
 
@@ -396,13 +396,13 @@ const loadInitialData = async () => {
     if (listRes.data.status === 'ok') {
       templates.value = listRes.data.data
     } else {
-      console.error('加载模板列表失败:', listRes.data.message)
+      console.error('Failed to load the template list:', listRes.data.message)
     }
 
     if (activeRes.data.status === 'ok') {
       activeTemplate.value = activeRes.data.data.active_template
     } else {
-      console.error('加载活动模板失败:', activeRes.data.message)
+      console.error('Failed to load the active template:', activeRes.data.message)
     }
 
     // 设置初始选中的模板
@@ -411,7 +411,7 @@ const loadInitialData = async () => {
     }
 
   } catch (error) {
-    console.error('加载初始数据失败:', error)
+    console.error('Failed to load initial data:', error)
   } finally {
     loading.value = false
   }
@@ -425,10 +425,10 @@ const loadTemplateContent = async (name) => {
     if (response.data.status === 'ok') {
       templateContent.value = response.data.data.content
     } else {
-      console.error(`加载模板 '${name}' 失败:`, response.data.message)
+      console.error(`Failed to load template '${name}':`, response.data.message)
     }
   } catch (error) {
-    console.error(`加载模板 '${name}' 失败:`, error)
+    console.error(`Failed to load template '${name}':`, error)
   } finally {
     previewLoading.value = false
   }

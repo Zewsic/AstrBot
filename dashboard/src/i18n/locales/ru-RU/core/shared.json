@@ -107,7 +107,8 @@
     "confirmDeleteMessage": "Удалить шаблон «{name}»? Действие необратимо.",
     "confirmDeleteButton": "Удалить",
     "confirmAction": "Подтвердите действие",
-    "confirmApplyMessage": "Сохранить изменения в шаблоне «{name}» и сделать его активным?"
+    "confirmApplyMessage": "Сохранить изменения в шаблоне «{name}» и сделать его активным?",
+    "renderError": "Ошибка отрисовки шаблона: {error}"
   },
   "folder": {
     "notSelected": "Не выбрано",
@@ -140,5 +141,8 @@
     },
     "subfolders": "Вложенные папки",
     "availableItems": "Доступные элементы"
+  },
+  "qrCodeViewer": {
+    "noQrCode": "QR-код недоступен"
   }
 }

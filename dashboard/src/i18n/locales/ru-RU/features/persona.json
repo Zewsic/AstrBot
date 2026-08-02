@@ -56,7 +56,9 @@
     "noSkillsSelected": "Навыки не выбраны",
     "skillsRuntimeNoneWarning": "Для Computer Use выбрана среда выполнения «none», поэтому навыки могут работать некорректно — ни одна среда не включена.",
     "createInFolder": "Будет создана в папке «{folder}»",
-    "rootFolder": "Все персоны"
+    "rootFolder": "Все персоны",
+    "allToolsOption": "Использовать все функциональные инструменты",
+    "specificToolsOption": "Выбрать отдельные инструменты"
   },
   "dialog": {
     "create": {

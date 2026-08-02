@@ -172,11 +172,12 @@ export default defineComponent({
     },
     computed: {
         mergedLabels(): DefaultLabels {
+            const defaults = defaultLabels();
             return {
-                ...defaultLabels,
+                ...defaults,
                 ...this.labels,
                 contextMenu: {
-                    ...defaultLabels.contextMenu,
+                    ...defaults.contextMenu,
                     ...(this.labels?.contextMenu || {})
                 }
             };

@@ -107,7 +107,8 @@
     "confirmDeleteMessage": "Are you sure you want to delete template '{name}'? This action cannot be undone.",
     "confirmDeleteButton": "Confirm Delete",
     "confirmAction": "Confirm Action",
-    "confirmApplyMessage": "Are you sure you want to save changes to '{name}' and set it as the active template?"
+    "confirmApplyMessage": "Are you sure you want to save changes to '{name}' and set it as the active template?",
+    "renderError": "Template rendering error: {error}"
   },
   "folder": {
     "notSelected": "Not selected",
@@ -140,5 +141,8 @@
     },
     "subfolders": "Subfolders",
     "availableItems": "Available Items"
+  },
+  "qrCodeViewer": {
+    "noQrCode": "No QR code available"
   }
 }

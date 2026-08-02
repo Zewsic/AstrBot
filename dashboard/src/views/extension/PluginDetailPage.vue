@@ -352,6 +352,37 @@ const getFallbackHandlerGroupKey = (handler) => {
   return "hook";
 };
 
+// The backend still ships these labels in Chinese; map the known ones onto
+// translation keys so the page follows the selected language.
+const BACKEND_EVENT_TIMING = {
+  "平台消息下发时": "adapterMessage",
+  "LLM 请求时": "llmRequest",
+  "LLM 响应后": "llmResponse",
+  "Agent 开始运行时": "agentBegin",
+  "Agent 运行完成后": "agentDone",
+  "回复消息前": "decoratingResult",
+  "函数工具": "funcTool",
+  "发送消息后": "afterMessageSent",
+  "插件报错时": "pluginError",
+};
+
+const BACKEND_HANDLER_TYPES = {
+  "指令": "command",
+  "指令组": "commandGroup",
+  "正则匹配": "regex",
+  "事件监听器": "listener",
+  "无": "none",
+  "自动触发": "autoTrigger",
+  "未知": "unknown",
+  "无描述": "noDescription",
+};
+
+const localizeBackendLabel = (value, map, group) => {
+  const raw = String(value || "").trim();
+  const key = map[raw];
+  return key ? tm(`detail.${group}.${key}`) : raw;
+};
+
 const getComponentGroupKey = (component) => {
   const type = String(
     component?.type || component?.component_type || "",
@@ -446,13 +477,26 @@ const getHandlerDisplayName = (handler, groupKey) => {
     return handler.name;
   }
   if (["llm_tool", "listener"].includes(groupKey)) {
-    return handler?.handler_name || handler?.cmd || tm("status.unknown");
+    return localizeBackendLabel(
+      handler?.handler_name || handler?.cmd || tm("status.unknown"),
+      BACKEND_HANDLER_TYPES,
+      "handlerTypes",
+    );
   }
-  return handler?.cmd || handler?.handler_name || tm("status.unknown");
+  return localizeBackendLabel(
+    handler?.cmd || handler?.handler_name || tm("status.unknown"),
+    BACKEND_HANDLER_TYPES,
+    "handlerTypes",
+  );
 };
 
 const getHandlerTiming = (handler) =>
-  String(handler?.event_type_h || handler?.event_type || "").trim();
+  localizeBackendLabel(
+    handler?.event_type_h || handler?.event_type,
+    BACKEND_EVENT_TIMING,
+    "eventTiming",
+  );
+
 
 const isCommandGroupExpanded = (key) => expandedCommandGroups.value.has(key);
 
@@ -467,8 +511,11 @@ const toggleCommandGroup = (key) => {
 };
 
 const getComponentDescription = (component) => {
-  const fallback =
-    component?.description || component?.desc || tm("status.unknown");
+  const fallback = localizeBackendLabel(
+    component?.description || component?.desc || tm("status.unknown"),
+    BACKEND_HANDLER_TYPES,
+    "handlerTypes",
+  );
   if (getComponentGroupKey(component) === "page") {
     return String(
       pluginPageDescription(pluginData.value, component, fallback),

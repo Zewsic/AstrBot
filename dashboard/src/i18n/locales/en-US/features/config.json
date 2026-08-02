@@ -35,7 +35,9 @@
     "deleteSuccess": "Deleted successfully",
     "deleteError": "Failed to delete",
     "updateSuccess": "Updated successfully",
-    "updateError": "Failed to update"
+    "updateError": "Failed to update",
+    "missingProviderId": "Provider ID is missing",
+    "fetchDimensionsSuccess": "Fetched: {value}"
   },
   "sections": {
     "general": "General Settings",

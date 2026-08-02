@@ -35,7 +35,9 @@
     "deleteSuccess": "Удалено",
     "deleteError": "Не удалось удалить",
     "updateSuccess": "Изменения сохранены",
-    "updateError": "Не удалось сохранить изменения"
+    "updateError": "Не удалось сохранить изменения",
+    "missingProviderId": "Не указан идентификатор провайдера",
+    "fetchDimensionsSuccess": "Получено: {value}"
   },
   "sections": {
     "general": "Основные настройки",

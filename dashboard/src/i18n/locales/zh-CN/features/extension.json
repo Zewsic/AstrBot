@@ -132,6 +132,27 @@
       "supportPlatforms": "支持平台",
       "authorWebsite": "作者网站",
       "repository": "仓库"
+    },
+    "eventTiming": {
+      "adapterMessage": "平台消息下发时",
+      "llmRequest": "LLM 请求时",
+      "llmResponse": "LLM 响应后",
+      "agentBegin": "Agent 开始运行时",
+      "agentDone": "Agent 运行完成后",
+      "decoratingResult": "回复消息前",
+      "funcTool": "函数工具",
+      "afterMessageSent": "发送消息后",
+      "pluginError": "插件报错时"
+    },
+    "handlerTypes": {
+      "command": "指令",
+      "commandGroup": "指令组",
+      "regex": "正则匹配",
+      "listener": "事件监听器",
+      "none": "无",
+      "autoTrigger": "自动触发",
+      "unknown": "未知",
+      "noDescription": "无描述"
     }
   },
   "market": {
@@ -306,7 +327,10 @@
     "sourceBindSuccess": "插件源已更新",
     "validatingPlugin": "正在校验插件...",
     "pluginValidateSuccess": "插件校验通过",
-    "pluginValidateFailed": "插件校验失败"
+    "pluginValidateFailed": "插件校验失败",
+    "noFailedPlugins": "没有需要重载的失败插件",
+    "reloadAllAttempted": "已尝试重载所有失败插件",
+    "reloadAllFailed": "批量重载过程中出现错误"
   },
   "upload": {
     "fromFile": "从文件安装",

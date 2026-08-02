@@ -41,6 +41,7 @@ const props = defineProps({
 
 const { t } = useI18n()
 const { getRaw } = useModuleI18n('features/config-metadata')
+const { tm } = useModuleI18n('features/config')
 const { translateIfKey, resolveConfigText } = useConfigTextResolver(props)
 const currentConfigPath = computed(() => props.pathPrefix || props.metadataKey)
 
@@ -111,7 +112,7 @@ async function getEmbeddingDimensions(providerConfig) {
   try {
     const providerId = String(providerConfig?.id || '')
     if (!providerId) {
-      useToast().error('缺少提供商 ID')
+      useToast().error(tm('messages.missingProviderId'))
       return
     }
     const response = await providerApi.embeddingDimension(providerId, providerConfig)
@@ -119,7 +120,7 @@ async function getEmbeddingDimensions(providerConfig) {
     if (response.data.status != "error" && response.data.data?.embedding_dimensions) {
       console.log(response.data.data.embedding_dimensions)
       providerConfig.embedding_dimensions = response.data.data.embedding_dimensions
-      useToast().success("获取成功: " + response.data.data.embedding_dimensions)
+      useToast().success(tm('messages.fetchDimensionsSuccess', { value: response.data.data.embedding_dimensions }))
     } else {
       useToast().error(response.data.message)
     }

@@ -526,7 +526,7 @@ export const useExtensionPage = () => {
   const handleReloadAllFailed = async () => {
     const dirNames = Object.keys(failedPluginsDict.value);
     if (dirNames.length === 0) {
-      toast("没有需要重载的失败插件", "info");
+      toast(tm("messages.noFailedPlugins"), "info");
       return;
     }
 
@@ -535,7 +535,7 @@ export const useExtensionPage = () => {
       const promises = dirNames.map((dir) => pluginApi.reloadFailed(dir));
       await Promise.all(promises);
 
-      toast("已尝试重载所有失败插件", "success");
+      toast(tm("messages.reloadAllAttempted"), "success");
 
       // 清空 message 关闭对话框
       extension_data.message = "";
@@ -543,8 +543,8 @@ export const useExtensionPage = () => {
       // 刷新列表
       await getExtensions();
     } catch (e) {
-      console.error("重载失败:", e);
-      toast("批量重载过程中出现错误", "error");
+      console.error("Failed to reload plugins:", e);
+      toast(tm("messages.reloadAllFailed"), "error");
     } finally {
       loading_.value = false;
     }

@@ -35,7 +35,9 @@
     "deleteSuccess": "删除成功",
     "deleteError": "删除失败",
     "updateSuccess": "更新成功",
-    "updateError": "更新失败"
+    "updateError": "更新失败",
+    "missingProviderId": "缺少提供商 ID",
+    "fetchDimensionsSuccess": "获取成功: {value}"
   },
   "sections": {
     "general": "常规设置",

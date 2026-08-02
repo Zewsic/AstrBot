@@ -132,6 +132,27 @@
       "supportPlatforms": "Поддерживаемые платформы",
       "authorWebsite": "Сайт автора",
       "repository": "Репозиторий"
+    },
+    "eventTiming": {
+      "adapterMessage": "При поступлении сообщения с платформы",
+      "llmRequest": "Перед запросом к модели",
+      "llmResponse": "После ответа модели",
+      "agentBegin": "При запуске агента",
+      "agentDone": "После завершения работы агента",
+      "decoratingResult": "Перед отправкой ответа",
+      "funcTool": "Функциональный инструмент",
+      "afterMessageSent": "После отправки сообщения",
+      "pluginError": "При ошибке плагина"
+    },
+    "handlerTypes": {
+      "command": "Команда",
+      "commandGroup": "Группа команд",
+      "regex": "Совпадение по регулярному выражению",
+      "listener": "Обработчик событий",
+      "none": "Нет",
+      "autoTrigger": "Автоматически",
+      "unknown": "Неизвестно",
+      "noDescription": "Без описания"
     }
   },
   "market": {
@@ -306,7 +327,10 @@
     "sourceBindSuccess": "Источник плагина изменён",
     "validatingPlugin": "Проверка плагина…",
     "pluginValidateSuccess": "Проверка плагина пройдена",
-    "pluginValidateFailed": "Проверка плагина не пройдена"
+    "pluginValidateFailed": "Проверка плагина не пройдена",
+    "noFailedPlugins": "Плагинов для перезагрузки нет",
+    "reloadAllAttempted": "Выполнена попытка перезагрузить все сбойные плагины",
+    "reloadAllFailed": "При массовой перезагрузке произошла ошибка"
   },
   "upload": {
     "fromFile": "Установить из файла",
