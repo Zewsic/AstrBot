@@ -12,29 +12,21 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from telegram import BotCommand, Update
 from telegram.constants import ChatType
 from telegram.error import Forbidden, InvalidToken, NetworkError
-from telegram.ext import (
-    ApplicationBuilder,
-    ApplicationHandlerStop,
-    ContextTypes,
-    ExtBot,
-    TypeHandler,
-    filters,
-)
+from telegram.ext import ApplicationBuilder, ContextTypes, ExtBot, filters
 from telegram.ext import MessageHandler as TelegramMessageHandler
 
 import astrbot.api.message_components as Comp
 from astrbot.api import logger
+from astrbot.core import astrbot_config
 from astrbot.api.event import MessageChain
 from astrbot.api.platform import (
     AstrBotMessage,
-    Group,
     MessageMember,
     MessageType,
     Platform,
     PlatformMetadata,
     register_platform_adapter,
 )
-from astrbot.core import astrbot_config
 from astrbot.core.platform.astr_message_event import MessageSesion
 from astrbot.core.star.filter.command import CommandFilter
 from astrbot.core.star.filter.command_group import CommandGroupFilter
@@ -78,15 +70,11 @@ class TelegramPlatformAdapter(Platform):
 
         self.base_url = base_url
         self.file_base_url = file_base_url
-        inferred_local_mode = urlparse(base_url).hostname in {
+        self.local_mode = urlparse(base_url).hostname in {
             "127.0.0.1",
             "::1",
             "localhost",
         }
-        # A local Bot API server may run under a different OS user and therefore
-        # be unable to access AstrBot paths passed as file:// URIs. Allow an
-        # explicit override so files can be uploaded as regular multipart data.
-        self.local_mode = self.config.get("telegram_local_mode", inferred_local_mode)
 
         self.enable_command_register = self.config.get(
             "telegram_command_register",
@@ -159,9 +147,6 @@ class TelegramPlatformAdapter(Platform):
         message_handler = TelegramMessageHandler(
             filters=filters.ALL,
             callback=self.message_handler,
-        )
-        self.application.add_handler(
-            TypeHandler(Update, self.guest_message_handler), group=-1
         )
         self.application.add_handler(message_handler)
         self.client = self.application.bot
@@ -441,57 +426,6 @@ class TelegramPlatformAdapter(Platform):
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=self.config["start_message"],
-        )
-
-    async def guest_message_handler(
-        self, update: Update, context: ContextTypes.DEFAULT_TYPE
-    ) -> None:
-        """Convert a Guest Mode update into an AstrBot event."""
-        guest_message = getattr(update, "guest_message", None)
-        if not guest_message:
-            return
-        if not self._guest_messages_enabled():
-            logger.info("[Telegram] Ignored Guest Mode update because it is disabled.")
-            raise ApplicationHandlerStop
-        logger.info("[Telegram] Received Guest Mode update.")
-        guest_update = Update(update_id=update.update_id, message=guest_message)
-        abm = await self.convert_message(guest_update, context)
-        if abm:
-            abm.raw_message = update
-            guest_chat = guest_message.chat
-            guest_chat_name = (
-                getattr(guest_chat, "title", None)
-                or " ".join(
-                    part
-                    for part in [
-                        getattr(guest_chat, "first_name", None),
-                        getattr(guest_chat, "last_name", None),
-                    ]
-                    if part
-                )
-                or str(guest_chat.id)
-            )
-            abm.group = Group(
-                group_id=str(guest_chat.id),
-                group_name=guest_chat_name,
-            )
-            abm.telegram_guest_query_id = guest_message.guest_query_id
-            abm.telegram_guest_message = True
-            abm.telegram_guest_chat_context = {
-                "id": str(guest_chat.id),
-                "name": guest_chat_name,
-                "type": str(guest_chat.type),
-            }
-            abm.session_id = f"guest:{guest_chat.id}:{guest_message.from_user.id}"
-            await self.handle_msg(abm)
-        raise ApplicationHandlerStop
-
-    def _guest_messages_enabled(self) -> bool:
-        """Return whether Telegram Guest Mode updates should be processed."""
-        return (
-            astrbot_config.get("platform_specific", {})
-            .get("telegram", {})
-            .get("enable_guest_messages", True)
         )
 
     async def message_handler(
@@ -833,12 +767,6 @@ class TelegramPlatformAdapter(Platform):
             use_rich_messages=astrbot_config.get("platform_specific", {})
             .get("telegram", {})
             .get("use_rich_messages", True),
-            show_tool_calling_execution=astrbot_config.get("platform_specific", {})
-            .get("telegram", {})
-            .get("show_tool_calling_execution", True),
-            guest_query_id=getattr(message, "telegram_guest_query_id", None),
-            is_guest_message=getattr(message, "telegram_guest_message", False),
-            guest_chat_context=getattr(message, "telegram_guest_chat_context", None),
         )
 
     async def handle_msg(self, message: AstrBotMessage) -> None:

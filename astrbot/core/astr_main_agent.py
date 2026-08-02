@@ -153,6 +153,13 @@ WEB_SEARCH_CITATION_PROMPT = (
     "after the sentence that uses the information. Do not invent citations."
 )
 
+TOOL_CALL_COMMUNICATION_PROMPT = (
+    "When a task requires multiple tool calls, perform the necessary actions "
+    "consecutively without sending a separate user-facing progress comment after "
+    "each tool call. Keep intermediate commentary to the minimum needed for the "
+    "user to understand the work; report results together when the task is complete."
+)
+
 
 @dataclass(slots=True)
 class MainAgentBuildConfig:
@@ -950,6 +957,15 @@ def _append_system_reminders(
     timezone: str | None,
 ) -> None:
     system_parts: list[str] = []
+    if guest_chat_context := event.get_extra("telegram_guest_chat_context"):
+        system_parts.append(
+            "Telegram Guest Mode request from "
+            f"{guest_chat_context.get('type', 'unknown')} chat "
+            f"{guest_chat_context.get('name', 'unknown')} "
+            f"(ID: {guest_chat_context.get('id', 'unknown')}). "
+            "You only have the guest request and its quoted reply context, not chat history."
+        )
+
     if cfg.get("identifier"):
         user_id = event.message_obj.sender.user_id
         user_nickname = event.message_obj.sender.nickname
@@ -1662,6 +1678,7 @@ async def build_main_agent(
             )
 
         req.system_prompt += f"\n{tool_prompt}\n"
+        req.system_prompt += f"\n{TOOL_CALL_COMMUNICATION_PROMPT}\n"
 
     action_type = event.get_extra("action_type")
     if action_type == "live":

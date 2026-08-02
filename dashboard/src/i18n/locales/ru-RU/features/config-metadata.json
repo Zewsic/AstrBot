@@ -916,6 +916,10 @@
                       "description": "[Telegram] Использовать Rich Messages",
                       "hint": "Использовать Telegram Rich Markdown и Rich Message Draft API. Включено по умолчанию."
                     },
+                    "enable_guest_messages": {
+                      "description": "[Telegram] Включить гостевые сообщения",
+                      "hint": "Обрабатывать упоминания в Telegram Guest Mode и отвечать одним редактируемым Rich Message. Включено по умолчанию."
+                    },
                     "show_tool_calling_execution": {
                       "description": "[Telegram] Показывать выполнение вызовов инструментов",
                       "hint": "Показывать в чате обновляемую сводку вызовов инструментов ИИ. Включено по умолчанию."

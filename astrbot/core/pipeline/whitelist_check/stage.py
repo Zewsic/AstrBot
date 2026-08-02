@@ -57,10 +57,14 @@ class WhitelistCheckStage(Stage):
                 and event.get_message_type() == MessageType.FRIEND_MESSAGE
             ):
                 return
-        if (
-            event.unified_msg_origin not in self.whitelist
-            and str(event.get_group_id()).strip() not in self.whitelist
-        ):
+        if event.get_extra("telegram_guest_message", False):
+            allowed = event.get_sender_id().strip() in self.whitelist
+        else:
+            allowed = (
+                event.unified_msg_origin in self.whitelist
+                or str(event.get_group_id()).strip() in self.whitelist
+            )
+        if not allowed:
             if self.wl_log:
                 logger.info(
                     f"Session ID {event.unified_msg_origin} is not in the session "

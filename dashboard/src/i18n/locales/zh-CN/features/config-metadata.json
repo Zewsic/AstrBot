@@ -917,6 +917,10 @@
             "description": "[Telegram] 使用 Rich Messages",
             "hint": "启用 Telegram Rich Markdown 和 Rich Message Draft API，默认启用。"
           },
+          "enable_guest_messages": {
+            "description": "[Telegram] 启用 Guest Messages",
+            "hint": "处理 Telegram Guest Mode 提及，并通过一个可编辑的 Rich Message 回复，默认启用。"
+          },
           "show_tool_calling_execution": {
             "description": "[Telegram] 显示工具调用执行情况",
             "hint": "在聊天中显示 AI 工具调用的实时汇总，默认启用。"

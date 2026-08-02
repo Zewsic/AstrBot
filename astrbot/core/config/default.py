@@ -288,6 +288,7 @@ DEFAULT_CONFIG = {
             "pre_ack_emoji": {"enable": False, "emojis": ["✍️"]},
             "use_rich_messages": True,
             "show_tool_calling_execution": True,
+            "enable_guest_messages": True,
         },
         "discord": {
             "pre_ack_emoji": {"enable": False, "emojis": ["🤔"]},
@@ -4146,6 +4147,11 @@ CONFIG_METADATA_3 = {
                         "description": "[Telegram] 使用 Rich Messages",
                         "type": "bool",
                         "hint": "启用后使用 Telegram 的 Rich Markdown 和 Rich Message Draft API；默认启用。",
+                    },
+                    "platform_specific.telegram.enable_guest_messages": {
+                        "description": "[Telegram] 启用 Guest Messages",
+                        "type": "bool",
+                        "hint": "处理 Telegram Guest Mode 提及，并通过一个可编辑的 Rich Message 回复；默认启用。",
                     },
                     "platform_specific.telegram.show_tool_calling_execution": {
                         "description": "[Telegram] 显示工具调用执行情况",

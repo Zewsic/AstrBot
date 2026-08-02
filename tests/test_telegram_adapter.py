@@ -623,6 +623,9 @@ async def test_telegram_rich_tool_status_uses_one_rich_message():
     event.show_tool_calling_execution = True
     event._tool_call_groups = []
     event._tool_status_message_id = None
+    event._last_response_message_id = None
+    event._last_response_markdown = ""
+    event._last_response_payload = None
     event.get_message_type = MagicMock(return_value=1)
     event.get_sender_id = MagicMock(return_value="1001")
 
@@ -641,13 +644,11 @@ async def test_telegram_rich_tool_status_uses_one_rich_message():
 
     assert event.client._post.await_count == 2
     assert event.client._post.await_args_list[0].args[0] == "sendRichMessage"
-    assert event.client._post.await_args_list[1].args[0] == "editMessageText"
-    assert (
-        event.client._post.await_args_list[1]
-        .args[1]["rich_message"]["markdown"]
-        .count("web_search")
-        == 3
-    )
+    assert event.client._post.await_args_list[1].args[0] == "sendRichMessage"
+    markdown = event.client._post.await_args_list[1].args[1]["rich_message"]["markdown"]
+    assert "Tool calls" not in markdown
+    assert "<summary>web_search (2)</summary>" in markdown
+    assert '- {"q": "first"}' in markdown
 
 
 @pytest.mark.asyncio
@@ -661,6 +662,9 @@ async def test_telegram_regular_tool_status_updates_plain_message():
     event.show_tool_calling_execution = True
     event._tool_call_groups = []
     event._tool_status_message_id = None
+    event._last_response_message_id = None
+    event._last_response_markdown = ""
+    event._last_response_payload = None
     event.get_message_type = MagicMock(return_value=1)
     event.get_sender_id = MagicMock(return_value="1001")
 
@@ -675,8 +679,130 @@ async def test_telegram_regular_tool_status_updates_plain_message():
         )
     )
 
-    event.client.send_message.assert_awaited_once()
-    event.client.edit_message_text.assert_awaited_once()
-    assert event.client.edit_message_text.await_args.kwargs["text"] == (
-        "🛠 Tool calls: 2\n- shell (2)"
+    assert event.client.send_message.await_count == 2
+    assert (
+        event.client.send_message.await_args.kwargs["text"]
+        == "<details><summary>shell (2)</summary>\n\n- {}\n- {}\n\n</details>"
     )
+
+
+@pytest.mark.asyncio
+async def test_telegram_guest_message_groups_consecutive_tool_calls():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client._post = AsyncMock(return_value={"inline_message_id": "guest-1"})
+    event.guest_query_id = "guest-query"
+    event._guest_inline_message_id = None
+    event._guest_parts = []
+    event._guest_active_tool = None
+
+    await event._send_guest_message(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "web_search", "args": {"query": "one"}})],
+        )
+    )
+    await event._send_guest_message(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "web_search", "args": {"query": "two"}})],
+        )
+    )
+    await event._send_guest_message(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "shell", "args": {"command": "pwd"}})],
+        )
+    )
+
+    assert event.client._post.await_count == 2
+    assert event.client._post.await_args_list[0].args[0] == "answerGuestQuery"
+    assert event.client._post.await_args_list[1].args[0] == "editMessageText"
+    markdown = event.client._post.await_args_list[1].args[1]["rich_message"]["markdown"]
+    assert "web_search (2)" in markdown
+    assert "shell</summary>" in markdown
+    assert "Инструмент выполняется" in markdown
+
+
+@pytest.mark.asyncio
+async def test_telegram_guest_message_finalizes_tools_before_text():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client._post = AsyncMock(return_value={"inline_message_id": "guest-2"})
+    event.guest_query_id = "guest-query"
+    event._guest_inline_message_id = "guest-2"
+    event._guest_parts = []
+    event._guest_active_tool = {
+        "name": "web_search",
+        "count": 1,
+        "args": ['{"q": "x"}'],
+    }
+
+    await event._send_guest_message(MessageChain().message("Готовый ответ."))
+
+    event.client._post.assert_awaited_once()
+    payload = event.client._post.await_args.args[1]
+    assert payload["inline_message_id"] == "guest-2"
+    markdown = payload["rich_message"]["markdown"]
+    assert "web_search (1)" in markdown
+    assert markdown.endswith("Готовый ответ.")
+
+
+@pytest.mark.asyncio
+async def test_telegram_guest_message_omits_reply_marker_from_output():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client._post = AsyncMock(return_value={"inline_message_id": "guest-3"})
+    event.guest_query_id = "guest-query"
+    event._guest_inline_message_id = None
+    event._guest_parts = []
+    event._guest_active_tool = None
+
+    await event._send_guest_message(
+        MessageChain(
+            chain=[
+                Comp.Reply(id="1", text="quoted message"),
+                Comp.Plain("Ответ без метки."),
+            ]
+        )
+    )
+
+    markdown = event.client._post.await_args.args[1]["result"]["input_message_content"][
+        "rich_message"
+    ]["markdown"]
+    assert markdown == "Ответ без метки."
+
+
+@pytest.mark.asyncio
+async def test_telegram_tool_calls_are_appended_to_last_rich_response():
+    TelegramPlatformEvent = _load_telegram_platform_event()
+    event = object.__new__(TelegramPlatformEvent)
+    event.client = MagicMock()
+    event.client._post = AsyncMock(return_value={"message_id": 900})
+    event.use_rich_messages = True
+    event.show_tool_calling_execution = True
+    event._tool_call_groups = []
+    event._tool_status_message_id = None
+    event._last_response_message_id = None
+    event._last_response_markdown = ""
+    event._last_response_payload = None
+
+    await event._send_final_segment("Проверяю данные.", {"chat_id": "1001"})
+    await event._update_tool_call_status(
+        MessageChain(
+            type="tool_call",
+            chain=[MagicMock(data={"name": "web_search", "args": {"query": "test"}})],
+        )
+    )
+
+    assert event.client._post.await_args_list[0].args[0] == "sendRichMessage"
+    assert event.client._post.await_args_list[1].args[0] == "editMessageText"
+    payload = event.client._post.await_args_list[1].args[1]
+    assert payload["message_id"] == 900
+    markdown = payload["rich_message"]["markdown"]
+    assert markdown.startswith("Проверяю данные.")
+    assert "<summary>web_search (1)</summary>" in markdown
+    assert "Tool calls" not in markdown
