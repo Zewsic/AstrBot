@@ -18,7 +18,10 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import { useI18n } from '@/i18n/composables';
 import type { BreadcrumbItem, FolderTreeNode } from './types';
+
+const { t } = useI18n();
 
 export default defineComponent({
     name: 'BaseFolderBreadcrumb',
@@ -33,7 +36,7 @@ export default defineComponent({
         },
         rootFolderName: {
             type: String,
-            default: '根目录'
+            default: () => t('core.shared.folder.rootFolder')
         }
     },
     emits: ['navigate'],

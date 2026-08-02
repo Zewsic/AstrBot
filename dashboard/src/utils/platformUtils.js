@@ -1,6 +1,9 @@
 /**
  * 平台相关工具函数
  */
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 /**
  * 获取平台图标
@@ -84,9 +87,9 @@ export function getTutorialLink(platformType) {
 export function getPlatformDescription(template, name) {
   // special judge for community platforms
   if (name.includes('vocechat')) {
-    return "由 @HikariFroya 提供。";
+    return t('features.platform.catalog.communityProvided', { author: '@HikariFroya' });
   } else if (name.includes('kook')) {
-    return "由 @wuyan1003 提供。"
+    return t('features.platform.catalog.communityProvided', { author: '@wuyan1003' });
   }
   return '';
 }
@@ -99,12 +102,12 @@ export function getPlatformDescription(template, name) {
 export function getPlatformDisplayName(platformId) {
   const displayNameMap = {
     aiocqhttp: 'aiocqhttp (OneBot v11)',
-    qq_official: 'qq_official (QQ 官方机器人平台)',
-    weixin_official_account: 'weixin_official_account (微信公众号)',
-    wecom: 'wecom (企业微信应用)',
-    wecom_ai_bot: 'wecom_ai_bot (企业微信智能机器人)',
-    lark: 'lark (飞书)',
-    dingtalk: 'dingtalk (钉钉)',
+    qq_official: `qq_official (${t('features.platform.catalog.displayNames.qq_official')})`,
+    weixin_official_account: `weixin_official_account (${t('features.platform.catalog.displayNames.weixin_official_account')})`,
+    wecom: `wecom (${t('features.platform.catalog.displayNames.wecom')})`,
+    wecom_ai_bot: `wecom_ai_bot (${t('features.platform.catalog.displayNames.wecom_ai_bot')})`,
+    lark: `lark (${t('features.platform.catalog.displayNames.lark')})`,
+    dingtalk: `dingtalk (${t('features.platform.catalog.displayNames.dingtalk')})`,
     telegram: 'telegram (Telegram)',
     discord: 'discord (Discord)',
     misskey: 'misskey (Misskey)',

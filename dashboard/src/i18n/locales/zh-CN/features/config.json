@@ -35,7 +35,9 @@
     "deleteSuccess": "删除成功",
     "deleteError": "删除失败",
     "updateSuccess": "更新成功",
-    "updateError": "更新失败"
+    "updateError": "更新失败",
+    "missingProviderId": "缺少提供商 ID",
+    "fetchDimensionsSuccess": "获取成功: {value}"
   },
   "sections": {
     "general": "常规设置",
@@ -116,7 +118,7 @@
     "addToConfig": "已加入配置",
     "fileCount": "文件：{count}",
     "done": "完成"
-    },
+  },
   "unsavedChangesWarning": {
     "dialogTitle": "未保存的更改",
     "leavePage": "当前配置有未保存的更改，切换前是否保存？",
@@ -129,5 +131,10 @@
       "confirm": "确定",
       "cancel": "取消"
     }
+  },
+  "testChat": {
+    "testConfig": "测试配置",
+    "testCurrentConfig": "测试当前配置",
+    "selectConfigFirst": "请先选择一个配置文件"
   }
 }

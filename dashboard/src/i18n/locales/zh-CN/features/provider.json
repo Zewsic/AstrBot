@@ -77,12 +77,17 @@
       "add": "添加成功!",
       "delete": "删除成功!",
       "statusUpdate": "状态更新成功!",
-      "sessionSeparation": "会话隔离设置已更新"
+      "sessionSeparation": "会话隔离设置已更新",
+      "copy": "成功复制并创建了 {id}"
     },
     "error": {
       "sessionSeparation": "获取会话隔离配置失败",
       "fetchStatus": "获取模型提供商状态失败",
-      "testError": "测试 {id} 失败: {error}"
+      "testError": "测试 {id} 失败: {error}",
+      "providerDisabled": "该提供商未被用户启用",
+      "update": "更新失败!",
+      "add": "添加失败!",
+      "templateNotFound": "未找到对应的模板配置"
     },
     "confirm": {
       "delete": "确定要删除模型提供商 {id} 吗?"
@@ -162,5 +167,24 @@
       "providerId": "提供商 ID",
       "modelId": "模型 ID"
     }
+  },
+  "agentRunnerDialog": {
+    "title": "请前往「配置文件」页测试 Agent 执行器",
+    "intro": "Agent 执行器的测试请在「配置文件」页进行。",
+    "step1": "找到对应的配置文件并打开。",
+    "step2": "找到 Agent 执行方式部分，修改执行器后点击保存。",
+    "step3": "点击右下角的 💬 聊天按钮进行测试。",
+    "note": "要让机器人应用这个 Agent 执行器，你也需要前往修改 Agent 执行器。",
+    "dismiss": "好的",
+    "goToConfig": "点击前往"
+  },
+  "manualModelDialog": {
+    "cancel": "取消",
+    "add": "添加"
+  },
+  "modelMenu": {
+    "loading": "正在加载模型...",
+    "noAvailable": "暂无可用模型",
+    "search": "搜索模型"
   }
 }

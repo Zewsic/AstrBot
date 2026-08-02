@@ -77,7 +77,7 @@ class HelpCommand:
         commands_section = (
             "\n".join(command_lines)
             if command_lines
-            else "No enabled built-in commands."
+            else event.t("command.help.no_commands")
         )
 
         msg_parts = [

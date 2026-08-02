@@ -132,6 +132,27 @@
       "supportPlatforms": "Supported Platforms",
       "authorWebsite": "Author Website",
       "repository": "Repository"
+    },
+    "eventTiming": {
+      "adapterMessage": "When a platform message arrives",
+      "llmRequest": "Before the LLM request",
+      "llmResponse": "After the LLM response",
+      "agentBegin": "When the Agent starts",
+      "agentDone": "After the Agent finishes",
+      "decoratingResult": "Before the reply is sent",
+      "funcTool": "Function tool",
+      "afterMessageSent": "After the message is sent",
+      "pluginError": "When a plugin fails"
+    },
+    "handlerTypes": {
+      "command": "Command",
+      "commandGroup": "Command group",
+      "regex": "Regex match",
+      "listener": "Event listener",
+      "none": "None",
+      "autoTrigger": "Automatic",
+      "unknown": "Unknown",
+      "noDescription": "No description"
     }
   },
   "market": {
@@ -172,7 +193,8 @@
     "sourceResolved": "Source resolved successfully",
     "installPlugin": "Install Plugin",
     "randomPlugins": "🎲 Random Plugins",
-    "sourceSafetyWarning": "Even with the default source, plugin stability and security cannot be fully guaranteed. Please verify carefully before use."
+    "sourceSafetyWarning": "Even with the default source, plugin stability and security cannot be fully guaranteed. Please verify carefully before use.",
+    "sourceNamePlaceholder": "My plugin source"
   },
   "sort": {
     "by": "Sort by",
@@ -305,7 +327,10 @@
     "sourceBindSuccess": "Plugin source updated",
     "validatingPlugin": "Validating plugin...",
     "pluginValidateSuccess": "Plugin validation passed",
-    "pluginValidateFailed": "Plugin validation failed"
+    "pluginValidateFailed": "Plugin validation failed",
+    "noFailedPlugins": "No failed plugins to reload",
+    "reloadAllAttempted": "Attempted to reload all failed plugins",
+    "reloadAllFailed": "Something went wrong while reloading plugins"
   },
   "upload": {
     "fromFile": "Install from File",
@@ -420,7 +445,11 @@
     "readonly": "Read-only",
     "unsaved": "Unsaved",
     "noFileSelected": "No file selected",
-    "discardChanges": "This file has unsaved changes. Discard them?"
+    "discardChanges": "This file has unsaved changes. Discard them?",
+    "neoTitle": "Neo Skills",
+    "stageCanary": "Canary",
+    "stageStable": "Stable",
+    "payload": "Payload"
   },
   "card": {
     "actions": {

@@ -98,7 +98,7 @@
           </v-alert>
 
           <v-alert type="warning" variant="tonal" class="mt-4" v-if="showEmbeddingWarning">
-            <strong>注意:</strong> 修改嵌入模型会导致现有的向量数据失效,建议重新上传文档。不同的嵌入模型生成的向量不兼容,可能导致检索结果不准确。
+            <strong>{{ t('settings.embeddingWarningLabel') }}</strong> {{ t('settings.embeddingWarning') }}
           </v-alert>
         </v-form>
       </v-card-text>
@@ -127,29 +127,29 @@
       <v-card>
         <v-card-title class="text-h3 pa-4 pb-0 pl-6">
           <v-icon class="mr-2">mdi-alert</v-icon>
-          确认修改嵌入模型
+          {{ t('settings.confirmTitle') }}
         </v-card-title>
         <v-card-text class="pa-6">
           <v-alert type="warning" variant="tonal" class="mb-4">
-            <strong>警告:</strong> 修改嵌入模型将导致以下影响:
+            <strong>{{ t('settings.confirmWarningLabel') }}</strong> {{ t('settings.confirmWarning') }}
           </v-alert>
           <ul class="text-body-2">
-            <li>现有的向量数据将失效</li>
-            <li>检索功能可能无法正常工作</li>
-            <li>建议删除现有文档后重新上传</li>
-            <li>不同嵌入模型生成的向量不兼容</li>
+            <li>{{ t('settings.consequence1') }}</li>
+            <li>{{ t('settings.consequence2') }}</li>
+            <li>{{ t('settings.consequence3') }}</li>
+            <li>{{ t('settings.consequence4') }}</li>
           </ul>
           <div class="mt-4 text-body-2">
-            您确定要将嵌入模型从 <strong>{{ originalEmbeddingProvider }}</strong> 修改为 <strong>{{ pendingEmbeddingProvider }}</strong> 吗?
+            {{ t('settings.confirmQuestion', { from: originalEmbeddingProvider, to: pendingEmbeddingProvider }) }}
           </div>
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="text" @click="cancelEmbeddingChange">
-            取消
+            {{ t('settings.confirmCancel') }}
           </v-btn>
           <v-btn color="warning" variant="tonal" @click="confirmEmbeddingChange">
-            确认修改
+            {{ t('settings.confirmSubmit') }}
           </v-btn>
         </v-card-actions>
       </v-card>

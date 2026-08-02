@@ -11,7 +11,7 @@
           :aria-selected="viewMode === 'preview'"
           @click="viewMode = 'preview'"
         >
-          Preview
+          {{ tm('htmlPreview.preview') }}
         </button>
         <button
           class="html-genui-toggle-button"
@@ -21,7 +21,7 @@
           :aria-selected="viewMode === 'source'"
           @click="viewMode = 'source'"
         >
-          Source
+          {{ tm('htmlPreview.source') }}
         </button>
       </div>
     </div>
@@ -31,7 +31,7 @@
       class="html-genui-frame"
       :srcdoc="renderedSrcdoc"
       :sandbox="sandboxPolicy"
-      title="Generated HTML UI preview"
+      :title="tm('htmlPreview.previewTitle')"
       loading="lazy"
     ></iframe>
     <pre v-else class="html-genui-source"><code>{{ htmlContent }}</code></pre>
@@ -40,6 +40,9 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { useModuleI18n } from "@/i18n/composables";
+
+const { tm } = useModuleI18n("features/chat");
 
 const RENDER_THROTTLE_MS = 500;
 const sandboxPolicy =

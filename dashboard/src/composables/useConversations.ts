@@ -105,7 +105,7 @@ export function useConversations(chatboxMode: boolean = false) {
             }
             editTitleDialog.value = false;
         } catch (err) {
-            console.error('重命名对话失败:', err);
+            console.error('Failed to rename the conversation:', err);
         }
     }
 

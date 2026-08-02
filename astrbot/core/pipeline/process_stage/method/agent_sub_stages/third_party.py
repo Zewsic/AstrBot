@@ -32,6 +32,7 @@ from astrbot.core.persona_error_reply import (
 if TYPE_CHECKING:
     from astrbot.core.agent.runners.base import BaseAgentRunner
     from astrbot.core.provider.entities import LLMResponse
+from astrbot.core.i18n import resolve_locale, translate
 from astrbot.core.pipeline.stage import Stage
 from astrbot.core.platform.astr_message_event import AstrMessageEvent
 from astrbot.core.provider.entities import (
@@ -63,6 +64,7 @@ async def run_third_party_agent(
     runner: "BaseAgentRunner",
     stream_to_general: bool = False,
     custom_error_message: str | None = None,
+    locale: str | None = None,
 ) -> AsyncGenerator[tuple[MessageChain, bool], None]:
     """
     运行第三方 agent runner 并转换响应格式
@@ -83,10 +85,11 @@ async def run_third_party_agent(
         logger.error(f"Third party agent runner error: {e}")
         err_msg = custom_error_message
         if not err_msg:
-            err_msg = (
-                f"Error occurred during AI execution.\n"
-                f"Error Type: {type(e).__name__} (3rd party)\n"
-                f"Error Message: {str(e)}"
+            err_msg = translate(
+                "agent.error.execution_details",
+                locale,
+                error_type=f"{type(e).__name__} (3rd party)",
+                error=e,
             )
         yield MessageChain().message(err_msg), True
 
@@ -222,6 +225,7 @@ class ThirdPartyAgentSubStage(Stage):
                     runner,
                     stream_to_general=False,
                     custom_error_message=custom_error_message,
+                    locale=resolve_locale(event),
                 ):
                     aggregator.add_chunk(chain, is_error)
                     if is_error:
@@ -264,6 +268,7 @@ class ThirdPartyAgentSubStage(Stage):
             runner,
             stream_to_general=stream_to_general,
             custom_error_message=custom_error_message,
+            locale=resolve_locale(event),
         ):
             aggregator.add_chunk(chain, is_error)
             if is_error:

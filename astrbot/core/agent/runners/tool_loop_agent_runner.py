@@ -832,8 +832,9 @@ class ToolLoopAgentRunner(BaseAgentRunner[TContext]):
             self._transition_state(AgentState.ERROR)
             self._resolve_unconsumed_follow_ups()
             custom_error_message = self._get_persona_custom_error_message()
-            error_text = custom_error_message or (
-                f"LLM 响应错误: {llm_resp.completion_text or '未知错误'}"
+            error_text = custom_error_message or self._t(
+                "agent.error.llm_response",
+                error=llm_resp.completion_text or self._t("agent.error.unknown"),
             )
             yield AgentResponse(
                 type="err",

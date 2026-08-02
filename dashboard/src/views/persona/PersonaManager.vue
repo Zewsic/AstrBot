@@ -619,7 +619,7 @@ export default defineComponent({
                     this.showSuccess(this.tm('messages.importSuccess'));
                 }
             } catch (error: any) {
-                console.error('导入人格失败:', error);
+                console.error('Failed to import the persona:', error);
                 this.showError(this.tm('messages.importError', { error: error.message || String(error) }));
             }
         },

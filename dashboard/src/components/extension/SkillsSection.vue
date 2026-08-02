@@ -142,7 +142,7 @@
             class="d-flex flex-wrap justify-space-between align-center ga-2 mb-3"
           >
             <div>
-              <div class="text-subtitle-1 font-weight-bold">Neo Skills</div>
+              <div class="text-subtitle-1 font-weight-bold">{{ tm("skills.neoTitle") }}</div>
               <div class="text-caption text-medium-emphasis">
                 {{ tm("skills.neoFilterHint") }}
               </div>
@@ -247,7 +247,7 @@
                   :disabled="isCandidatePromoting(item.id)"
                   @click="promoteCandidate(item, 'canary')"
                 >
-                  Canary
+                  {{ tm("skills.stageCanary") }}
                 </v-btn>
                 <v-btn
                   size="x-small"
@@ -257,7 +257,7 @@
                   :disabled="isCandidatePromoting(item.id)"
                   @click="promoteCandidate(item, 'stable')"
                 >
-                  Stable
+                  {{ tm("skills.stageStable") }}
                 </v-btn>
                 <v-btn
                   size="x-small"
@@ -265,7 +265,7 @@
                   :disabled="!item.payload_ref"
                   @click="viewPayload(item.payload_ref)"
                 >
-                  Payload
+                  {{ tm("skills.payload") }}
                 </v-btn>
                 <v-btn
                   size="x-small"

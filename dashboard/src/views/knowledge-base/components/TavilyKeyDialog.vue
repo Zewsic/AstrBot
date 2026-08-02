@@ -2,15 +2,15 @@
   <v-dialog v-model="dialog" max-width="500px" persistent>
     <v-card>
       <v-card-title class="text-h3 pa-4 pb-0 pl-6">
-        配置 Tavily API Key
+        {{ tm('tavilyKey.title') }}
       </v-card-title>
       <v-card-text>
         <p class="mb-4 text-body-2 text-medium-emphasis">
-          为了使用基于网页的知识库功能，需要提供 Tavily API Key。您可以从 <a href="https://tavily.com/" target="_blank">Tavily 官网</a> 获取。
+          {{ tm('tavilyKey.descriptionBefore') }}<a href="https://tavily.com/" target="_blank">{{ tm('tavilyKey.descriptionLink') }}</a>{{ tm('tavilyKey.descriptionAfter') }}
         </p>
         <v-text-field
           v-model="apiKey"
-          label="Tavily API Key"
+          :label="tm('tavilyKey.keyLabel')"
           variant="outlined"
           :loading="saving"
           :error-messages="errorMessage"
@@ -22,10 +22,10 @@
       <v-card-actions>
         <v-spacer />
         <v-btn variant="text" @click="closeDialog" :disabled="saving">
-          取消
+          {{ tm('tavilyKey.cancel') }}
         </v-btn>
         <v-btn color="primary" variant="tonal" @click="saveKey" :loading="saving">
-          保存
+          {{ tm('tavilyKey.save') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useModuleI18n } from '@/i18n/composables'
 import { configProfileApi } from '@/api/v1'
 
 const props = defineProps<{
@@ -41,6 +42,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:modelValue', 'success'])
+
+const { tm } = useModuleI18n('features/knowledge-base/detail')
 
 const dialog = ref(props.modelValue)
 const apiKey = ref('')
@@ -63,7 +66,7 @@ const closeDialog = () => {
 
 const saveKey = async () => {
   if (!apiKey.value.trim()) {
-    errorMessage.value = 'API Key 不能为空'
+    errorMessage.value = tm('tavilyKey.keyRequired')
     return
   }
   errorMessage.value = ''
@@ -73,7 +76,7 @@ const saveKey = async () => {
     const configResponse = await configProfileApi.get('default')
 
     if (configResponse.data.status !== 'ok') {
-      throw new Error('获取当前配置失败')
+      throw new Error(tm('tavilyKey.loadConfigFailed'))
     }
 
     const currentConfig = ((configResponse.data.data as any).config || {}) as any
@@ -93,10 +96,10 @@ const saveKey = async () => {
       emit('success')
       closeDialog()
     } else {
-      errorMessage.value = saveResponse.data.message || '保存失败，请检查 Key 是否正确'
+      errorMessage.value = saveResponse.data.message || tm('tavilyKey.saveFailed')
     }
   } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || '保存失败，发生未知错误'
+    errorMessage.value = error.response?.data?.message || tm('tavilyKey.saveUnknownError')
   } finally {
     saving.value = false
   }

@@ -240,8 +240,8 @@
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="showManualModelDialog = false">取消</v-btn>
-          <v-btn color="primary" variant="tonal" @click="confirmManualModel">添加</v-btn>
+          <v-btn variant="text" @click="showManualModelDialog = false">{{ tm('manualModelDialog.cancel') }}</v-btn>
+          <v-btn color="primary" variant="tonal" @click="confirmManualModel">{{ tm('manualModelDialog.add') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -317,21 +317,21 @@
       <v-card>
         <v-card-title class="text-h3 pa-4 pb-0 pl-6 d-flex align-center">
           <v-icon start class="me-2">mdi-information</v-icon>
-          请前往「配置文件」页测试 Agent 执行器
+          {{ tm('agentRunnerDialog.title') }}
         </v-card-title>
         <v-card-text class="py-4 text-body-1 text-medium-emphasis">
-          Agent 执行器的测试请在「配置文件」页进行。
+          {{ tm('agentRunnerDialog.intro') }}
           <ol class="ml-4 mt-4 mb-4">
-            <li>找到对应的配置文件并打开。</li>
-            <li>找到 Agent 执行方式部分，修改执行器后点击保存。</li>
-            <li>点击右下角的 💬 聊天按钮进行测试。</li>
+            <li>{{ tm('agentRunnerDialog.step1') }}</li>
+            <li>{{ tm('agentRunnerDialog.step2') }}</li>
+            <li>{{ tm('agentRunnerDialog.step3') }}</li>
           </ol>
-          要让机器人应用这个 Agent 执行器，你也需要前往修改 Agent 执行器。
+          {{ tm('agentRunnerDialog.note') }}
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="grey" variant="text" @click="showAgentRunnerDialog = false">好的</v-btn>
-          <v-btn color="primary" variant="tonal" @click="goToConfigPage">点击前往</v-btn>
+          <v-btn color="grey" variant="text" @click="showAgentRunnerDialog = false">{{ tm('agentRunnerDialog.dismiss') }}</v-btn>
+          <v-btn color="primary" variant="tonal" @click="goToConfigPage">{{ tm('agentRunnerDialog.goToConfig') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -559,20 +559,20 @@ async function newProvider() {
         newSelectedProviderConfig.value
       )
       if (res.data.status === 'error') {
-        showMessage(res.data.message || '更新失败!', 'error')
+        showMessage(res.data.message || tm('messages.error.update'), 'error')
         return
       }
-      showMessage(res.data.message || '更新成功!')
+      showMessage(res.data.message || tm('messages.success.update'))
       if (wasUpdating) {
         updatingMode.value = false
       }
     } else {
       const res = await providerApi.create(newSelectedProviderConfig.value)
       if (res.data.status === 'error') {
-        showMessage(res.data.message || '添加失败!', 'error')
+        showMessage(res.data.message || tm('messages.error.add'), 'error')
         return
       }
-      showMessage(res.data.message || '添加成功!')
+      showMessage(res.data.message || tm('messages.success.add'))
     }
     showProviderCfg.value = false
   } catch (err) {
@@ -602,7 +602,7 @@ async function copyProvider(providerToCopy) {
   loading.value = true
   try {
     const res = await providerApi.create(newProviderConfig)
-    showMessage(res.data.message || `成功复制并创建了 ${newProviderConfig.id}`)
+    showMessage(res.data.message || tm('messages.success.copy', { id: newProviderConfig.id }))
     await loadConfig()
   } catch (err) {
     showMessage(err.response?.data?.message || err.message, 'error')
@@ -656,7 +656,7 @@ async function testSingleProvider(provider) {
 
   try {
     if (!provider.enable) {
-      throw new Error('该提供商未被用户启用')
+      throw new Error(tm('messages.error.providerDisabled'))
     }
     if (provider.provider_type === 'agent_runner') {
       showAgentRunnerDialog.value = true

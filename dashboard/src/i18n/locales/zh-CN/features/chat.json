@@ -22,13 +22,14 @@
   "voice": {
     "start": "开始录音",
     "stop": "停止录音",
-    "recording": "新录音",
+    "recording": "录音中...",
     "processing": "处理中...",
     "error": "录音失败",
     "listening": "等待语音...",
     "speaking": "正在说话",
     "startRecording": "开始语音输入",
-    "liveMode": "实时对话"
+    "liveMode": "实时对话",
+    "inputPlaceholder": "聊天输入框"
   },
   "welcome": {
     "title": "今天想聊点什么？",
@@ -111,7 +112,12 @@
     "websocket": "WebSocket"
   },
   "config": {
-    "title": "配置文件"
+    "title": "配置",
+    "dialogTitle": "选择配置文件",
+    "empty": "暂无可选配置，请先在配置页创建。",
+    "cancel": "取消",
+    "apply": "应用",
+    "applyFailed": "配置文件应用失败"
   },
   "reasoning": {
     "thinking": "思考过程",
@@ -214,5 +220,26 @@
     "exit": "退出",
     "partialFailure": "{total} 个对话中有 {failed} 个删除失败",
     "requestFailed": "删除对话失败，请重试。"
+  },
+  "liveMode": {
+    "idle": "Astr Live",
+    "processing": "正在处理...",
+    "speaking": "正在说话...",
+    "listening": "正在听...",
+    "ready": "准备就绪",
+    "startFailed": "启动失败，请检查麦克风权限或网络连接",
+    "notSignedIn": "未登录，请先登录",
+    "connectionTimeout": "WebSocket 连接超时",
+    "processingError": "处理出错: {error}"
+  },
+  "toolCall": {
+    "id": "ID:",
+    "args": "参数:",
+    "result": "结果:"
+  },
+  "htmlPreview": {
+    "preview": "预览",
+    "source": "源码",
+    "previewTitle": "生成的 HTML 界面预览"
   }
 }

@@ -3,6 +3,9 @@
  */
 import { defineStore } from 'pinia';
 import { personaApi } from '@/api/v1';
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 // 类型定义
 export interface PersonaFolder {
@@ -58,10 +61,11 @@ export const usePersonaStore = defineStore("persona", {
   getters: {
     // 当前文件夹名称
     currentFolderName(): string {
+      const rootName = t('core.shared.folder.rootFolder');
       if (this.breadcrumbPath.length === 0) {
-        return '根目录';
+        return rootName;
       }
-      return this.breadcrumbPath[this.breadcrumbPath.length - 1]?.name || '根目录';
+      return this.breadcrumbPath[this.breadcrumbPath.length - 1]?.name || rootName;
     },
   },
 
@@ -100,7 +104,7 @@ export const usePersonaStore = defineStore("persona", {
         if (response.data.status === 'ok') {
           this.folderTree = response.data.data || [];
         } else {
-          throw new Error(response.data.message || '获取文件夹树失败');
+          throw new Error(response.data.message || t('features.persona.folder.messages.loadTreeFailed'));
         }
       } finally {
         this.treeLoading = false;
@@ -179,7 +183,7 @@ export const usePersonaStore = defineStore("persona", {
       const response = await personaApi.move(personaId, targetFolderId);
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '移动人格失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.movePersonaFailed'));
       }
 
       // 刷新当前文件夹内容和文件夹树
@@ -198,7 +202,7 @@ export const usePersonaStore = defineStore("persona", {
       });
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '移动文件夹失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.moveFolderFailed'));
       }
 
       // 刷新当前文件夹内容和文件夹树
@@ -222,7 +226,7 @@ export const usePersonaStore = defineStore("persona", {
       });
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '创建文件夹失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.createFolderFailed'));
       }
 
       // 刷新当前文件夹内容和文件夹树
@@ -245,7 +249,7 @@ export const usePersonaStore = defineStore("persona", {
       const response = await personaApi.updateFolder(data.folder_id, data);
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '更新文件夹失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.updateFolderFailed'));
       }
 
       // 刷新当前文件夹内容和文件夹树
@@ -262,7 +266,7 @@ export const usePersonaStore = defineStore("persona", {
       const response = await personaApi.deleteFolder(folderId);
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '删除文件夹失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.deleteFolderFailed'));
       }
 
       // 刷新当前文件夹内容和文件夹树
@@ -279,7 +283,7 @@ export const usePersonaStore = defineStore("persona", {
       const response = await personaApi.delete(personaId);
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '删除人格失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.deletePersonaFailed'));
       }
 
       // 刷新当前文件夹内容
@@ -293,7 +297,7 @@ export const usePersonaStore = defineStore("persona", {
       const response = await personaApi.reorder(items);
 
       if (response.data.status !== 'ok') {
-        throw new Error(response.data.message || '更新排序失败');
+        throw new Error(response.data.message || t('features.persona.folder.messages.updateOrderFailed'));
       }
 
       // 刷新当前文件夹内容

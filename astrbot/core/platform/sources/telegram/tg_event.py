@@ -92,11 +92,18 @@ class TelegramPlatformEvent(AstrMessageEvent):
         self.client = client
         self.use_rich_messages = use_rich_messages
         self.show_tool_calling_execution = show_tool_calling_execution
+        # The message currently being composed for this turn. Tool calls and the
+        # assistant text that belongs with them share one Telegram message: when
+        # a turn opens with tool calls the following text is edited in below
+        # them, and when it opens with text the tool calls are appended below
+        # the text. Once both halves are present the message is sealed and the
+        # next round of tool calls starts a new one.
         self._tool_call_groups: list[dict[str, Any]] = []
-        self._tool_status_message_id: int | None = None
-        self._last_response_message_id: int | None = None
-        self._last_response_markdown = ""
-        self._last_response_payload: dict[str, Any] | None = None
+        self._active_message_id: int | None = None
+        self._active_message_payload: dict[str, Any] | None = None
+        self._active_text = ""
+        self._active_starts_with_tools = False
+        self._active_sealed = False
         self.guest_query_id = guest_query_id
         self.is_guest_message = is_guest_message
         self.guest_chat_context = guest_chat_context
@@ -443,7 +450,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
             await super().send(message)
             return
 
-        await self._close_tool_call_status()
+        if await self._attach_text_to_tool_message(self._plain_only_text(message)):
+            await super().send(message)
+            return
+
+        self._reset_active_message()
         if self.get_message_type() == MessageType.GROUP_MESSAGE:
             await self.send_with_client(
                 self.client,
@@ -457,23 +468,35 @@ class TelegramPlatformEvent(AstrMessageEvent):
             )
         await super().send(message)
 
+    @staticmethod
+    def _plain_only_text(message: MessageChain) -> str:
+        """Return the chain's text, or "" when it carries anything but text.
+
+        Only a text-only chain can be merged into an existing message; media
+        components always need a message of their own.
+        """
+        if not message.chain or any(
+            not isinstance(component, Plain) for component in message.chain
+        ):
+            return ""
+        return "".join(component.text for component in message.chain).strip()
+
     def _guest_markdown(self) -> str:
         """Build the current single Rich Message shown for a Guest Mode request."""
         parts = list(self._guest_parts)
         if self._guest_active_tool:
+            summary = self.t("agent.tool.calls_summary")
+            running = self.t("agent.tool.running")
             parts.append(
-                f"<details><summary>{self._guest_active_tool['name']}</summary>\n\n"
-                "Инструмент выполняется…\n\n</details>"
+                f"<details open><summary>{summary}</summary>\n\n"
+                f"<details open><summary>{self._guest_active_tool['name']}</summary>"
+                f"\n\n{running}\n\n</details>\n\n</details>"
             )
         return "\n\n".join(part for part in parts if part.strip()) or "…"
 
     def _guest_completed_tool_markdown(self, tool: dict[str, Any]) -> str:
         """Render a completed consecutive tool-call group for a Guest Message."""
-        details = "\n".join(f"- {args}" for args in tool["args"])
-        return (
-            f"<details><summary>{tool['name']} ({tool['count']})</summary>\n\n"
-            f"{details}\n\n</details>"
-        )
+        return self._wrap_tool_groups([tool])
 
     async def _publish_guest_message(self) -> None:
         """Create or edit the single Rich Message authorized by a guest query."""
@@ -563,16 +586,33 @@ class TelegramPlatformEvent(AstrMessageEvent):
         self._guest_parts.append(text)
         await self._publish_guest_message()
 
+    @staticmethod
+    def _tool_group_markdown(group: dict[str, Any]) -> str:
+        """Render one tool's calls as a collapsible block."""
+        details = "\n".join(f"- {args}" for args in group["args"])
+        return (
+            f"<details open><summary>{group['name']} ({group['count']})</summary>\n\n"
+            f"{details}\n\n</details>"
+        )
+
+    def _wrap_tool_groups(self, groups: list[dict[str, Any]]) -> str:
+        """Wrap per-tool blocks in a single collapsible "tool calls" section."""
+        if not groups:
+            return ""
+        inner = "\n\n".join(self._tool_group_markdown(group) for group in groups)
+        summary = self.t("agent.tool.calls_summary")
+        return f"<details open><summary>{summary}</summary>\n\n{inner}\n\n</details>"
+
     def _tool_status_payload(self) -> str:
-        """Build tool detail blocks without a separate status heading."""
-        blocks = []
-        for group in self._tool_call_groups:
-            details = "\n".join(f"- {args}" for args in group["args"])
-            blocks.append(
-                f"<details><summary>{group['name']} ({group['count']})</summary>\n\n"
-                f"{details}\n\n</details>"
-            )
-        return "\n\n".join(blocks)
+        """Render the tool calls collected for the message being composed."""
+        return self._wrap_tool_groups(self._tool_call_groups)
+
+    def _active_markdown(self, text: str | None = None) -> str:
+        """Render the message being composed, ordering it by how it started."""
+        body = self._active_text if text is None else text
+        blocks = self._tool_status_payload()
+        parts = (blocks, body) if self._active_starts_with_tools else (body, blocks)
+        return "\n\n".join(part for part in parts if part)
 
     def _tool_status_payload_args(self) -> dict[str, Any]:
         """Build chat identifiers for tool status send and edit requests."""
@@ -588,19 +628,23 @@ class TelegramPlatformEvent(AstrMessageEvent):
             payload["message_thread_id"] = message_thread_id
         return payload
 
-    async def _update_tool_call_status(self, message: MessageChain) -> None:
-        """Append tool-call details to the latest completed assistant message."""
-        if not self.show_tool_calling_execution or not message.chain:
-            return
+    @staticmethod
+    def _extract_tool_call(message: MessageChain) -> tuple[str, str] | None:
+        """Read the tool name and truncated arguments from a tool-call chain."""
         tool_info = getattr(message.chain[0], "data", None)
         if not isinstance(tool_info, dict):
-            return
+            return None
         tool_name = str(tool_info.get("name", "unknown"))
         try:
             tool_args = json.dumps(tool_info.get("args", {}), ensure_ascii=False)
         except (TypeError, ValueError):
             tool_args = str(tool_info.get("args", {}))
-        tool_args = tool_args if len(tool_args) <= 256 else f"{tool_args[:253]}..."
+        if len(tool_args) > 256:
+            tool_args = f"{tool_args[:253]}..."
+        return tool_name, tool_args
+
+    def _record_tool_call(self, tool_name: str, tool_args: str) -> None:
+        """Merge a call into the trailing group when it repeats the same tool."""
         if self._tool_call_groups and self._tool_call_groups[-1]["name"] == tool_name:
             self._tool_call_groups[-1]["count"] += 1
             self._tool_call_groups[-1]["args"].append(tool_args)
@@ -609,28 +653,54 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 {"name": tool_name, "count": 1, "args": [tool_args]}
             )
 
-        blocks = self._tool_status_payload()
-        if self.use_rich_messages and self._last_response_message_id is not None:
-            markdown = "\n\n".join(
-                part for part in (self._last_response_markdown, blocks) if part
+    @staticmethod
+    def _sent_message_id(sent_message: Any) -> int:
+        return (
+            int(sent_message["message_id"])
+            if isinstance(sent_message, dict)
+            else int(sent_message.message_id)
+        )
+
+    async def _edit_active_message(self, markdown: str) -> bool:
+        """Rewrite the message being composed. Returns False when it failed."""
+        if self._active_message_id is None:
+            return False
+        try:
+            await self._call_rich_api(
+                self.client,
+                "editMessageText",
+                {
+                    **(self._active_message_payload or {}),
+                    "message_id": self._active_message_id,
+                    "rich_message": {"markdown": markdown},
+                },
             )
-            try:
-                await self._call_rich_api(
-                    self.client,
-                    "editMessageText",
-                    {
-                        **(self._last_response_payload or {}),
-                        "message_id": self._last_response_message_id,
-                        "rich_message": {"markdown": markdown},
-                    },
-                )
+            return True
+        except Exception as e:
+            logger.warning("[Telegram] Failed to update the composed message: %s", e)
+            return False
+
+    async def _update_tool_call_status(self, message: MessageChain) -> None:
+        """Show tool calls, reusing the message being composed where possible."""
+        if not self.show_tool_calling_execution or not message.chain:
+            return
+        parsed = self._extract_tool_call(message)
+        if parsed is None:
+            return
+
+        # A sealed message already carries both its tool calls and its text, so
+        # this round opens a new one instead of growing the previous message.
+        if self._active_sealed:
+            self._reset_active_message()
+
+        self._record_tool_call(*parsed)
+
+        if self.use_rich_messages and self._active_message_id is not None:
+            if await self._edit_active_message(self._active_markdown()):
                 return
-            except Exception as e:
-                logger.warning(
-                    "[Telegram] Failed to append tool calls to response: %s", e
-                )
 
         payload = self._tool_status_payload_args()
+        blocks = self._tool_status_payload()
         try:
             if self.use_rich_messages:
                 sent_message = await self._call_rich_api(
@@ -640,19 +710,42 @@ class TelegramPlatformEvent(AstrMessageEvent):
                 )
             else:
                 sent_message = await self.client.send_message(text=blocks, **payload)
-            self._tool_status_message_id = (
-                int(sent_message["message_id"])
-                if isinstance(sent_message, dict)
-                else sent_message.message_id
-            )
+            self._active_message_id = self._sent_message_id(sent_message)
+            self._active_message_payload = dict(payload)
+            self._active_text = ""
+            self._active_starts_with_tools = True
+            self._active_sealed = False
         except Exception as e:
             logger.warning("[Telegram] Failed to display tool call details: %s", e)
 
-    async def _close_tool_call_status(self) -> None:
-        """Stop editing the current tool status before a new assistant response."""
-        if self._tool_status_message_id is not None:
-            self._tool_status_message_id = None
-            self._tool_call_groups.clear()
+    def _reset_active_message(self) -> None:
+        """Forget the message being composed so the next output starts a new one."""
+        self._active_message_id = None
+        self._active_message_payload = None
+        self._active_text = ""
+        self._active_starts_with_tools = False
+        self._active_sealed = False
+        self._tool_call_groups.clear()
+
+    async def _attach_text_to_tool_message(self, text: str) -> bool:
+        """Place assistant text below the tool calls that opened this message.
+
+        Returns:
+            True when the text was merged into the existing message, so no
+            separate message needs to be sent.
+        """
+        if not self.use_rich_messages or not text:
+            return False
+        if self._active_message_id is None or not self._active_starts_with_tools:
+            return False
+        if self._active_sealed:
+            return False
+        if not await self._edit_active_message(self._active_markdown(text)):
+            return False
+        self._active_text = text
+        # Both halves are present now; further tool calls open a new message.
+        self._active_sealed = True
+        return True
 
     async def react(self, emoji: str | None, big: bool = False) -> None:
         """给原消息添加 Telegram 反应：
@@ -718,10 +811,14 @@ class TelegramPlatformEvent(AstrMessageEvent):
     ) -> None:
         """处理 MessageChain 中的各类组件，文本通过 on_text 回调追加，媒体直接发送。"""
         for i in chain.chain:
-            await self._close_tool_call_status()
             if isinstance(i, Plain):
+                # Buffered; _send_final_segment decides where the text lands.
                 on_text(i.text)
-            elif isinstance(i, Image):
+                continue
+            # Media always occupies its own message, which ends the message
+            # currently being composed.
+            self._reset_active_message()
+            if isinstance(i, Image):
                 image_path = await i.convert_to_file_path()
                 if _is_gif(image_path):
                     action = ChatAction.UPLOAD_VIDEO
@@ -777,6 +874,11 @@ class TelegramPlatformEvent(AstrMessageEvent):
 
     async def _send_final_segment(self, delta: str, payload: dict[str, Any]) -> None:
         """Persist text and retain its message ID for subsequent tool details."""
+        if len(delta) <= self.MAX_RICH_MESSAGE_LENGTH:
+            # When this turn opened with tool calls, the text belongs under them
+            # in the same message rather than in a message of its own.
+            if await self._attach_text_to_tool_message(delta):
+                return
         if self.use_rich_messages and len(delta) <= self.MAX_RICH_MESSAGE_LENGTH:
             try:
                 sent_message = await self._call_rich_api(
@@ -784,16 +886,14 @@ class TelegramPlatformEvent(AstrMessageEvent):
                     "sendRichMessage",
                     {**payload, "rich_message": {"markdown": delta}},
                 )
-                self._last_response_message_id = (
-                    int(sent_message["message_id"])
-                    if isinstance(sent_message, dict)
-                    else sent_message.message_id
-                )
-                self._last_response_markdown = delta
-                self._last_response_payload = dict(payload)
+                self._reset_active_message()
+                self._active_message_id = self._sent_message_id(sent_message)
+                self._active_message_payload = dict(payload)
+                self._active_text = delta
                 return
             except Exception as e:
                 logger.warning("[Telegram] sendRichMessage failed: %s", e)
+        self._reset_active_message()
         if self.use_rich_messages:
             await self._send_rich_text_chunks(self.client, delta, payload)
         else:

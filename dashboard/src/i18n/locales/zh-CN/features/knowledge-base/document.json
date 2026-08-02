@@ -25,7 +25,10 @@
     "showing": "显示",
     "deleteConfirm": "确定要删除该文本块吗?",
     "deleteSuccess": "文本块删除成功",
-    "deleteFailed": "文本块删除失败"
+    "deleteFailed": "文本块删除失败",
+    "charCountSuffix": "字符",
+    "loadDetailFailed": "加载文档详情失败",
+    "loadChunksFailed": "加载分块列表失败"
   },
   "edit": {
     "title": "编辑分块",

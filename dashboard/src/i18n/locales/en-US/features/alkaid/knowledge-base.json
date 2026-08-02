@@ -151,5 +151,18 @@
     "uploadingChunks": "Content extracted successfully, uploading chunks...",
     "preRequisite": "Hint: Please go to the plugin market to install astrbot_plugin_url_2_knowledge_base and follow the instructions in the plugin documentation to complete the playwright installation before using this feature.",
     "allChunksUploaded": "All chunks uploaded successfully"
+  },
+  "legacy": {
+    "legacyNotice": "We recommend switching to the new knowledge base.",
+    "rerankModelLabel": "Rerank model:",
+    "notSet": "Not set",
+    "usageHintPrefix": "💡 Usage: type ",
+    "importTab": "Import Data",
+    "importTitle": "Import Data",
+    "importSubtitle": "Choose a data source and import content into the knowledge base",
+    "dataSourceLabel": "Data source",
+    "fromFile": "From file",
+    "fromUrl": "From URL",
+    "unknown": "Unknown"
   }
 }

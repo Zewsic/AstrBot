@@ -170,7 +170,12 @@
       "provider_settings": {
         "computer_use_runtime": {
           "description": "运行环境",
-          "hint": "允许 Agent 访问的环境。local 为本机环境，sandbox 为沙箱环境，none 为不允许任何环境。"
+          "hint": "允许 Agent 访问的环境。local 为本机环境，sandbox 为沙箱环境，none 为不允许任何环境。",
+          "labels": [
+            "无",
+            "本地",
+            "沙箱"
+          ]
         },
         "computer_use_require_admin": {
           "description": "需要 AstrBot 管理员权限",
@@ -178,7 +183,12 @@
         },
         "sandbox": {
           "booter": {
-            "description": "沙箱环境驱动器"
+            "description": "沙箱环境驱动器",
+            "labels": [
+              "Shipyard Neo",
+              "Shipyard",
+              "CUA"
+            ]
           },
           "shipyard_neo_endpoint": {
             "description": "Shipyard Neo API Endpoint",
@@ -202,7 +212,13 @@
           },
           "cua_os_type": {
             "description": "CUA 操作系统类型",
-            "hint": "CUA 沙箱操作系统类型，默认 linux。"
+            "hint": "CUA 沙箱操作系统类型，默认 linux。",
+            "labels": [
+              "Linux",
+              "macOS",
+              "Windows",
+              "Android"
+            ]
           },
           "cua_idle_timeout": {
             "description": "CUA 空闲超时(秒)",
@@ -635,7 +651,11 @@
       },
       "wecom_ai_bot_connection_mode": {
         "description": "企业微信智能机器人连接模式",
-        "hint": "Webhook 回调模式需要配置 Token/EncodingAESKey；长连接模式需要配置 BotID/Secret。"
+        "hint": "Webhook 回调模式需要配置 Token/EncodingAESKey；长连接模式需要配置 BotID/Secret。",
+        "labels": [
+          "Webhook 回调",
+          "长连接"
+        ]
       },
       "wecomaibot_friend_message_welcome_text": {
         "description": "企业微信智能机器人私聊欢迎语",
@@ -722,43 +742,38 @@
       },
       "kook_bot_token": {
         "description": "机器人 Token",
-        "type": "string",
         "hint": "必填项。从 KOOK 开发者平台获取的机器人 Token"
       },
       "kook_reconnect_delay": {
         "description": "重连延迟",
-        "type": "int",
         "hint": "重连延迟时间（秒），使用指数退避策略"
       },
       "kook_max_reconnect_delay": {
         "description": "最大重连延迟",
-        "type": "int",
         "hint": "重连延迟的最大值（秒）"
       },
       "kook_max_retry_delay": {
         "description": "最大重试延迟",
-        "type": "int",
         "hint": "重试的最大延迟时间（秒）"
       },
       "kook_heartbeat_interval": {
         "description": "心跳间隔",
-        "type": "int",
         "hint": "心跳检测间隔时间（秒）"
       },
       "kook_heartbeat_timeout": {
         "description": "心跳超时时间",
-        "type": "int",
         "hint": "心跳检测超时时间（秒）"
       },
       "kook_max_heartbeat_failures": {
         "description": "最大心跳失败次数",
-        "type": "int",
         "hint": "允许的最大心跳失败次数，超过后断开连接"
       },
       "kook_max_consecutive_failures": {
         "description": "最大连续失败次数",
-        "type": "int",
         "hint": "允许的最大连续失败次数，超过后停止重试"
+      },
+      "wecom_ai_bot": {
+        "hint": "如果发现字段有异常，请重新创建"
       }
     },
     "general": {
@@ -770,6 +785,16 @@
         "unique_session": {
           "description": "隔离会话",
           "hint": "启用后,群成员的上下文独立。"
+        },
+        "reply_locale": {
+          "description": "回复语言",
+          "hint": "AstrBot 发送给用户的提示与错误信息使用的语言。选择自动检测时，会依据消息平台上报的用户语言（如 Telegram 的 language_code）判断，无法判断时使用英语。",
+          "labels": [
+            "自动检测",
+            "English",
+            "简体中文",
+            "Русский"
+          ]
         },
         "friend_message_needs_wake_prefix": {
           "description": "私聊消息需要唤醒词"
@@ -1193,7 +1218,13 @@
           "configSaveCode": "验证码",
           "configSaveConfirm": "继续",
           "configSaveCancel": "取消",
-          "configSaveError": "验证失败，请重试。"
+          "configSaveError": "验证失败，请重试。",
+          "verifyTitle": "验证当前 TOTP",
+          "verifySubtitle": "输入当前认证器应用中的验证码以验证身份。",
+          "verifyCode": "当前验证码",
+          "verifyCancel": "取消",
+          "verifySubmit": "验证",
+          "verifyFailed": "验证失败"
         }
       },
       "timezone": {
@@ -1798,6 +1829,18 @@
       "auto_save_history": {
         "description": "由 Coze 管理对话记录",
         "hint": "启用后，将由 Coze 进行对话历史记录管理, 此时 AstrBot 本地保存的上下文不会生效(仅供浏览), 对 AstrBot 的上下文进行的操作也不会生效。如果为禁用, 则使用 AstrBot 管理上下文。"
+      },
+      "elevenlabs_tts": {
+        "hint": "API Key 从 https://elevenlabs.io/app/settings/api-keys 获取。Voice ID 可在 https://elevenlabs.io/app/voice-library 浏览选择。"
+      },
+      "dashscope_tts": {
+        "hint": "API Key 从 https://bailian.console.aliyun.com/?tab=model#/api-key 获取。模型和音色的选择文档请参考: 阿里云百炼语音合成音色名称。具体可参考 https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition"
+      },
+      "nvidia_embedding": {
+        "hint": "NVIDIA NIM Embedding 服务。"
+      },
+      "ollama_embedding": {
+        "hint": "Ollama Embedding 服务，默认地址 http://localhost:11434/v1。"
       }
     }
   },
@@ -1811,9 +1854,32 @@
   },
   "telegram_group": {
     "name": "Telegram",
-    "metadata": {
-      "telegram": {
-        "description": "Telegram 配置"
+    "telegram": {
+      "description": "Telegram 配置",
+      "platform_specific": {
+        "telegram": {
+          "pre_ack_emoji": {
+            "enable": {
+              "description": "启用预回应表情"
+            },
+            "emojis": {
+              "description": "表情列表（Unicode）",
+              "hint": "Telegram 仅支持固定的反应集合，参考：https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9"
+            }
+          },
+          "use_rich_messages": {
+            "description": "使用 Rich Messages",
+            "hint": "启用后，回复将通过 Telegram 的 Rich Markdown 与 Rich Message Draft API 发送。默认启用。"
+          },
+          "enable_guest_messages": {
+            "description": "启用 Guest Messages",
+            "hint": "处理 Telegram 访客模式（Guest Mode）中的提及，并通过一条可编辑的 Rich Message 回复。默认启用。"
+          },
+          "show_tool_calling_execution": {
+            "description": "显示工具调用执行情况",
+            "hint": "在会话中聚合并展示 AI 调用工具的执行过程。默认启用。"
+          }
+        }
       }
     }
   }

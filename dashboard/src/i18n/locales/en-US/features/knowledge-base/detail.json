@@ -43,7 +43,25 @@
     "uploadSuccess": "Document uploaded successfully",
     "uploadFailed": "Failed to upload document",
     "deleteSuccess": "Document deleted successfully",
-    "deleteFailed": "Failed to delete document"
+    "deleteFailed": "Failed to delete document",
+    "searchPlaceholder": "Search documents...",
+    "maxFiles": "Up to 10 files can be uploaded",
+    "selectedFiles": "{count} file(s) selected",
+    "clearSelection": "Clear",
+    "tavilyCheckFailed": "Failed to check the web search config",
+    "tavilyRequired": "This feature needs a Tavily key",
+    "configure": "Configure",
+    "deleteCancel": "Cancel",
+    "deleteConfirmButton": "Delete",
+    "loadFailed": "Failed to load the document list",
+    "tooManyFiles": "You can select at most 10 files",
+    "uploadingInBackground": "Uploading {count} file(s) in the background...",
+    "extractingInBackground": "Extracting content from the URL in the background...",
+    "uploadedCount": "Uploaded {count} document(s)",
+    "uploadPartial": "Upload finished: {success} succeeded, {failed} failed",
+    "uploadFailedWith": "Upload failed: {error}",
+    "unknownError": "unknown error",
+    "tavilyKeySaved": "Tavily API key saved"
   },
   "upload": {
     "title": "Upload Document",
@@ -62,11 +80,11 @@
     "chunkOverlap": "Chunk Overlap",
     "chunkOverlapHint": "Overlapping characters between chunks (default: 50)",
     "batchSize": "Batch Size",
-    "batchSizeHint": "Number of chunks to process in each batch (default: 32)",
+    "batchSizeHint": "Number of text chunks processed per batch",
     "tasksLimit": "Concurrent Tasks Limit",
-    "tasksLimitHint": "Maximum number of concurrent upload tasks (default: 3)",
+    "tasksLimitHint": "Limit on concurrent tasks",
     "maxRetries": "Max Retries",
-    "maxRetriesHint": "Number of times to retry a failed upload task (default: 3)",
+    "maxRetriesHint": "Maximum retries after a failure",
     "cancel": "Cancel",
     "submit": "Upload",
     "fileRequired": "Please select a file to upload",
@@ -75,7 +93,15 @@
     "urlPlaceholder": "Enter the URL of the web page to extract content from",
     "urlRequired": "Please enter a URL",
     "urlHint": "The main content will be automatically extracted from the target URL as a document. Currently supports {supported} pages. Before use, please ensure that the target web page allows crawler access.",
-    "beta": "Beta"
+    "beta": "Beta",
+    "stages": {
+      "waiting": "Waiting...",
+      "extracting": "Extracting content...",
+      "cleaning": "Cleaning content...",
+      "parsing": "Parsing document...",
+      "chunking": "Splitting into chunks...",
+      "embedding": "Building vectors..."
+    }
   },
   "retrieval": {
     "title": "Retrieval",
@@ -99,7 +125,8 @@
     "charCount": "{count} characters",
     "searchSuccess": "Search completed, found {count} results",
     "searchFailed": "Search failed",
-    "queryRequired": "Please enter a query"
+    "queryRequired": "Please enter a query",
+    "debugTsne": "Debug (t-SNE)"
   },
   "settings": {
     "title": "Knowledge Base Settings",
@@ -116,6 +143,31 @@
     "save": "Save Settings",
     "saveSuccess": "Settings saved successfully",
     "saveFailed": "Failed to save settings",
-    "tips": "Tip: Modifying retrieval settings will affect subsequent knowledge base queries."
+    "tips": "Tip: Modifying retrieval settings will affect subsequent knowledge base queries.",
+    "embeddingWarningLabel": "Note:",
+    "embeddingWarning": "Changing the embedding model invalidates existing vectors, so documents should be re-uploaded. Vectors from different embedding models are incompatible and retrieval may become inaccurate.",
+    "confirmTitle": "Confirm embedding model change",
+    "confirmWarningLabel": "Warning:",
+    "confirmWarning": "Changing the embedding model has the following consequences:",
+    "consequence1": "Existing vector data becomes invalid",
+    "consequence2": "Retrieval may stop working correctly",
+    "consequence3": "Existing documents should be deleted and re-uploaded",
+    "consequence4": "Vectors from different embedding models are incompatible",
+    "confirmQuestion": "Change the embedding model from {from} to {to}?",
+    "confirmCancel": "Cancel",
+    "confirmSubmit": "Confirm change"
+  },
+  "tavilyKey": {
+    "title": "Configure the Tavily API key",
+    "descriptionBefore": "Web-based knowledge base features need a Tavily API key. You can get one on ",
+    "descriptionLink": "the Tavily website",
+    "descriptionAfter": ".",
+    "keyLabel": "Tavily API Key",
+    "cancel": "Cancel",
+    "save": "Save",
+    "keyRequired": "The API key cannot be empty",
+    "loadConfigFailed": "Failed to load the current config",
+    "saveFailed": "Could not save. Check that the key is correct.",
+    "saveUnknownError": "Could not save because of an unknown error"
   }
 }

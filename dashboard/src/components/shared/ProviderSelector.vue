@@ -337,7 +337,7 @@ async function loadProviders() {
         : providers
     }
   } catch (error) {
-    console.error('加载提供商列表失败:', error)
+    console.error('Failed to load the provider list:', error)
     providerList.value = []
   } finally {
     loading.value = false

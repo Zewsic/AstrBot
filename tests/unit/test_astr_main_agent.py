@@ -11,6 +11,7 @@ from astrbot.core.agent.mcp_client import MCPTool
 from astrbot.core.agent.message import Message, dump_messages_with_checkpoints
 from astrbot.core.agent.tool import FunctionTool, ToolSet
 from astrbot.core.conversation_mgr import Conversation
+from astrbot.core.i18n import translate
 from astrbot.core.message.components import File, Image, Plain, Reply, Video
 from astrbot.core.platform.astr_message_event import AstrMessageEvent
 from astrbot.core.platform.platform_metadata import PlatformMetadata
@@ -72,6 +73,7 @@ def mock_event():
     event.session_id = "session123"
     event.unified_msg_origin = "test_platform:private:session123"
     event.get_extra.return_value = None
+    event.t.side_effect = lambda key, **params: translate(key, "en-US", **params)
     event.get_platform_name.return_value = "test_platform"
     event.get_platform_id.return_value = "test_platform"
     event.get_group_id.return_value = None
@@ -374,7 +376,7 @@ class TestGetSessionConv:
         conv_mgr.new_conversation = AsyncMock(return_value="new-conv-id")
         conv_mgr.get_conversation = AsyncMock(return_value=None)
 
-        with pytest.raises(RuntimeError, match="无法创建新的对话。"):
+        with pytest.raises(RuntimeError, match="Could not create a new conversation."):
             await module._get_session_conv(mock_event, mock_context)
 
 

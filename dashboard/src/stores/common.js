@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { logApi, pluginApi, statsApi } from "@/api/v1";
 import { fetchWithAuth } from "@/api/http";
+import { useI18n } from "@/i18n/composables";
+
+const { t } = useI18n();
 
 export const useCommonStore = defineStore("common", {
   state: () => ({
@@ -238,7 +241,7 @@ export const useCommonStore = defineStore("common", {
                 author: pluginData.author,
                 repo: pluginData.repo,
                 installed: false,
-                version: pluginData?.version ? pluginData.version : "未知",
+                version: pluginData?.version ? pluginData.version : t("features.extension.status.unknown"),
                 social_link: pluginData?.social_link,
                 tags: pluginData?.tags ? pluginData.tags : [],
                 logo: pluginData?.logo ? pluginData.logo : "",

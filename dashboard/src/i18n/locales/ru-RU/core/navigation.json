@@ -1,50 +1,50 @@
-﻿{
-    "welcome": "Добро пожаловать",
-    "dashboard": "Статистика",
-    "platforms": "Боты",
-    "providers": "Провайдеры моделей",
-    "commands": "Команды",
-    "persona": "Персонажи",
-    "subagent": "Субагенты",
-    "toolUse": "Инструменты MCP",
-    "extension": "Плагины",
-    "extensionTabs": {
-        "installed": "Плагины AstrBot",
-        "market": "Магазин плагинов",
-        "mcp": "Серверы MCP",
-        "skills": "Навыки",
-        "components": "Управление поведением"
-    },
-    "config": "Конфигурация",
-    "chat": "Чат",
-    "cron": "Запланированные задачи",
-    "conversation": "Данные диалогов",
-    "sessionManagement": "Пользовательские правила",
-    "console": "Логи платформы",
-    "trace": "Трассировка",
-    "alkaid": "Alkaid Lab",
-    "knowledgeBase": "База знаний",
-    "about": "О программе",
-    "settings": "Настройки",
-    "changelog": "Журнал изменений",
-    "documentation": "Документация",
-    "faq": "FAQ",
-    "github": "GitHub",
-    "drag": "Перетащить",
-    "groups": {
-        "more": "Дополнительно"
-    },
-    "changelogDialog": {
-        "title": "Журнал изменений",
-        "loading": "Загрузка...",
-        "error": "Ошибка загрузки",
-        "notFound": "Журнал изменений для этой версии не найден",
-        "selectVersion": "Выберите версию",
-        "current": "Текущая"
-    },
-    "configTabs": {
-        "normal": "Обычная конфигурация",
-        "system": "Системная конфигурация"
-    },
-    "pluginWebui": "Страницы плагинов"
+{
+  "welcome": "Начало работы",
+  "dashboard": "Панель управления",
+  "platforms": "Платформы",
+  "providers": "Провайдеры",
+  "commands": "Команды",
+  "persona": "Персоны",
+  "subagent": "Субагенты",
+  "toolUse": "Инструменты MCP",
+  "config": "Конфигурация",
+  "chat": "Чат",
+  "cron": "Отложенные задачи",
+  "extension": "Расширения",
+  "extensionTabs": {
+    "installed": "Плагины AstrBot",
+    "market": "Каталог плагинов",
+    "mcp": "Серверы MCP",
+    "skills": "Навыки",
+    "components": "Обработчики"
+  },
+  "conversation": "Диалоги",
+  "sessionManagement": "Правила сессий",
+  "console": "Консоль",
+  "trace": "Трассировка",
+  "alkaid": "Лаборатория Alkaid",
+  "knowledgeBase": "База знаний",
+  "about": "О программе",
+  "settings": "Настройки",
+  "changelog": "История изменений",
+  "documentation": "Документация",
+  "faq": "Вопросы и ответы",
+  "github": "GitHub",
+  "drag": "Перетащите",
+  "groups": {
+    "more": "Дополнительно"
+  },
+  "changelogDialog": {
+    "title": "История изменений",
+    "loading": "Загрузка…",
+    "error": "Не удалось загрузить",
+    "notFound": "История изменений для этой версии не найдена",
+    "selectVersion": "Версия",
+    "current": "Текущая"
+  },
+  "configTabs": {
+    "normal": "Основные настройки",
+    "system": "Системные настройки"
+  },
+  "pluginWebui": "Страницы плагинов"
 }

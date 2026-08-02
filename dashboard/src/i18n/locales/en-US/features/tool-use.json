@@ -157,7 +157,20 @@
     "messages": {
       "syncSuccess": "MCP servers synced successfully!",
       "syncError": "Sync failed: {error}",
-      "tokenHelp": "How to get a ModelScope access token? Click the button on the right for instructions"
+      "tokenHelp": "How to get a ModelScope access token? Click the button on the right for instructions",
+      "networkOrTokenIssue": "network or access token issue"
+    },
+    "guide": {
+      "discoverTitle": "Discover MCP servers",
+      "discoverBefore": "Visit ",
+      "discoverLink": "the ModelScope catalog",
+      "discoverAfter": " and pick the MCP servers you need.",
+      "tokenTitle": "Get an access token",
+      "tokenBefore": "Get a personal access token in ",
+      "tokenLink": "your account settings",
+      "tokenAfter": ".",
+      "enterTitle": "Enter your access token",
+      "enterText": "Enter your access token to sync MCP servers."
     }
   },
   "messages": {

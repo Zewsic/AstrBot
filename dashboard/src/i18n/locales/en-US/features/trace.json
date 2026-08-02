@@ -6,5 +6,14 @@
   },
   "hint": "Currently only recording partial model call paths from AstrBot main Agent. More coverage will be added.",
   "recording": "Recording",
-  "paused": "Paused"
+  "paused": "Paused",
+  "table": {
+    "time": "Time",
+    "eventId": "Event ID",
+    "umo": "UMO",
+    "sender": "Sender",
+    "outline": "Outline",
+    "showMore": "Show more",
+    "empty": "No trace data yet."
+  }
 }

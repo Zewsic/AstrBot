@@ -447,7 +447,7 @@ export function useProviderSources(options: UseProviderSourcesOptions) {
   function addProviderSource(templateKey: string) {
     const template = providerTemplates.value[templateKey]
     if (!template) {
-      showMessage('未找到对应的模板配置', 'error')
+      showMessage(tm('messages.error.templateNotFound'), 'error')
       return
     }
 

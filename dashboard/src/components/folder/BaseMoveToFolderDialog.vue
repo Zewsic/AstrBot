@@ -54,6 +54,9 @@ import { defineComponent, type PropType } from 'vue';
 import type { FolderTreeNode } from './types';
 import BaseMoveTargetNode from './BaseMoveTargetNode.vue';
 import { collectFolderAndChildrenIds } from './useFolderManager';
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 interface DefaultLabels {
     title: string;
@@ -63,13 +66,13 @@ interface DefaultLabels {
     moveButton: string;
 }
 
-const defaultLabels: DefaultLabels = {
-    title: '移动到文件夹',
-    description: '选择目标文件夹',
-    rootFolder: '根目录',
-    cancelButton: '取消',
-    moveButton: '移动'
-};
+const defaultLabels = (): DefaultLabels => ({
+    title: t('core.shared.folder.moveDialog.title'),
+    description: t('core.shared.folder.moveDialog.description'),
+    rootFolder: t('core.shared.folder.rootFolder'),
+    cancelButton: t('core.shared.folder.cancelButton'),
+    moveButton: t('core.shared.folder.moveDialog.moveButton')
+});
 
 export default defineComponent({
     name: 'BaseMoveToFolderDialog',
@@ -126,7 +129,7 @@ export default defineComponent({
             }
         },
         mergedLabels(): DefaultLabels {
-            return { ...defaultLabels, ...this.labels };
+            return { ...defaultLabels(), ...this.labels };
         },
         // 禁用的文件夹 ID（不能移动到自己或子文件夹）
         disabledFolderIds(): string[] {

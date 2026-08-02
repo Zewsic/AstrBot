@@ -15,7 +15,7 @@ class SetUnsetCommands:
 
         event.set_result(
             MessageEventResult().message(
-                f"会话 {uid} 变量 {key} 存储成功。使用 /unset 移除。",
+                event.t("command.variable.set", umo=uid, key=key),
             ),
         )
 
@@ -26,11 +26,13 @@ class SetUnsetCommands:
 
         if key not in session_var:
             event.set_result(
-                MessageEventResult().message("没有那个变量名。格式 /unset 变量名。"),
+                MessageEventResult().message(event.t("command.variable.missing")),
             )
         else:
             del session_var[key]
             await sp.session_put(uid, "session_variables", session_var)
             event.set_result(
-                MessageEventResult().message(f"会话 {uid} 变量 {key} 移除成功。"),
+                MessageEventResult().message(
+                    event.t("command.variable.removed", umo=uid, key=key),
+                ),
             )

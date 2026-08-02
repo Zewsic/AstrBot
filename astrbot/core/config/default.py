@@ -57,6 +57,7 @@ DEFAULT_CONFIG = {
     "config_version": 2,
     "platform_settings": {
         "unique_session": False,
+        "reply_locale": "auto",
         "rate_limit": {
             "time": 60,
             "count": 30,
@@ -399,7 +400,7 @@ CONFIG_METADATA_2 = {
                     "企业微信智能机器人": {
                         "id": "wecom_ai_bot",
                         "type": "wecom_ai_bot",
-                        "hint": "如果发现字段有异常，请重新创建",
+                        "hint": "platform_group.platform.wecom_ai_bot.hint",
                         "enable": True,
                         "wecom_ai_bot_connection_mode": "long_connection",  # long_connection, webhook
                         "wecom_ai_bot_name": "",
@@ -1010,6 +1011,10 @@ CONFIG_METADATA_2 = {
                 "items": {
                     "unique_session": {
                         "type": "bool",
+                    },
+                    "reply_locale": {
+                        "type": "string",
+                        "options": ["auto", "en-US", "zh-CN", "ru-RU"],
                     },
                     "rate_limit": {
                         "type": "object",
@@ -1737,7 +1742,7 @@ CONFIG_METADATA_2 = {
                         "proxy": "",
                     },
                     "阿里云百炼 TTS(API)": {
-                        "hint": "API Key 从 https://bailian.console.aliyun.com/?tab=model#/api-key 获取。模型和音色的选择文档请参考: 阿里云百炼语音合成音色名称。具体可参考 https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition",
+                        "hint": "provider_group.provider.dashscope_tts.hint",
                         "id": "dashscope_tts",
                         "provider": "dashscope",
                         "type": "dashscope_tts",
@@ -1816,7 +1821,7 @@ CONFIG_METADATA_2 = {
                         "proxy": "",
                     },
                     "ElevenLabs TTS(API)": {
-                        "hint": "API Key 从 https://elevenlabs.io/app/settings/api-keys 获取。Voice ID 可在 https://elevenlabs.io/app/voice-library 浏览选择。",
+                        "hint": "provider_group.provider.elevenlabs_tts.hint",
                         "id": "elevenlabs_tts",
                         "type": "elevenlabs_tts_api",
                         "provider": "elevenlabs",
@@ -3940,6 +3945,13 @@ CONFIG_METADATA_3 = {
                         "description": "隔离会话",
                         "type": "bool",
                         "hint": "启用后，群成员的上下文独立。",
+                    },
+                    "platform_settings.reply_locale": {
+                        "description": "回复语言",
+                        "type": "string",
+                        "options": ["auto", "en-US", "zh-CN", "ru-RU"],
+                        "labels": ["自动检测", "English", "简体中文", "Русский"],
+                        "hint": "AstrBot 发送给用户的提示与错误信息使用的语言。选择自动检测时，会依据消息平台上报的用户语言（如 Telegram 的 language_code）判断，无法判断时使用英语。",
                     },
                     "wake_prefix": {
                         "description": "唤醒词",

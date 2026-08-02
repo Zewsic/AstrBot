@@ -197,11 +197,11 @@ const loadKB = async () => {
       kb.value = response.data.data
       emit('title-change', kb.value.kb_name || '')
     } else {
-      showSnackbar(response.data.message || '加载失败', 'error')
+      showSnackbar(response.data.message || t('messages.loadFailedShort'), 'error')
     }
   } catch (error) {
     console.error('Failed to load knowledge base:', error)
-    showSnackbar('加载知识库详情失败', 'error')
+    showSnackbar(t('messages.loadDetailFailed'), 'error')
   } finally {
     loading.value = false
   }

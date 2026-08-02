@@ -1,6 +1,8 @@
 import { ref } from 'vue';
+import { useI18n } from '@/i18n/composables';
 
 export function useRecording() {
+    const { t } = useI18n();
     const isRecording = ref(false);
     const audioChunks = ref<Blob[]>([]);
     const mediaRecorder = ref<MediaRecorder | null>(null);
@@ -69,7 +71,7 @@ export function useRecording() {
             isRecording.value = true;
             
             if (onStart) {
-                onStart('录音中...');
+                onStart(t('features.chat.voice.recording'));
             }
         } catch (error) {
             console.error('Failed to start recording:', error);
@@ -88,7 +90,7 @@ export function useRecording() {
 
             isRecording.value = false;
             if (onStop) {
-                onStop('聊天输入框');
+                onStop(t('features.chat.voice.inputPlaceholder'));
             }
 
             recorder.onstop = () => {

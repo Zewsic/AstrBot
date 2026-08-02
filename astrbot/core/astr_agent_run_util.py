@@ -9,6 +9,7 @@ from astrbot.core import logger
 from astrbot.core.agent.message import Message
 from astrbot.core.agent.runners.tool_loop_agent_runner import ToolLoopAgentRunner
 from astrbot.core.astr_agent_context import AstrAgentContext
+from astrbot.core.i18n import resolve_locale, translate
 from astrbot.core.message.components import BaseMessageComponent, Json, Plain
 from astrbot.core.message.message_event_result import (
     MessageChain,
@@ -59,14 +60,20 @@ def _record_tool_call_name(
     tool_name_by_call_id[str(tool_call_id)] = str(tool_name)
 
 
-def _build_tool_call_status_message(tool_info: dict | None) -> str:
+def _build_tool_call_status_message(
+    tool_info: dict | None, locale: str | None = None
+) -> str:
     if tool_info:
-        return f"🔨 调用工具: {tool_info.get('name', 'unknown')}"
-    return "🔨 调用工具..."
+        return translate(
+            "agent.tool.calling", locale, name=tool_info.get("name", "unknown")
+        )
+    return translate("agent.tool.calling_unknown", locale)
 
 
 def _build_tool_result_status_message(
-    msg_chain: MessageChain, tool_name_by_call_id: dict[str, str]
+    msg_chain: MessageChain,
+    tool_name_by_call_id: dict[str, str],
+    locale: str | None = None,
 ) -> str:
     tool_name = "unknown"
     tool_result = ""
@@ -82,9 +89,12 @@ def _build_tool_result_status_message(
         tool_result = msg_chain.get_plain_text(with_other_comps_mark=True)
     tool_result = _truncate_tool_result(tool_result, 70)
 
-    status_msg = f"🔨 调用工具: {tool_name}"
+    status_msg = translate("agent.tool.calling", locale, name=tool_name)
     if tool_result:
-        status_msg = f"{status_msg}\n📎 返回结果: {tool_result}"
+        status_msg = (
+            f"{status_msg}\n"
+            f"{translate('agent.tool.result', locale, result=tool_result)}"
+        )
     return status_msg
 
 
@@ -206,7 +216,9 @@ async def run_agent(
                         await astr_event.send(msg_chain)
                     elif show_tool_use and show_tool_call_result:
                         status_msg = _build_tool_result_status_message(
-                            msg_chain, tool_name_by_call_id
+                            msg_chain,
+                            tool_name_by_call_id,
+                            resolve_locale(astr_event),
                         )
                         await astr_event.send(
                             MessageChain(type="tool_call").message(status_msg)
@@ -236,7 +248,9 @@ async def run_agent(
                             # Delay tool status notification until tool_call_result.
                             continue
                         chain = MessageChain(type="tool_call").message(
-                            _build_tool_call_status_message(tool_info)
+                            _build_tool_call_status_message(
+                                tool_info, resolve_locale(astr_event)
+                            )
                         )
                         await astr_event.send(chain)
                     continue
@@ -263,7 +277,9 @@ async def run_agent(
                             "Agent runner returned an error response without a message chain."
                         )
                         chain = MessageChain().message(
-                            "Error occurred during AI execution."
+                            translate(
+                                "agent.error.execution", resolve_locale(astr_event)
+                            )
                         )
                     yield chain
                     continue
@@ -329,10 +345,11 @@ async def run_agent(
             if custom_error_message:
                 err_msg = custom_error_message
             else:
-                err_msg = (
-                    f"Error occurred during AI execution.\n"
-                    f"Error Type: {type(e).__name__}\n"
-                    f"Error Message: {str(e)}"
+                err_msg = translate(
+                    "agent.error.execution_details",
+                    resolve_locale(astr_event),
+                    error_type=type(e).__name__,
+                    error=e,
                 )
 
             error_llm_response = LLMResponse(

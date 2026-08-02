@@ -205,5 +205,16 @@
     "occurredAt": "Occurred At",
     "traceback": "Traceback",
     "close": "Close"
+  },
+  "catalog": {
+    "communityProvided": "Provided by {author}.",
+    "displayNames": {
+      "qq_official": "QQ Official Bot Platform",
+      "weixin_official_account": "WeChat Official Account",
+      "wecom": "WeCom App",
+      "wecom_ai_bot": "WeCom AI Bot",
+      "lark": "Feishu / Lark",
+      "dingtalk": "DingTalk"
+    }
   }
 }

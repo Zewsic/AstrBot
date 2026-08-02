@@ -14,6 +14,9 @@
 
 <script>
 import QRCode from 'qrcode';
+import { useI18n } from '@/i18n/composables';
+
+const { t } = useI18n();
 
 export default {
   name: "QrCodeViewer",
@@ -36,7 +39,7 @@ export default {
     },
     emptyHint: {
       type: String,
-      default: "暂无可用二维码",
+      default: () => t('core.shared.qrCodeViewer.noQrCode'),
     },
   },
   data() {

@@ -56,7 +56,9 @@
     "noSkillsSelected": "No skills selected",
     "skillsRuntimeNoneWarning": "Computer Use runtime is set to None; Skills may not run correctly because no runtime is enabled.",
     "createInFolder": "Will be created in \"{folder}\"",
-    "rootFolder": "All Personas"
+    "rootFolder": "All Personas",
+    "allToolsOption": "Use all function tools by default",
+    "specificToolsOption": "Select specific function tools"
   },
   "dialog": {
     "create": {
@@ -145,7 +147,15 @@
       "renameSuccess": "Folder renamed successfully",
       "renameError": "Failed to rename folder",
       "deleteSuccess": "Folder deleted successfully",
-      "deleteError": "Failed to delete folder"
+      "deleteError": "Failed to delete folder",
+      "loadTreeFailed": "Failed to load the folder tree",
+      "movePersonaFailed": "Failed to move the persona",
+      "moveFolderFailed": "Failed to move the folder",
+      "createFolderFailed": "Failed to create the folder",
+      "updateFolderFailed": "Failed to update the folder",
+      "deleteFolderFailed": "Failed to delete the folder",
+      "deletePersonaFailed": "Failed to delete the persona",
+      "updateOrderFailed": "Failed to update the order"
     }
   },
   "moveDialog": {

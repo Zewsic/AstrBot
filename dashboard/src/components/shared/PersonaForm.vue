@@ -55,8 +55,8 @@
                                 </div>
 
                                 <v-radio-group class="mt-2" v-model="toolSelectValue" hide-details="true">
-                                    <v-radio label="默认使用全部函数工具" value="0"></v-radio>
-                                    <v-radio label="选择指定函数工具" value="1">
+                                    <v-radio :label="tm('form.allToolsOption')" value="0"></v-radio>
+                                    <v-radio :label="tm('form.specificToolsOption')" value="1">
                                     </v-radio>
                                 </v-radio-group>
 

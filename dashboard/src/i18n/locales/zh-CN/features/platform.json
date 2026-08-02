@@ -205,5 +205,16 @@
     "occurredAt": "发生时间",
     "traceback": "错误堆栈",
     "close": "关闭"
+  },
+  "catalog": {
+    "communityProvided": "由 {author} 提供。",
+    "displayNames": {
+      "qq_official": "QQ 官方机器人平台",
+      "weixin_official_account": "微信公众号",
+      "wecom": "企业微信应用",
+      "wecom_ai_bot": "企业微信智能机器人",
+      "lark": "飞书",
+      "dingtalk": "钉钉"
+    }
   }
 }

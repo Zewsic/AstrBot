@@ -51,7 +51,7 @@
             icon
             size="small"
             variant="text"
-            :title="expandedEntries[entryIndex] ? (t('core.common.collapse') || '收起') : (t('core.common.expand') || '展开')"
+            :title="expandedEntries[entryIndex] ? t('core.common.collapse') : t('core.common.expand')"
           >
             <v-icon>{{ expandedEntries[entryIndex] ? 'mdi-chevron-down' : 'mdi-chevron-right' }}</v-icon>
           </v-btn>
@@ -74,7 +74,7 @@
       <v-expand-transition>
         <v-card-text v-show="expandedEntries[entryIndex]" class="px-0 py-1">
           <div v-if="!getTemplate(entry)" class="px-4 py-2">
-            <v-alert type="error" variant="tonal" density="compact">{{ t('core.common.templateList.missingTemplate') || '找不到对应模板，请删除后重新添加。' }}</v-alert>
+            <v-alert type="error" variant="tonal" density="compact">{{ t('core.common.templateList.missingTemplate') }}</v-alert>
           </div>
           <div v-else class="template-entry-body">
             <template v-for="(itemMeta, itemKey, metaIndex) in getTemplate(entry).items" :key="itemKey">
@@ -195,8 +195,8 @@ const { resolveConfigText } = useConfigTextResolver(props)
 const expandedEntries = ref({})
 
 const safeText = (val, fallback) => (val && typeof val === 'string' ? val : fallback)
-const addButtonText = computed(() => safeText(t('core.common.templateList.addEntry'), '添加条目'))
-const emptyHintText = computed(() => safeText(t('core.common.templateList.empty'), '暂无条目，请先选择模板并添加。'))
+const addButtonText = computed(() => t('core.common.templateList.addEntry'))
+const emptyHintText = computed(() => t('core.common.templateList.empty'))
 const defaultValueMap = {
   int: 0,
   float: 0.0,
@@ -218,7 +218,7 @@ const templateOptions = computed(() => {
 })
 
 function templateLabel(key) {
-  if (!key) return t('core.common.templateList.unknownTemplate') || '未指定模板'
+  if (!key) return t('core.common.templateList.unknownTemplate')
   return templateText(key, 'name', props.templates?.[key]?.name || key)
 }
 

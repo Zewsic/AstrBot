@@ -59,6 +59,7 @@
     "cancelSelection": "取消",
     "confirmSelection": "确认选择",
     "selectPersonaPool": "选择人格池...",
+    "editPersona": "编辑",
     "rootFolder": "全部人格",
     "emptyFolder": "此文件夹为空"
   },
@@ -106,6 +107,42 @@
     "confirmDeleteMessage": "确定要删除模板 '{name}' 吗？此操作无法撤销。",
     "confirmDeleteButton": "确认删除",
     "confirmAction": "确认操作",
-    "confirmApplyMessage": "确定要保存对 '{name}' 的修改，并将其设为新的活动模板吗？"
+    "confirmApplyMessage": "确定要保存对 '{name}' 的修改，并将其设为新的活动模板吗？",
+    "renderError": "模板渲染错误: {error}"
+  },
+  "folder": {
+    "notSelected": "未选择",
+    "buttonText": "选择...",
+    "dialogTitle": "选择项目",
+    "rootFolder": "根目录",
+    "emptyFolder": "此文件夹为空",
+    "createButton": "新建",
+    "cancelButton": "取消",
+    "confirmButton": "确认",
+    "searchPlaceholder": "搜索文件夹...",
+    "noFolders": "暂无文件夹",
+    "contextMenu": {
+      "open": "打开",
+      "rename": "重命名",
+      "moveTo": "移动到...",
+      "delete": "删除"
+    },
+    "moveDialog": {
+      "title": "移动到文件夹",
+      "description": "选择目标文件夹",
+      "moveButton": "移动"
+    },
+    "createDialog": {
+      "title": "创建文件夹",
+      "nameLabel": "名称",
+      "descriptionLabel": "描述",
+      "nameRequired": "请输入文件夹名称",
+      "createButton": "创建"
+    },
+    "subfolders": "子文件夹",
+    "availableItems": "可选项目"
+  },
+  "qrCodeViewer": {
+    "noQrCode": "暂无可用二维码"
   }
 }

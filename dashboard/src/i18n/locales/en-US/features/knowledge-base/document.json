@@ -25,7 +25,10 @@
     "showing": "Showing",
     "deleteConfirm": "Are you sure you want to delete this chunk?",
     "deleteSuccess": "Chunk deleted successfully",
-    "deleteFailed": "Failed to delete chunk"
+    "deleteFailed": "Failed to delete chunk",
+    "charCountSuffix": "characters",
+    "loadDetailFailed": "Failed to load document details",
+    "loadChunksFailed": "Failed to load the chunk list"
   },
   "edit": {
     "title": "Edit Chunk",

@@ -56,7 +56,9 @@
     "noSkillsSelected": "未选择任何 Skills",
     "skillsRuntimeNoneWarning": "Computer Use 运行环境为无，Skills 可能无法正确被 Agent 运行，因为没有启用运行环境。",
     "createInFolder": "将在「{folder}」中创建",
-    "rootFolder": "全部人格"
+    "rootFolder": "全部人格",
+    "allToolsOption": "默认使用全部函数工具",
+    "specificToolsOption": "选择指定函数工具"
   },
   "dialog": {
     "create": {
@@ -145,7 +147,15 @@
       "renameSuccess": "文件夹重命名成功",
       "renameError": "重命名文件夹失败",
       "deleteSuccess": "文件夹删除成功",
-      "deleteError": "删除文件夹失败"
+      "deleteError": "删除文件夹失败",
+      "loadTreeFailed": "获取文件夹树失败",
+      "movePersonaFailed": "移动人格失败",
+      "moveFolderFailed": "移动文件夹失败",
+      "createFolderFailed": "创建文件夹失败",
+      "updateFolderFailed": "更新文件夹失败",
+      "deleteFolderFailed": "删除文件夹失败",
+      "deletePersonaFailed": "删除人格失败",
+      "updateOrderFailed": "更新排序失败"
     }
   },
   "moveDialog": {
