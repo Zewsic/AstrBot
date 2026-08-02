@@ -117,9 +117,14 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("image", f)
                         except Exception as e:
-                            logger.error(f"微信客服上传图片失败: {e}")
+                            logger.error(
+                                "WeCom Customer Service: failed to upload the image: %s",
+                                e,
+                            )
                             await self.send(
-                                MessageChain().message(f"微信客服上传图片失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom_kf", "image", e)
+                                ),
                             )
                             return
                         logger.debug(f"微信客服上传图片返回: {response}")
@@ -137,10 +142,13 @@ class WecomPlatformEvent(AstrMessageEvent):
                             try:
                                 response = self.client.media.upload("voice", f)
                             except Exception as e:
-                                logger.error(f"微信客服上传语音失败: {e}")
+                                logger.error(
+                                    "WeCom Customer Service: failed to upload the voice message: %s",
+                                    e,
+                                )
                                 await self.send(
                                     MessageChain().message(
-                                        f"微信客服上传语音失败: {e}"
+                                        self.t_upload_failed("wecom_kf", "voice", e)
                                     ),
                                 )
                                 return
@@ -165,9 +173,14 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("file", f)
                         except Exception as e:
-                            logger.error(f"微信客服上传文件失败: {e}")
+                            logger.error(
+                                "WeCom Customer Service: failed to upload the file: %s",
+                                e,
+                            )
                             await self.send(
-                                MessageChain().message(f"微信客服上传文件失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom_kf", "file", e)
+                                ),
                             )
                             return
                         logger.debug(f"微信客服上传文件返回: {response}")
@@ -183,9 +196,14 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("video", f)
                         except Exception as e:
-                            logger.error(f"微信客服上传视频失败: {e}")
+                            logger.error(
+                                "WeCom Customer Service: failed to upload the video: %s",
+                                e,
+                            )
                             await self.send(
-                                MessageChain().message(f"微信客服上传视频失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom_kf", "video", e)
+                                ),
                             )
                             return
                         logger.debug(f"微信客服上传视频返回: {response}")
@@ -216,9 +234,11 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("image", f)
                         except Exception as e:
-                            logger.error(f"企业微信上传图片失败: {e}")
+                            logger.error("WeCom: failed to upload the image: %s", e)
                             await self.send(
-                                MessageChain().message(f"企业微信上传图片失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom", "image", e)
+                                ),
                             )
                             return
                         logger.debug(f"企业微信上传图片返回: {response}")
@@ -236,10 +256,12 @@ class WecomPlatformEvent(AstrMessageEvent):
                             try:
                                 response = self.client.media.upload("voice", f)
                             except Exception as e:
-                                logger.error(f"企业微信上传语音失败: {e}")
+                                logger.error(
+                                    "WeCom: failed to upload the voice message: %s", e
+                                )
                                 await self.send(
                                     MessageChain().message(
-                                        f"企业微信上传语音失败: {e}"
+                                        self.t_upload_failed("wecom", "voice", e)
                                     ),
                                 )
                                 return
@@ -264,9 +286,11 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("file", f)
                         except Exception as e:
-                            logger.error(f"企业微信上传文件失败: {e}")
+                            logger.error("WeCom: failed to upload the file: %s", e)
                             await self.send(
-                                MessageChain().message(f"企业微信上传文件失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom", "file", e)
+                                ),
                             )
                             return
                         logger.debug(f"企业微信上传文件返回: {response}")
@@ -282,9 +306,11 @@ class WecomPlatformEvent(AstrMessageEvent):
                         try:
                             response = self.client.media.upload("video", f)
                         except Exception as e:
-                            logger.error(f"企业微信上传视频失败: {e}")
+                            logger.error("WeCom: failed to upload the video: %s", e)
                             await self.send(
-                                MessageChain().message(f"企业微信上传视频失败: {e}"),
+                                MessageChain().message(
+                                    self.t_upload_failed("wecom", "video", e)
+                                ),
                             )
                             return
                         logger.debug(f"企业微信上传视频返回: {response}")

@@ -206,7 +206,9 @@ class WebChatAdapter(Platform):
 
         abm = AstrBotMessage()
         abm.self_id = "webchat"
-        abm.sender = MessageMember(username, username)
+        abm.sender = MessageMember(
+            username, username, language_code=payload.get("locale")
+        )
 
         abm.type = MessageType.FRIEND_MESSAGE
 

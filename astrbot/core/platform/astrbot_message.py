@@ -10,6 +10,12 @@ from .message_type import MessageType
 class MessageMember:
     user_id: str  # 发送者id
     nickname: str | None = None
+    language_code: str | None = None
+    """IETF language tag reported by the platform, e.g. "ru" or "zh-Hans".
+
+    Used to pick the language of bot replies when the reply language is set to
+    automatic detection. Platforms that do not expose it leave it as None.
+    """
 
     def __str__(self) -> str:
         # 使用 f-string 来构建返回的字符串表示形式

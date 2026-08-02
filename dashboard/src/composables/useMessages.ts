@@ -1,6 +1,9 @@
 import { computed, onBeforeUnmount, reactive, ref, type Ref } from "vue";
 import { chatApi, fileApi } from "@/api/v1";
 import { fetchWithAuth } from "@/api/http";
+import { useI18n } from "@/i18n/composables";
+
+const { locale: uiLocale } = useI18n();
 
 export type TransportMode = "sse" | "websocket";
 
@@ -525,6 +528,7 @@ export function useMessages(options: UseMessagesOptions) {
             selected_provider: selectedProvider,
             selected_model: selectedModel,
             flags: buildChatRequestFlags(enableStreaming),
+            locale: uiLocale.value,
           }),
           signal: abort.signal,
         },
@@ -650,6 +654,7 @@ export function useMessages(options: UseMessagesOptions) {
         selected_model: selectedModel,
         _skip_user_history: skipUserHistory,
         _llm_checkpoint_id: llmCheckpointId || undefined,
+        locale: uiLocale.value,
       }),
       signal: abort.signal,
     })
@@ -798,6 +803,7 @@ export function useMessages(options: UseMessagesOptions) {
       flags: buildChatRequestFlags(enableStreaming),
       selected_provider: selectedProvider,
       selected_model: selectedModel,
+      locale: uiLocale.value,
     });
   }
 

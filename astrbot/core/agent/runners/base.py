@@ -20,6 +20,22 @@ class AgentState(Enum):
 
 
 class BaseAgentRunner(T.Generic[TContext]):
+    def _t(self, key: str, /, **params: T.Any) -> str:
+        """Translate a message resource key into the requesting user's locale.
+
+        Args:
+            key: Dotted key from ``astrbot/core/i18n/locales/*.json``.
+            **params: Values substituted into ``{placeholder}`` markers.
+
+        Returns:
+            The translated text, or the key itself when it is not defined.
+        """
+        from astrbot.core.i18n import resolve_locale, translate
+
+        run_context = getattr(self, "run_context", None)
+        event = getattr(getattr(run_context, "context", None), "event", None)
+        return translate(key, resolve_locale(event), **params)
+
     @abc.abstractmethod
     async def reset(
         self,

@@ -278,7 +278,7 @@ async def _get_session_conv(
         cid = await conv_mgr.new_conversation(umo, event.get_platform_id())
         conversation = await conv_mgr.get_conversation(umo, cid)
     if not conversation:
-        raise RuntimeError("无法创建新的对话。")
+        raise RuntimeError(event.t("agent.error.conversation_create_failed"))
     return conversation
 
 

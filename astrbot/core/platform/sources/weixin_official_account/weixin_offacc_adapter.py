@@ -23,6 +23,7 @@ from astrbot.api.platform import (
     register_platform_adapter,
 )
 from astrbot.core import logger
+from astrbot.core.i18n import resolve_locale, translate
 from astrbot.core.platform.astr_message_event import MessageSesion
 from astrbot.core.platform.webhook_server import FastAPIWebhookServer
 from astrbot.core.utils.astrbot_path import get_astrbot_temp_path
@@ -378,8 +379,10 @@ class WeixinOfficialAccountPlatformAdapter(Platform):
                 logger.debug(f"Got future result: {result}")
                 return result
             except asyncio.TimeoutError:
-                logger.info(f"callback 处理消息超时: message_id={msg.id}")
-                return create_reply("处理消息超时，请稍后再试。", msg)
+                logger.info("Callback timed out while handling message %s", msg.id)
+                return create_reply(
+                    translate("platform.error.timeout", resolve_locale(None)), msg
+                )
             except Exception as e:
                 logger.error(f"转换消息时出现异常: {e}")
             finally:

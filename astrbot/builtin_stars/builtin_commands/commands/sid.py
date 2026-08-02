@@ -17,20 +17,19 @@ class SIDCommand:
         umo_platform = event.session.platform_id
         umo_msg_type = event.session.message_type.value
         umo_session_id = event.session.session_id
-        ret = (
-            f"UMO: 「{sid}」\n"
-            f"UID: 「{user_id}」\n"
-            "*Use UMO to set whitelist and configure routing, use UID to set admin list(UMO 可用于设置白名单和配置文件路由，UID 可用于设置管理员列表)\n\n"
-            f"Your session information:\n"
-            f"Bot ID: 「{umo_platform}」\n"
-            f"Message Type: 「{umo_msg_type}」\n"
-            f"Session ID: 「{umo_session_id}」\n\n"
+        ret = event.t(
+            "command.sid.body",
+            umo=sid,
+            uid=user_id,
+            platform_id=umo_platform,
+            message_type=umo_msg_type,
+            session_id=umo_session_id,
         )
 
         if (
             self.context.get_config()["platform_settings"]["unique_session"]
             and event.get_group_id()
         ):
-            ret += f"\n\nThe group's ID: 「{event.get_group_id()}」. Set this ID to whitelist to allow the entire group."
+            ret += event.t("command.sid.group_hint", group_id=event.get_group_id())
 
         event.set_result(MessageEventResult().message(ret).use_t2i(False))

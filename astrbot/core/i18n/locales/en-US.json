@@ -1,0 +1,118 @@
+{
+  "agent": {
+    "error": {
+      "request_failed": "An error occurred while processing your request: {error}",
+      "llm_response": "LLM response error: {error}",
+      "unknown": "unknown error",
+      "conversation_create_failed": "Could not create a new conversation.",
+      "api_base_blocked": "LLM request failed: the provider API base `{api_base}` was blocked for security reasons. Switch to a different AI provider.",
+      "coze_request_failed": "Coze request failed: {error}",
+      "dashscope_request_failed": "Alibaba Cloud Bailian request failed: {error}",
+      "dify_request_failed": "Dify request failed: {error}",
+      "execution": "Error occurred during AI execution.",
+      "execution_details": "Error occurred during AI execution.\nError Type: {error_type}\nError Message: {error}"
+    },
+    "tool": {
+      "calling": "🔨 Calling tool: {name}",
+      "calling_unknown": "🔨 Calling tool...",
+      "result": "📎 Result: {result}"
+    },
+    "status": {
+      "thinking": "🤔 Thinking..."
+    },
+    "reference": {
+      "sources": "\n\nSources:\n{references}"
+    }
+  },
+  "pipeline": {
+    "no_permission": "You (ID: {user_id}) do not have permission to use this command. Send /sid to get your ID and ask an administrator to grant access.",
+    "plugin_filter_error": "Plugin {plugin}: {error}",
+    "content_safety_blocked": "Your message or the model response contains inappropriate content and has been blocked."
+  },
+  "command": {
+    "error": {
+      "generic": "Something went wrong, please contact an administrator: {error}"
+    },
+    "empty_mention": {
+      "fallback": "What would you like to ask? 😄"
+    },
+    "help": {
+      "no_commands": "No built-in commands are enabled."
+    },
+    "sid": {
+      "body": "UMO: 「{umo}」\nUID: 「{uid}」\n*Use the UMO to configure whitelists and config routing, and the UID to configure the administrator list.\n\nYour session information:\nBot ID: 「{platform_id}」\nMessage type: 「{message_type}」\nSession ID: 「{session_id}」\n\n",
+      "group_hint": "\n\nThis group's ID is 「{group_id}」. Add it to the whitelist to allow the entire group."
+    },
+    "name": {
+      "usage": "Usage: /name <name>",
+      "umo": "UMO: {umo}",
+      "auto_name": "Auto name: {auto_name}",
+      "alias": "Alias: {alias}",
+      "empty": "(empty)",
+      "updated": "UMO name set to: {alias}\nUMO: {umo}"
+    },
+    "scene": {
+      "group_unique_on": "group chat with session isolation enabled",
+      "group_unique_off": "group chat with session isolation disabled",
+      "private": "direct message"
+    },
+    "reset": {
+      "requires_admin": "The reset command requires administrator rights in the \"{scene}\" scenario. You (ID {user_id}) are not an administrator, so this action is not available.",
+      "success": "✅ Conversation reset.",
+      "no_provider": "😕 No LLM provider found. Configure one first.",
+      "no_conversation": "😕 You are not in a conversation. Send /new to create one."
+    },
+    "stop": {
+      "requested": "✅ Requested a stop for {count} running tasks.",
+      "none": "✅ There are no running tasks in this session."
+    },
+    "new": {
+      "created": "✅ New conversation created.",
+      "switched": "✅ Switched to a new conversation: {cid}"
+    },
+    "stats": {
+      "no_conversation": "❌ You are not in a conversation. Send /new to create one.",
+      "empty": "📊 There are no statistics for this conversation yet.",
+      "body": "📊 Conversation token usage (ID: {cid}...)\nTotal:          {total}\nInput (cached): {input_cached}\nInput (other):  {input_other}\nOutput:         {output}\n"
+    },
+    "variable": {
+      "set": "Variable {key} saved for session {umo}. Use /unset to remove it.",
+      "missing": "No such variable. Usage: /unset <name>.",
+      "removed": "Variable {key} removed from session {umo}."
+    },
+    "dashboard": {
+      "updating": "⏳ Updating the WebUI...",
+      "updated": "✅ WebUI updated."
+    },
+    "provider": {
+      "testing": "👀 Checking provider availability...",
+      "llm_header": "## LLM providers\n",
+      "tts_header": "\n## TTS providers\n",
+      "stt_header": "\n## STT providers\n",
+      "switch_llm_hint": "\nUse /provider <index> to switch the LLM provider.",
+      "switch_tts_hint": "\nUse /provider tts <index> to switch the TTS provider.",
+      "switch_stt_hint": "\nUse /provider stt <index> to switch the STT provider.",
+      "index_required": "Specify the index.",
+      "invalid_index": "❌ Invalid provider index.",
+      "switched": "✅ Switched to {provider_id}.",
+      "invalid_parameter": "❌ Invalid parameter."
+    }
+  },
+  "platform": {
+    "name": {
+      "wecom": "WeCom",
+      "wecom_kf": "WeCom Customer Service",
+      "weixin_official_account": "WeChat Official Account"
+    },
+    "media": {
+      "image": "image",
+      "voice": "voice message",
+      "file": "file",
+      "video": "video"
+    },
+    "error": {
+      "upload_failed": "{platform}: failed to upload the {media}: {error}",
+      "timeout": "Processing the message took too long, please try again later."
+    }
+  }
+}

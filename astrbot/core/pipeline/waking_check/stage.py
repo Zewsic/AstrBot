@@ -191,7 +191,11 @@ class WakingCheckStage(Stage):
                     await event.send(
                         MessageEventResult()
                         .message(
-                            f"插件 {star_map[handler.handler_module_path].name}: {e}",
+                            event.t(
+                                "pipeline.plugin_filter_error",
+                                plugin=star_map[handler.handler_module_path].name,
+                                error=e,
+                            ),
                         )
                         .use_markdown(False),
                     )
@@ -206,7 +210,10 @@ class WakingCheckStage(Stage):
                     if self.no_permission_reply:
                         await event.send(
                             MessageChain().message(
-                                f"您(ID: {event.get_sender_id()})的权限不足以使用此指令。通过 /sid 获取 ID 并请管理员添加。",
+                                event.t(
+                                    "pipeline.no_permission",
+                                    user_id=event.get_sender_id(),
+                                ),
                             ),
                         )
                     logger.info(

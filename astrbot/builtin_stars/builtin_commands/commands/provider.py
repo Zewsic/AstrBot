@@ -120,7 +120,7 @@ class ProviderCommands:
         reachability_check_enabled = cfg.get("reachability_check", True)
 
         if idx is None:
-            parts = ["## LLM Providers\n"]
+            parts = [event.t("command.provider.llm_header")]
 
             llms = list(self.context.get_all_providers())
             ttss = self.context.get_all_tts_providers()
@@ -128,7 +128,7 @@ class ProviderCommands:
 
             if reachability_check_enabled and (llms or ttss or stts):
                 await event.send(
-                    MessageEventResult().message("👀 Testing provider reachability...")
+                    MessageEventResult().message(event.t("command.provider.testing"))
                 )
 
             llm_data, tts_data, stt_data = await asyncio.gather(
@@ -160,7 +160,7 @@ class ProviderCommands:
                 parts.append(line + "\n")
 
             if tts_data:
-                parts.append("\n## TTS Providers\n")
+                parts.append(event.t("command.provider.tts_header"))
                 tts_using = self.context.get_using_tts_provider(umo=umo)
                 for i, d in enumerate(tts_data):
                     line = f"{i + 1}. {d['info']}{d['mark']}"
@@ -169,7 +169,7 @@ class ProviderCommands:
                     parts.append(line + "\n")
 
             if stt_data:
-                parts.append("\n## STT Providers\n")
+                parts.append(event.t("command.provider.stt_header"))
                 stt_using = self.context.get_using_stt_provider(umo=umo)
                 for i, d in enumerate(stt_data):
                     line = f"{i + 1}. {d['info']}{d['mark']}"
@@ -177,24 +177,28 @@ class ProviderCommands:
                         line += " 👈"
                     parts.append(line + "\n")
 
-            parts.append("\nUse /provider <idx> to switch LLM providers.")
+            parts.append(event.t("command.provider.switch_llm_hint"))
             ret = "".join(parts)
 
             if ttss:
-                ret += "\nUse /provider tts <idx> to switch TTS providers."
+                ret += event.t("command.provider.switch_tts_hint")
             if stts:
-                ret += "\nUse /provider stt <idx> to switch STT providers."
+                ret += event.t("command.provider.switch_stt_hint")
 
             event.set_result(MessageEventResult().message(ret))
         elif idx == "tts":
             if idx2 is None:
                 event.set_result(
-                    MessageEventResult().message("Please enter the index.")
+                    MessageEventResult().message(
+                        event.t("command.provider.index_required")
+                    )
                 )
                 return
             if idx2 > len(self.context.get_all_tts_providers()) or idx2 < 1:
                 event.set_result(
-                    MessageEventResult().message("❌ Invalid provider index.")
+                    MessageEventResult().message(
+                        event.t("command.provider.invalid_index")
+                    )
                 )
                 return
             provider = self.context.get_all_tts_providers()[idx2 - 1]
@@ -205,17 +209,23 @@ class ProviderCommands:
                 umo=umo,
             )
             event.set_result(
-                MessageEventResult().message(f"✅ Successfully switched to {id_}.")
+                MessageEventResult().message(
+                    event.t("command.provider.switched", provider_id=id_)
+                )
             )
         elif idx == "stt":
             if idx2 is None:
                 event.set_result(
-                    MessageEventResult().message("Please enter the index.")
+                    MessageEventResult().message(
+                        event.t("command.provider.index_required")
+                    )
                 )
                 return
             if idx2 > len(self.context.get_all_stt_providers()) or idx2 < 1:
                 event.set_result(
-                    MessageEventResult().message("❌ Invalid provider index.")
+                    MessageEventResult().message(
+                        event.t("command.provider.invalid_index")
+                    )
                 )
                 return
             provider = self.context.get_all_stt_providers()[idx2 - 1]
@@ -226,12 +236,16 @@ class ProviderCommands:
                 umo=umo,
             )
             event.set_result(
-                MessageEventResult().message(f"✅ Successfully switched to {id_}.")
+                MessageEventResult().message(
+                    event.t("command.provider.switched", provider_id=id_)
+                )
             )
         elif isinstance(idx, int):
             if idx > len(self.context.get_all_providers()) or idx < 1:
                 event.set_result(
-                    MessageEventResult().message("❌ Invalid provider index.")
+                    MessageEventResult().message(
+                        event.t("command.provider.invalid_index")
+                    )
                 )
                 return
             provider = self.context.get_all_providers()[idx - 1]
@@ -242,7 +256,13 @@ class ProviderCommands:
                 umo=umo,
             )
             event.set_result(
-                MessageEventResult().message(f"✅ Successfully switched to {id_}.")
+                MessageEventResult().message(
+                    event.t("command.provider.switched", provider_id=id_)
+                )
             )
         else:
-            event.set_result(MessageEventResult().message("❌ Invalid parameter."))
+            event.set_result(
+                MessageEventResult().message(
+                    event.t("command.provider.invalid_parameter")
+                )
+            )

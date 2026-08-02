@@ -400,6 +400,45 @@ class AstrMessageEvent(abc.ABC):
         """创建一个空的消息事件结果，只包含一条文本消息。"""
         return MessageEventResult().message(text)
 
+    def get_locale(self) -> str:
+        """Return the locale that replies to this event should use.
+
+        Resolved from the per-event override, the configured reply language and
+        finally the language the platform reported for the sender.
+        """
+        from astrbot.core.i18n import resolve_locale
+
+        return resolve_locale(self)
+
+    def t(self, key: str, /, **params: Any) -> str:
+        """Translate a message resource key into this event's locale.
+
+        Args:
+            key: Dotted key from ``astrbot/core/i18n/locales/*.json``.
+            **params: Values substituted into ``{placeholder}`` markers.
+
+        Returns:
+            The translated text, or the key itself when it is not defined.
+        """
+        from astrbot.core.i18n import translate
+
+        return translate(key, self.get_locale(), **params)
+
+    def t_upload_failed(self, platform: str, media: str, error: object) -> str:
+        """Build a localized "failed to upload <media>" notice.
+
+        Args:
+            platform: Key under ``platform.name`` in the message resources.
+            media: Key under ``platform.media`` in the message resources.
+            error: The underlying error, rendered as-is.
+        """
+        return self.t(
+            "platform.error.upload_failed",
+            platform=self.t(f"platform.name.{platform}"),
+            media=self.t(f"platform.media.{media}"),
+            error=error,
+        )
+
     def image_result(self, url_or_path: str) -> MessageEventResult:
         """创建一个空的消息事件结果，只包含一条图片消息。
 

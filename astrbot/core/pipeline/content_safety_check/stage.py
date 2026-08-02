@@ -46,8 +46,7 @@ class ContentSafetyCheckStage(Stage):
             if event.is_at_or_wake_command:
                 event.set_result(
                     MessageEventResult().message(
-                        "Your message or the model response contains inappropriate "
-                        "content and has been blocked.",
+                        event.t("pipeline.content_safety_blocked"),
                     ),
                 )
                 yield

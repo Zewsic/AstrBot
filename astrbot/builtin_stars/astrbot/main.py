@@ -109,7 +109,7 @@ class Main(star.Star):
                     )
                 except Exception as e:
                     logger.error(f"LLM response failed: {e!s}")
-                    yield event.plain_result("想要问什么呢？😄")
+                    yield event.plain_result(event.t("command.empty_mention.fallback"))
 
             @session_waiter(60)
             async def empty_mention_waiter(
@@ -132,7 +132,7 @@ class Main(star.Star):
             except TimeoutError:
                 pass
             except Exception as e:
-                yield event.plain_result("发生错误，请联系管理员: " + str(e))
+                yield event.plain_result(event.t("command.error.generic", error=e))
             finally:
                 event.stop_event()
         except Exception as e:
@@ -229,7 +229,9 @@ class Main(star.Star):
             if need_active:
                 provider = self.context.get_using_provider(event.unified_msg_origin)
                 if not provider:
-                    logger.error("未找到任何 LLM 提供商。请先配置。无法主动回复")
+                    logger.error(
+                        "No LLM provider is configured, cannot send an active reply."
+                    )
                     return
                 try:
                     session_curr_cid = await self.context.conversation_manager.get_curr_conversation_id(
@@ -238,7 +240,10 @@ class Main(star.Star):
 
                     if not session_curr_cid:
                         logger.error(
-                            "当前未处于对话状态，无法主动回复，请确保 平台设置->会话隔离(unique_session) 未开启，并使用 /new 创建一个会话。",
+                            "No active conversation, cannot send an active reply. "
+                            "Make sure Platform Settings -> Isolate Sessions "
+                            "(unique_session) is off, and create a conversation "
+                            "with /new.",
                         )
                         return
 
@@ -248,7 +253,9 @@ class Main(star.Star):
                     )
 
                     if not conv:
-                        logger.error("未找到对话，无法主动回复")
+                        logger.error(
+                            "Conversation not found, cannot send an active reply."
+                        )
                         return
 
                     prompt = event.message_str
@@ -258,7 +265,9 @@ class Main(star.Star):
                             try:
                                 image_urls.append(await comp.convert_to_file_path())
                             except Exception:
-                                logger.exception("主动回复处理图片失败")
+                                logger.exception(
+                                    "Failed to process an image for the active reply."
+                                )
 
                     yield event.request_llm(
                         prompt=prompt,
@@ -268,7 +277,7 @@ class Main(star.Star):
                     )
                 except BaseException as e:
                     logger.error(traceback.format_exc())
-                    logger.error(f"主动回复失败: {e}")
+                    logger.error("Active reply failed: %s", e)
 
     @filter.on_llm_response()
     async def persist_llm_response(

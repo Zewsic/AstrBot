@@ -57,6 +57,7 @@ DEFAULT_CONFIG = {
     "config_version": 2,
     "platform_settings": {
         "unique_session": False,
+        "reply_locale": "auto",
         "rate_limit": {
             "time": 60,
             "count": 30,
@@ -1010,6 +1011,10 @@ CONFIG_METADATA_2 = {
                 "items": {
                     "unique_session": {
                         "type": "bool",
+                    },
+                    "reply_locale": {
+                        "type": "string",
+                        "options": ["auto", "en-US", "zh-CN", "ru-RU"],
                     },
                     "rate_limit": {
                         "type": "object",
@@ -3940,6 +3945,13 @@ CONFIG_METADATA_3 = {
                         "description": "隔离会话",
                         "type": "bool",
                         "hint": "启用后，群成员的上下文独立。",
+                    },
+                    "platform_settings.reply_locale": {
+                        "description": "回复语言",
+                        "type": "string",
+                        "options": ["auto", "en-US", "zh-CN", "ru-RU"],
+                        "labels": ["自动检测", "English", "简体中文", "Русский"],
+                        "hint": "AstrBot 发送给用户的提示与错误信息使用的语言。选择自动检测时，会依据消息平台上报的用户语言（如 Telegram 的 language_code）判断，无法判断时使用英语。",
                     },
                     "wake_prefix": {
                         "description": "唤醒词",

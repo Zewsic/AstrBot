@@ -786,6 +786,16 @@
           "description": "Isolate Sessions",
           "hint": "When enabled, group members have independent contexts."
         },
+        "reply_locale": {
+          "description": "Reply Language",
+          "hint": "Language of the prompts and error messages AstrBot sends to users. With automatic detection the language reported by the messaging platform is used (for example Telegram's language_code), falling back to English.",
+          "labels": [
+            "Auto-detect",
+            "English",
+            "简体中文",
+            "Русский"
+          ]
+        },
         "friend_message_needs_wake_prefix": {
           "description": "Private Messages Require Wake Word"
         },

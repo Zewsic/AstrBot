@@ -92,15 +92,18 @@ class CozeAgentRunner(BaseAgentRunner[TContext]):
             async for response in self._execute_coze_request():
                 yield response
         except Exception as e:
-            logger.error(f"Coze 请求失败：{str(e)}")
+            logger.error("Coze request failed: %s", e)
             self._transition_state(AgentState.ERROR)
             self.final_llm_resp = LLMResponse(
-                role="err", completion_text=f"Coze 请求失败：{str(e)}"
+                role="err",
+                completion_text=self._t("agent.error.coze_request_failed", error=e),
             )
             yield AgentResponse(
                 type="err",
                 data=AgentResponseData(
-                    chain=MessageChain().message(f"Coze 请求失败：{str(e)}")
+                    chain=MessageChain().message(
+                        self._t("agent.error.coze_request_failed", error=e)
+                    )
                 ),
             )
         finally:

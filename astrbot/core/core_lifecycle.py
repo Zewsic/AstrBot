@@ -24,6 +24,7 @@ from astrbot.core.config.default import VERSION
 from astrbot.core.conversation_mgr import ConversationManager
 from astrbot.core.cron import CronJobManager
 from astrbot.core.db import BaseDatabase
+from astrbot.core.i18n import set_config_manager as i18n_set_config_manager
 from astrbot.core.knowledge_base.kb_mgr import KnowledgeBaseManager
 from astrbot.core.persona_mgr import PersonaManager
 from astrbot.core.pipeline.scheduler import PipelineContext, PipelineScheduler
@@ -184,6 +185,8 @@ class AstrBotCoreLifecycle:
             ucr=self.umop_config_router,
             sp=sp,
         )
+        # Let the runtime translator read per-session reply language settings.
+        i18n_set_config_manager(self.astrbot_config_mgr)
         self.temp_dir_cleaner = TempDirCleaner(
             max_size_getter=lambda: self.astrbot_config_mgr.default_conf.get(
                 TempDirCleaner.CONFIG_KEY,

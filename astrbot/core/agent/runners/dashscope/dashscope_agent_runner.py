@@ -103,15 +103,20 @@ class DashscopeAgentRunner(BaseAgentRunner[TContext]):
             async for response in self._execute_dashscope_request():
                 yield response
         except Exception as e:
-            logger.error(f"阿里云百炼请求失败：{str(e)}")
+            logger.error("Alibaba Cloud Bailian request failed: %s", e)
             self._transition_state(AgentState.ERROR)
             self.final_llm_resp = LLMResponse(
-                role="err", completion_text=f"阿里云百炼请求失败：{str(e)}"
+                role="err",
+                completion_text=self._t(
+                    "agent.error.dashscope_request_failed", error=e
+                ),
             )
             yield AgentResponse(
                 type="err",
                 data=AgentResponseData(
-                    chain=MessageChain().message(f"阿里云百炼请求失败：{str(e)}")
+                    chain=MessageChain().message(
+                        self._t("agent.error.dashscope_request_failed", error=e)
+                    )
                 ),
             )
 
@@ -214,7 +219,7 @@ class DashscopeAgentRunner(BaseAgentRunner[TContext]):
             )
             ref_parts.append(f"{ref['index_id']}. {ref_title}\n")
         ref_str = "".join(ref_parts)
-        return f"\n\n回答来源:\n{ref_str}"
+        return self._t("agent.reference.sources", references=ref_str)
 
     async def _build_request_payload(
         self, prompt: str, session_id: str, contexts: list, system_prompt: str

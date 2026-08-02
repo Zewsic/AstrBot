@@ -56,7 +56,8 @@ class _MalformedStreamingErrorRunner(_StreamingErrorRunner):
 @pytest.mark.asyncio
 async def test_run_agent_forwards_streaming_provider_error():
     error_text = (
-        "LLM 响应错误: Not found the model k2.7-code-highspeed or Permission denied"
+        "LLM response error: Not found the model k2.7-code-highspeed "
+        "or Permission denied"
     )
     runner = _StreamingErrorRunner(error_text)
 

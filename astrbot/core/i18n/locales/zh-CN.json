@@ -1,0 +1,118 @@
+{
+  "agent": {
+    "error": {
+      "request_failed": "处理请求时发生错误：{error}",
+      "llm_response": "LLM 响应错误：{error}",
+      "unknown": "未知错误",
+      "conversation_create_failed": "无法创建新的对话。",
+      "api_base_blocked": "LLM 请求失败：Provider API base `{api_base}` 因安全原因被拦截，请更换可用的 AI 提供商。",
+      "coze_request_failed": "Coze 请求失败：{error}",
+      "dashscope_request_failed": "阿里云百炼请求失败：{error}",
+      "dify_request_failed": "Dify 请求失败：{error}",
+      "execution": "AI 运行时发生错误。",
+      "execution_details": "AI 运行时发生错误。\n错误类型: {error_type}\n错误信息: {error}"
+    },
+    "tool": {
+      "calling": "🔨 调用工具: {name}",
+      "calling_unknown": "🔨 调用工具...",
+      "result": "📎 返回结果: {result}"
+    },
+    "status": {
+      "thinking": "🤔 正在思考中..."
+    },
+    "reference": {
+      "sources": "\n\n回答来源:\n{references}"
+    }
+  },
+  "pipeline": {
+    "no_permission": "您(ID: {user_id})的权限不足以使用此指令。通过 /sid 获取 ID 并请管理员添加。",
+    "plugin_filter_error": "插件 {plugin}: {error}",
+    "content_safety_blocked": "您的消息或模型的回复包含不当内容，已被拦截。"
+  },
+  "command": {
+    "error": {
+      "generic": "发生错误，请联系管理员：{error}"
+    },
+    "empty_mention": {
+      "fallback": "想要问什么呢？😄"
+    },
+    "help": {
+      "no_commands": "没有已启用的内置指令。"
+    },
+    "sid": {
+      "body": "UMO: 「{umo}」\nUID: 「{uid}」\n*UMO 可用于设置白名单和配置文件路由，UID 可用于设置管理员列表\n\n当前会话信息：\nBot ID: 「{platform_id}」\n消息类型: 「{message_type}」\n会话 ID: 「{session_id}」\n\n",
+      "group_hint": "\n\n本群的群号为 「{group_id}」。将该 ID 加入白名单可放行整个群聊。"
+    },
+    "name": {
+      "usage": "用法：/name <名称>",
+      "umo": "UMO: {umo}",
+      "auto_name": "自动名称: {auto_name}",
+      "alias": "别名: {alias}",
+      "empty": "(空)",
+      "updated": "UMO 名称已设置为：{alias}\nUMO: {umo}"
+    },
+    "scene": {
+      "group_unique_on": "群聊+会话隔离开启",
+      "group_unique_off": "群聊+会话隔离关闭",
+      "private": "私聊"
+    },
+    "reset": {
+      "requires_admin": "在「{scene}」场景下，重置指令需要管理员权限。您(ID {user_id})不是管理员，无法执行此操作。",
+      "success": "✅ 对话已重置。",
+      "no_provider": "😕 未找到任何 LLM 提供商，请先进行配置。",
+      "no_conversation": "😕 您当前不在任何对话中，请使用 /new 创建一个。"
+    },
+    "stop": {
+      "requested": "✅ 已请求停止 {count} 个正在运行的任务。",
+      "none": "✅ 当前会话没有正在运行的任务。"
+    },
+    "new": {
+      "created": "✅ 已创建新对话。",
+      "switched": "✅ 已切换到新对话：{cid}"
+    },
+    "stats": {
+      "no_conversation": "❌ 您当前不在任何对话中，请使用 /new 创建一个。",
+      "empty": "📊 该对话暂无统计数据。",
+      "body": "📊 对话 Token 用量 (ID: {cid}...)\n总计:           {total}\n输入 (缓存):    {input_cached}\n输入 (其他):    {input_other}\n输出:           {output}\n"
+    },
+    "variable": {
+      "set": "会话 {umo} 变量 {key} 存储成功。使用 /unset 移除。",
+      "missing": "没有那个变量名。格式 /unset 变量名。",
+      "removed": "会话 {umo} 变量 {key} 移除成功。"
+    },
+    "dashboard": {
+      "updating": "⏳ 正在更新管理面板...",
+      "updated": "✅ 管理面板更新成功。"
+    },
+    "provider": {
+      "testing": "👀 正在检测提供商可用性...",
+      "llm_header": "## LLM 提供商\n",
+      "tts_header": "\n## TTS 提供商\n",
+      "stt_header": "\n## STT 提供商\n",
+      "switch_llm_hint": "\n使用 /provider <序号> 切换 LLM 提供商。",
+      "switch_tts_hint": "\n使用 /provider tts <序号> 切换 TTS 提供商。",
+      "switch_stt_hint": "\n使用 /provider stt <序号> 切换 STT 提供商。",
+      "index_required": "请输入序号。",
+      "invalid_index": "❌ 无效的提供商序号。",
+      "switched": "✅ 已切换到 {provider_id}。",
+      "invalid_parameter": "❌ 无效的参数。"
+    }
+  },
+  "platform": {
+    "name": {
+      "wecom": "企业微信",
+      "wecom_kf": "微信客服",
+      "weixin_official_account": "微信公众平台"
+    },
+    "media": {
+      "image": "图片",
+      "voice": "语音",
+      "file": "文件",
+      "video": "视频"
+    },
+    "error": {
+      "upload_failed": "{platform}上传{media}失败: {error}",
+      "timeout": "处理消息超时，请稍后再试。"
+    }
+  }
+}

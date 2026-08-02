@@ -21,10 +21,16 @@ class NameCommand:
                 .message(
                     "\n".join(
                         [
-                            "Usage: /name <name>",
-                            f"UMO: {umo}",
-                            f"Auto name: {auto_name or '(empty)'}",
-                            f"Alias: {user_alias or '(empty)'}",
+                            event.t("command.name.usage"),
+                            event.t("command.name.umo", umo=umo),
+                            event.t(
+                                "command.name.auto_name",
+                                auto_name=auto_name or event.t("command.name.empty"),
+                            ),
+                            event.t(
+                                "command.name.alias",
+                                alias=user_alias or event.t("command.name.empty"),
+                            ),
                         ]
                     )
                 )
@@ -43,6 +49,6 @@ class NameCommand:
 
         event.set_result(
             MessageEventResult()
-            .message(f"UMO name set to: {alias}\nUMO: {umo}")
+            .message(event.t("command.name.updated", alias=alias, umo=umo))
             .use_t2i(False)
         )

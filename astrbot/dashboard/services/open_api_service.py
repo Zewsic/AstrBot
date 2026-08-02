@@ -389,6 +389,8 @@ class OpenApiService:
                         "selected_model": selected_model,
                         "flags": flags,
                         "message_id": message_id,
+                        # WebUI language, so bot replies match the panel language.
+                        "locale": post_data.get("locale"),
                     },
                 )
             )
