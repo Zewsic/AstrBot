@@ -15,7 +15,9 @@
     "tool": {
       "calling": "🔨 Вызов инструмента: {name}",
       "calling_unknown": "🔨 Вызов инструмента…",
-      "result": "📎 Результат: {result}"
+      "result": "📎 Результат: {result}",
+      "calls_summary": "Вызовы инструментов",
+      "running": "Инструмент выполняется…"
     },
     "status": {
       "thinking": "🤔 Думаю…"

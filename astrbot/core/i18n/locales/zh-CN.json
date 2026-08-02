@@ -15,7 +15,9 @@
     "tool": {
       "calling": "🔨 调用工具: {name}",
       "calling_unknown": "🔨 调用工具...",
-      "result": "📎 返回结果: {result}"
+      "result": "📎 返回结果: {result}",
+      "calls_summary": "工具调用",
+      "running": "工具执行中…"
     },
     "status": {
       "thinking": "🤔 正在思考中..."

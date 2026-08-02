@@ -15,7 +15,9 @@
     "tool": {
       "calling": "🔨 Calling tool: {name}",
       "calling_unknown": "🔨 Calling tool...",
-      "result": "📎 Result: {result}"
+      "result": "📎 Result: {result}",
+      "calls_summary": "Tool calls",
+      "running": "Running the tool…"
     },
     "status": {
       "thinking": "🤔 Thinking..."
