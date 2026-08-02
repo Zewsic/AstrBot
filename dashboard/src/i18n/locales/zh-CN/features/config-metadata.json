@@ -170,7 +170,12 @@
       "provider_settings": {
         "computer_use_runtime": {
           "description": "运行环境",
-          "hint": "允许 Agent 访问的环境。local 为本机环境，sandbox 为沙箱环境，none 为不允许任何环境。"
+          "hint": "允许 Agent 访问的环境。local 为本机环境，sandbox 为沙箱环境，none 为不允许任何环境。",
+          "labels": [
+            "无",
+            "本地",
+            "沙箱"
+          ]
         },
         "computer_use_require_admin": {
           "description": "需要 AstrBot 管理员权限",
@@ -178,7 +183,12 @@
         },
         "sandbox": {
           "booter": {
-            "description": "沙箱环境驱动器"
+            "description": "沙箱环境驱动器",
+            "labels": [
+              "Shipyard Neo",
+              "Shipyard",
+              "CUA"
+            ]
           },
           "shipyard_neo_endpoint": {
             "description": "Shipyard Neo API Endpoint",
@@ -202,7 +212,13 @@
           },
           "cua_os_type": {
             "description": "CUA 操作系统类型",
-            "hint": "CUA 沙箱操作系统类型，默认 linux。"
+            "hint": "CUA 沙箱操作系统类型，默认 linux。",
+            "labels": [
+              "Linux",
+              "macOS",
+              "Windows",
+              "Android"
+            ]
           },
           "cua_idle_timeout": {
             "description": "CUA 空闲超时(秒)",
@@ -635,7 +651,11 @@
       },
       "wecom_ai_bot_connection_mode": {
         "description": "企业微信智能机器人连接模式",
-        "hint": "Webhook 回调模式需要配置 Token/EncodingAESKey；长连接模式需要配置 BotID/Secret。"
+        "hint": "Webhook 回调模式需要配置 Token/EncodingAESKey；长连接模式需要配置 BotID/Secret。",
+        "labels": [
+          "Webhook 回调",
+          "长连接"
+        ]
       },
       "wecomaibot_friend_message_welcome_text": {
         "description": "企业微信智能机器人私聊欢迎语",
@@ -751,6 +771,9 @@
       "kook_max_consecutive_failures": {
         "description": "最大连续失败次数",
         "hint": "允许的最大连续失败次数，超过后停止重试"
+      },
+      "wecom_ai_bot": {
+        "hint": "如果发现字段有异常，请重新创建"
       }
     },
     "general": {
@@ -1796,6 +1819,18 @@
       "auto_save_history": {
         "description": "由 Coze 管理对话记录",
         "hint": "启用后，将由 Coze 进行对话历史记录管理, 此时 AstrBot 本地保存的上下文不会生效(仅供浏览), 对 AstrBot 的上下文进行的操作也不会生效。如果为禁用, 则使用 AstrBot 管理上下文。"
+      },
+      "elevenlabs_tts": {
+        "hint": "API Key 从 https://elevenlabs.io/app/settings/api-keys 获取。Voice ID 可在 https://elevenlabs.io/app/voice-library 浏览选择。"
+      },
+      "dashscope_tts": {
+        "hint": "API Key 从 https://bailian.console.aliyun.com/?tab=model#/api-key 获取。模型和音色的选择文档请参考: 阿里云百炼语音合成音色名称。具体可参考 https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition"
+      },
+      "nvidia_embedding": {
+        "hint": "NVIDIA NIM Embedding 服务。"
+      },
+      "ollama_embedding": {
+        "hint": "Ollama Embedding 服务，默认地址 http://localhost:11434/v1。"
       }
     }
   },

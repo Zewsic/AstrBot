@@ -170,7 +170,12 @@
       "provider_settings": {
         "computer_use_runtime": {
           "description": "Среда выполнения",
-          "hint": "Среда, доступная агенту: local — локальный компьютер, sandbox — изолированная песочница, none — доступ запрещён."
+          "hint": "Среда, доступная агенту: local — локальный компьютер, sandbox — изолированная песочница, none — доступ запрещён.",
+          "labels": [
+            "Нет",
+            "Локальная",
+            "Песочница"
+          ]
         },
         "computer_use_require_admin": {
           "description": "Требовать права администратора AstrBot",
@@ -178,7 +183,12 @@
         },
         "sandbox": {
           "booter": {
-            "description": "Драйвер песочницы"
+            "description": "Драйвер песочницы",
+            "labels": [
+              "Shipyard Neo",
+              "Shipyard",
+              "CUA"
+            ]
           },
           "shipyard_neo_endpoint": {
             "description": "Адрес API Shipyard Neo",
@@ -202,7 +212,13 @@
           },
           "cua_os_type": {
             "description": "Тип ОС CUA",
-            "hint": "Операционная система песочницы CUA. По умолчанию linux."
+            "hint": "Операционная система песочницы CUA. По умолчанию linux.",
+            "labels": [
+              "Linux",
+              "macOS",
+              "Windows",
+              "Android"
+            ]
           },
           "cua_idle_timeout": {
             "description": "Тайм-аут простоя CUA",
@@ -635,7 +651,11 @@
       },
       "wecom_ai_bot_connection_mode": {
         "description": "Режим подключения бота WeCom AI",
-        "hint": "Для режима webhook нужны Token и EncodingAESKey, для режима long_connection — BotID и Secret."
+        "hint": "Для режима webhook нужны Token и EncodingAESKey, для режима long_connection — BotID и Secret.",
+        "labels": [
+          "Обратный вызов по вебхуку",
+          "Постоянное соединение"
+        ]
       },
       "wecomaibot_friend_message_welcome_text": {
         "description": "Приветствие в личных сообщениях WeCom AI",
@@ -751,6 +771,9 @@
       "kook_max_consecutive_failures": {
         "description": "Максимум неудач подряд",
         "hint": "Допустимое число неудач подряд; при превышении попытки прекращаются."
+      },
+      "wecom_ai_bot": {
+        "hint": "Если поля выглядят некорректно, создайте адаптер заново."
       }
     },
     "general": {
@@ -1796,6 +1819,18 @@
       "auto_save_history": {
         "description": "Историю диалога ведёт Coze",
         "hint": "Историю диалога будет хранить Coze. Локальный контекст AstrBot при этом не применяется (доступен только для чтения), а действия с ним не дают эффекта. Если параметр отключён, контекстом управляет AstrBot."
+      },
+      "elevenlabs_tts": {
+        "hint": "Ключ API можно получить на https://elevenlabs.io/app/settings/api-keys. Список голосов и их идентификаторы — на https://elevenlabs.io/app/voice-library."
+      },
+      "dashscope_tts": {
+        "hint": "Ключ API можно получить на https://bailian.console.aliyun.com/?tab=model#/api-key. Список моделей и голосов приведён в документации Alibaba Cloud Model Studio: https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition"
+      },
+      "nvidia_embedding": {
+        "hint": "Сервис эмбеддингов NVIDIA NIM."
+      },
+      "ollama_embedding": {
+        "hint": "Сервис эмбеддингов Ollama. Адрес по умолчанию: http://localhost:11434/v1."
       }
     }
   },

@@ -170,7 +170,12 @@
       "provider_settings": {
         "computer_use_runtime": {
           "description": "Computer Use Runtime",
-          "hint": "Environment allowed for Agent usage. `local` means the local machine environment, `sandbox` means the sandbox environment, and `none` means no environment is allowed."
+          "hint": "Environment allowed for Agent usage. `local` means the local machine environment, `sandbox` means the sandbox environment, and `none` means no environment is allowed.",
+          "labels": [
+            "None",
+            "Local",
+            "Sandbox"
+          ]
         },
         "computer_use_require_admin": {
           "description": "Require AstrBot Admin Permission",
@@ -178,7 +183,12 @@
         },
         "sandbox": {
           "booter": {
-            "description": "Sandbox Environment Driver"
+            "description": "Sandbox Environment Driver",
+            "labels": [
+              "Shipyard Neo",
+              "Shipyard",
+              "CUA"
+            ]
           },
           "shipyard_neo_endpoint": {
             "description": "Shipyard Neo API Endpoint",
@@ -202,7 +212,13 @@
           },
           "cua_os_type": {
             "description": "CUA OS Type",
-            "hint": "CUA sandbox operating system type. Defaults to linux."
+            "hint": "CUA sandbox operating system type. Defaults to linux.",
+            "labels": [
+              "Linux",
+              "macOS",
+              "Windows",
+              "Android"
+            ]
           },
           "cua_idle_timeout": {
             "description": "CUA Idle Timeout",
@@ -635,7 +651,11 @@
       },
       "wecom_ai_bot_connection_mode": {
         "description": "WeCom AI Bot Connection Mode",
-        "hint": "Webhook mode requires Token/EncodingAESKey; long_connection mode requires BotID/Secret."
+        "hint": "Webhook mode requires Token/EncodingAESKey; long_connection mode requires BotID/Secret.",
+        "labels": [
+          "Webhook callback",
+          "Long connection"
+        ]
       },
       "wecomaibot_friend_message_welcome_text": {
         "description": "WeCom AI Bot DM Welcome Message",
@@ -751,6 +771,9 @@
       "kook_max_consecutive_failures": {
         "description": "Max Consecutive Failures",
         "hint": "Maximum allowed consecutive failures; retries will stop if exceeded."
+      },
+      "wecom_ai_bot": {
+        "hint": "If any field looks wrong, recreate the adapter."
       }
     },
     "general": {
@@ -1796,6 +1819,18 @@
       "auto_save_history": {
         "description": "Conversation history managed by Coze",
         "hint": "When enabled, Coze manages conversation history. AstrBot's locally saved context will not take effect (read-only), and operations on AstrBot context will not apply. If disabled, AstrBot manages the context."
+      },
+      "elevenlabs_tts": {
+        "hint": "Get an API key at https://elevenlabs.io/app/settings/api-keys. Browse voice IDs at https://elevenlabs.io/app/voice-library."
+      },
+      "dashscope_tts": {
+        "hint": "Get an API key at https://bailian.console.aliyun.com/?tab=model#/api-key. For models and voices, see the Alibaba Cloud Model Studio speech synthesis docs: https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition"
+      },
+      "nvidia_embedding": {
+        "hint": "NVIDIA NIM embedding service."
+      },
+      "ollama_embedding": {
+        "hint": "Ollama embedding service. Default address: http://localhost:11434/v1."
       }
     }
   },

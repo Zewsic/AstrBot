@@ -399,7 +399,7 @@ CONFIG_METADATA_2 = {
                     "企业微信智能机器人": {
                         "id": "wecom_ai_bot",
                         "type": "wecom_ai_bot",
-                        "hint": "如果发现字段有异常，请重新创建",
+                        "hint": "platform_group.platform.wecom_ai_bot.hint",
                         "enable": True,
                         "wecom_ai_bot_connection_mode": "long_connection",  # long_connection, webhook
                         "wecom_ai_bot_name": "",
@@ -1737,7 +1737,7 @@ CONFIG_METADATA_2 = {
                         "proxy": "",
                     },
                     "阿里云百炼 TTS(API)": {
-                        "hint": "API Key 从 https://bailian.console.aliyun.com/?tab=model#/api-key 获取。模型和音色的选择文档请参考: 阿里云百炼语音合成音色名称。具体可参考 https://help.aliyun.com/zh/model-studio/speech-synthesis-and-speech-recognition",
+                        "hint": "provider_group.provider.dashscope_tts.hint",
                         "id": "dashscope_tts",
                         "provider": "dashscope",
                         "type": "dashscope_tts",
@@ -1816,7 +1816,7 @@ CONFIG_METADATA_2 = {
                         "proxy": "",
                     },
                     "ElevenLabs TTS(API)": {
-                        "hint": "API Key 从 https://elevenlabs.io/app/settings/api-keys 获取。Voice ID 可在 https://elevenlabs.io/app/voice-library 浏览选择。",
+                        "hint": "provider_group.provider.elevenlabs_tts.hint",
                         "id": "elevenlabs_tts",
                         "type": "elevenlabs_tts_api",
                         "provider": "elevenlabs",
