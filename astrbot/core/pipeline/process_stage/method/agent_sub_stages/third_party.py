@@ -53,7 +53,6 @@ AGENT_RUNNER_TYPE_KEY = {
 }
 THIRD_PARTY_RUNNER_ERROR_EXTRA_KEY = "_third_party_runner_error"
 STREAM_CONSUMPTION_CLOSE_TIMEOUT_SEC = 30
-RUNNER_NO_RESULT_FALLBACK_MESSAGE = "Agent Runner did not return any result."
 RUNNER_NO_FINAL_RESPONSE_LOG = (
     "Agent Runner returned no final response, fallback to streamed error/result chain."
 )
@@ -95,7 +94,8 @@ async def run_third_party_agent(
 
 
 class _RunnerResultAggregator:
-    def __init__(self) -> None:
+    def __init__(self, locale: str | None = None) -> None:
+        self.locale = locale
         self.merged_chain: list = []
         self.has_error = False
 
@@ -115,7 +115,7 @@ class _RunnerResultAggregator:
 
             logger.warning(RUNNER_NO_RESULT_LOG)
             fallback_error_chain = MessageChain().message(
-                RUNNER_NO_RESULT_FALLBACK_MESSAGE,
+                translate("agent.error.runner_no_result", self.locale),
             )
             return fallback_error_chain.chain or [], True
 
@@ -216,7 +216,7 @@ class ThirdPartyAgentSubStage(Stage):
         close_runner_once: Callable[[], Awaitable[None]],
         mark_stream_consumed: Callable[[], None],
     ) -> AsyncGenerator[None, None]:
-        aggregator = _RunnerResultAggregator()
+        aggregator = _RunnerResultAggregator(resolve_locale(event))
 
         async def _stream_runner_chain() -> AsyncGenerator[MessageChain, None]:
             mark_stream_consumed()
@@ -263,7 +263,7 @@ class ThirdPartyAgentSubStage(Stage):
         stream_to_general: bool,
         custom_error_message: str | None,
     ) -> AsyncGenerator[None, None]:
-        aggregator = _RunnerResultAggregator()
+        aggregator = _RunnerResultAggregator(resolve_locale(event))
         async for chain, is_error in run_third_party_agent(
             runner,
             stream_to_general=stream_to_general,

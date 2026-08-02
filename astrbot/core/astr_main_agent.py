@@ -241,19 +241,23 @@ def _select_provider(
     if sel_provider and isinstance(sel_provider, str):
         provider = plugin_context.get_provider_by_id(sel_provider)
         if provider is None:
-            logger.error("未找到指定的提供商: %s。", sel_provider)
+            logger.error("Provider not found: %s.", sel_provider)
             _set_llm_error_message(
                 event,
-                f"LLM 请求失败：未找到指定的提供商 `{sel_provider}`。请检查提供商配置或重新选择可用模型。",
+                event.t("agent.error.provider_not_found", provider_id=sel_provider),
             )
             return None
         if not isinstance(provider, Provider):
             logger.error(
-                "选择的提供商类型无效(%s)，跳过 LLM 请求处理。", type(provider)
+                "Selected provider has an invalid type (%s), skipping the LLM request.",
+                type(provider),
             )
             _set_llm_error_message(
                 event,
-                f"LLM 请求失败：选择的提供商类型无效（{type(provider).__name__}），已跳过本次请求。",
+                event.t(
+                    "agent.error.provider_invalid_type",
+                    type_name=type(provider).__name__,
+                ),
             )
             return None
         return provider
@@ -261,7 +265,9 @@ def _select_provider(
         return plugin_context.get_using_provider(umo=event.unified_msg_origin)
     except ValueError as exc:
         logger.error("Error occurred while selecting provider: %s", exc)
-        _set_llm_error_message(event, f"LLM 请求失败：{exc}")
+        _set_llm_error_message(
+            event, event.t("agent.error.provider_selection_failed", error=exc)
+        )
         return None
 
 
@@ -1401,12 +1407,9 @@ async def build_main_agent(
     """
     provider = provider or _select_provider(event, plugin_context)
     if provider is None:
-        logger.info("未找到任何对话模型（提供商），跳过 LLM 请求处理。")
+        logger.info("No chat model (provider) found, skipping the LLM request.")
         if not event.get_extra(LLM_ERROR_MESSAGE_EXTRA_KEY):
-            _set_llm_error_message(
-                event,
-                "LLM 请求失败：未找到任何可用的对话模型（提供商）。请先在 WebUI 中配置并启用可用模型。",
-            )
+            _set_llm_error_message(event, event.t("agent.error.no_provider"))
         return None
 
     if req is None:

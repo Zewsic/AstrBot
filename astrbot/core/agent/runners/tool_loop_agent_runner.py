@@ -572,15 +572,16 @@ class ToolLoopAgentRunner(BaseAgentRunner[TContext]):
         if last_exception:
             yield LLMResponse(
                 role="err",
-                completion_text=(
-                    "All chat models failed: "
-                    f"{type(last_exception).__name__}: {last_exception}"
+                completion_text=self._t(
+                    "agent.error.all_models_failed",
+                    error_type=type(last_exception).__name__,
+                    error=last_exception,
                 ),
             )
             return
         yield LLMResponse(
             role="err",
-            completion_text="All available chat models are unavailable.",
+            completion_text=self._t("agent.error.no_models_available"),
         )
 
     def _sanitize_contexts_for_provider(

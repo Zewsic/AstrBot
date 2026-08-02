@@ -10,7 +10,16 @@
       "dashscope_request_failed": "Alibaba Cloud Bailian request failed: {error}",
       "dify_request_failed": "Dify request failed: {error}",
       "execution": "Error occurred during AI execution.",
-      "execution_details": "Error occurred during AI execution.\nError Type: {error_type}\nError Message: {error}"
+      "execution_details": "Error occurred during AI execution.\nError Type: {error_type}\nError Message: {error}",
+      "provider_not_found": "LLM request failed: provider `{provider_id}` was not found. Check the provider configuration or pick another model.",
+      "provider_invalid_type": "LLM request failed: the selected provider has an invalid type ({type_name}), so the request was skipped.",
+      "provider_selection_failed": "LLM request failed: {error}",
+      "no_provider": "LLM request failed: no chat model (provider) is available. Configure and enable one in the WebUI first.",
+      "all_models_failed": "All chat models failed: {error_type}: {error}",
+      "no_models_available": "All available chat models are unavailable.",
+      "deerflow_request_failed": "DeerFlow request failed: {error}",
+      "dashscope_request_detail": "Alibaba Cloud Bailian request failed: message={message} code={code}",
+      "runner_no_result": "Agent Runner did not return any result."
     },
     "tool": {
       "calling": "🔨 Calling tool: {name}",

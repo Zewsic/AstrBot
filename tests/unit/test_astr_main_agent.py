@@ -257,7 +257,9 @@ class TestSelectProvider:
         assert result is None
         mock_event.set_extra.assert_called_with(
             module.LLM_ERROR_MESSAGE_EXTRA_KEY,
-            "LLM 请求失败：未找到指定的提供商 `non-existent`。请检查提供商配置或重新选择可用模型。",
+            translate(
+                "agent.error.provider_not_found", "en-US", provider_id="non-existent"
+            ),
         )
 
     def test_select_provider_invalid_type(self, mock_event, mock_context):
@@ -273,7 +275,7 @@ class TestSelectProvider:
         assert result is None
         mock_event.set_extra.assert_called_with(
             module.LLM_ERROR_MESSAGE_EXTRA_KEY,
-            "LLM 请求失败：选择的提供商类型无效（str），已跳过本次请求。",
+            translate("agent.error.provider_invalid_type", "en-US", type_name="str"),
         )
 
     def test_select_provider_fallback(self, mock_event, mock_context, mock_provider):
@@ -300,7 +302,9 @@ class TestSelectProvider:
         assert result is None
         mock_event.set_extra.assert_called_with(
             module.LLM_ERROR_MESSAGE_EXTRA_KEY,
-            "LLM 请求失败：Test error",
+            translate(
+                "agent.error.provider_selection_failed", "en-US", error="Test error"
+            ),
         )
 
 

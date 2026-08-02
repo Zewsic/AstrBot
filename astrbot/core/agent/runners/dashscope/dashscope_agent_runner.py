@@ -166,11 +166,18 @@ class DashscopeAgentRunner(BaseAgentRunner[TContext]):
 
         if chunk.status_code != 200:
             logger.error(
-                f"阿里云百炼请求失败: request_id={chunk.request_id}, code={chunk.status_code}, message={chunk.message}, 请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code",
+                "Alibaba Cloud Bailian request failed: request_id=%s, code=%s, "
+                "message=%s. See "
+                "https://help.aliyun.com/zh/model-studio/developer-reference/error-code",
+                chunk.request_id,
+                chunk.status_code,
+                chunk.message,
             )
             self._transition_state(AgentState.ERROR)
-            error_msg = (
-                f"阿里云百炼请求失败: message={chunk.message} code={chunk.status_code}"
+            error_msg = self._t(
+                "agent.error.dashscope_request_detail",
+                message=chunk.message,
+                code=chunk.status_code,
             )
             self.final_llm_resp = LLMResponse(
                 role="err",

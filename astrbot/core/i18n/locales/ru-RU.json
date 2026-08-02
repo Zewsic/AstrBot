@@ -10,7 +10,16 @@
       "dashscope_request_failed": "Запрос к Alibaba Cloud Bailian не выполнен: {error}",
       "dify_request_failed": "Запрос к Dify не выполнен: {error}",
       "execution": "Во время работы ИИ произошла ошибка.",
-      "execution_details": "Во время работы ИИ произошла ошибка.\nТип ошибки: {error_type}\nСообщение об ошибке: {error}"
+      "execution_details": "Во время работы ИИ произошла ошибка.\nТип ошибки: {error_type}\nСообщение об ошибке: {error}",
+      "provider_not_found": "Запрос к модели не выполнен: поставщик «{provider_id}» не найден. Проверьте настройки поставщика или выберите другую модель.",
+      "provider_invalid_type": "Запрос к модели не выполнен: у выбранного поставщика недопустимый тип ({type_name}), запрос пропущен.",
+      "provider_selection_failed": "Запрос к модели не выполнен: {error}",
+      "no_provider": "Запрос к модели не выполнен: нет ни одной доступной модели. Сначала настройте и включите её в панели управления.",
+      "all_models_failed": "Ни одна из моделей не ответила: {error_type}: {error}",
+      "no_models_available": "Ни одна из доступных моделей сейчас не работает.",
+      "deerflow_request_failed": "Запрос к DeerFlow не выполнен: {error}",
+      "dashscope_request_detail": "Запрос к Alibaba Cloud Bailian не выполнен: message={message} code={code}",
+      "runner_no_result": "Agent Runner не вернул результат."
     },
     "tool": {
       "calling": "🔨 Вызов инструмента: {name}",

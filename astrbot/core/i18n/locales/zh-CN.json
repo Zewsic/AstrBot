@@ -10,7 +10,16 @@
       "dashscope_request_failed": "阿里云百炼请求失败：{error}",
       "dify_request_failed": "Dify 请求失败：{error}",
       "execution": "AI 运行时发生错误。",
-      "execution_details": "AI 运行时发生错误。\n错误类型: {error_type}\n错误信息: {error}"
+      "execution_details": "AI 运行时发生错误。\n错误类型: {error_type}\n错误信息: {error}",
+      "provider_not_found": "LLM 请求失败：未找到指定的提供商 `{provider_id}`。请检查提供商配置或重新选择可用模型。",
+      "provider_invalid_type": "LLM 请求失败：选择的提供商类型无效（{type_name}），已跳过本次请求。",
+      "provider_selection_failed": "LLM 请求失败：{error}",
+      "no_provider": "LLM 请求失败：未找到任何可用的对话模型（提供商）。请先在 WebUI 中配置并启用可用模型。",
+      "all_models_failed": "所有对话模型均请求失败：{error_type}: {error}",
+      "no_models_available": "没有任何可用的对话模型。",
+      "deerflow_request_failed": "DeerFlow 请求失败：{error}",
+      "dashscope_request_detail": "阿里云百炼请求失败: message={message} code={code}",
+      "runner_no_result": "Agent Runner 未返回任何结果。"
     },
     "tool": {
       "calling": "🔨 调用工具: {name}",
