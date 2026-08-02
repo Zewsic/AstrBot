@@ -722,42 +722,34 @@
       },
       "kook_bot_token": {
         "description": "机器人 Token",
-        "type": "string",
         "hint": "必填项。从 KOOK 开发者平台获取的机器人 Token"
       },
       "kook_reconnect_delay": {
         "description": "重连延迟",
-        "type": "int",
         "hint": "重连延迟时间（秒），使用指数退避策略"
       },
       "kook_max_reconnect_delay": {
         "description": "最大重连延迟",
-        "type": "int",
         "hint": "重连延迟的最大值（秒）"
       },
       "kook_max_retry_delay": {
         "description": "最大重试延迟",
-        "type": "int",
         "hint": "重试的最大延迟时间（秒）"
       },
       "kook_heartbeat_interval": {
         "description": "心跳间隔",
-        "type": "int",
         "hint": "心跳检测间隔时间（秒）"
       },
       "kook_heartbeat_timeout": {
         "description": "心跳超时时间",
-        "type": "int",
         "hint": "心跳检测超时时间（秒）"
       },
       "kook_max_heartbeat_failures": {
         "description": "最大心跳失败次数",
-        "type": "int",
         "hint": "允许的最大心跳失败次数，超过后断开连接"
       },
       "kook_max_consecutive_failures": {
         "description": "最大连续失败次数",
-        "type": "int",
         "hint": "允许的最大连续失败次数，超过后停止重试"
       }
     },
@@ -1811,9 +1803,32 @@
   },
   "telegram_group": {
     "name": "Telegram",
-    "metadata": {
-      "telegram": {
-        "description": "Telegram 配置"
+    "telegram": {
+      "description": "Telegram 配置",
+      "platform_specific": {
+        "telegram": {
+          "pre_ack_emoji": {
+            "enable": {
+              "description": "启用预回应表情"
+            },
+            "emojis": {
+              "description": "表情列表（Unicode）",
+              "hint": "Telegram 仅支持固定的反应集合，参考：https://gist.github.com/Soulter/3f22c8e5f9c7e152e967e8bc28c97fc9"
+            }
+          },
+          "use_rich_messages": {
+            "description": "使用 Rich Messages",
+            "hint": "启用后，回复将通过 Telegram 的 Rich Markdown 与 Rich Message Draft API 发送。默认启用。"
+          },
+          "enable_guest_messages": {
+            "description": "启用 Guest Messages",
+            "hint": "处理 Telegram 访客模式（Guest Mode）中的提及，并通过一条可编辑的 Rich Message 回复。默认启用。"
+          },
+          "show_tool_calling_execution": {
+            "description": "显示工具调用执行情况",
+            "hint": "在会话中聚合并展示 AI 调用工具的执行过程。默认启用。"
+          }
+        }
       }
     }
   }

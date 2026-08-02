@@ -1,65 +1,65 @@
-﻿{
-    "title": "Логи платформы",
-    "subtitle": "Мониторинг и статистика в реальном времени",
-    "lastUpdate": "Последнее обновление",
-    "status": {
-        "loading": "Загрузка...",
-        "dataError": "Ошибка получения данных",
-        "noticeError": "Ошибка получения объявлений",
-        "online": "В сети",
-        "uptime": "Время работы",
-        "memoryUsage": "Память"
+{
+  "title": "Панель управления",
+  "subtitle": "Мониторинг и статистика в реальном времени",
+  "lastUpdate": "Обновлено",
+  "status": {
+    "loading": "Загрузка…",
+    "dataError": "Не удалось получить данные",
+    "noticeError": "Не удалось получить объявление",
+    "online": "В сети",
+    "uptime": "Время работы",
+    "memoryUsage": "Использование памяти"
+  },
+  "stats": {
+    "totalMessage": {
+      "title": "Всего сообщений",
+      "subtitle": "Сообщения со всех подключённых платформ"
     },
-    "stats": {
-        "totalMessage": {
-            "title": "Всего сообщений",
-            "subtitle": "Все сообщения со всех платформ"
-        },
-        "onlinePlatform": {
-            "title": "Платформы",
-            "subtitle": "Количество подключенных платформ"
-        },
-        "runningTime": {
-            "title": "Время работы",
-            "subtitle": "Общее время работы системы",
-            "format": "{hours} ч. {minutes} мин. {seconds} сек."
-        },
-        "memoryUsage": {
-            "title": "Память",
-            "subtitle": "Использование оперативной памяти",
-            "cpuLoad": "Загрузка CPU",
-            "status": {
-                "good": "Отлично",
-                "normal": "Нормально",
-                "high": "Высокая"
-            }
-        }
+    "onlinePlatform": {
+      "title": "Платформы",
+      "subtitle": "Количество подключённых платформ"
     },
-    "charts": {
-        "messageTrend": {
-            "title": "Тренды сообщений",
-            "subtitle": "Изменение количества сообщений во времени",
-            "totalMessages": "Всего сообщений",
-            "dailyAverage": "В среднем за день",
-            "growthRate": "Скорость роста",
-            "timeLabel": "Время",
-            "messageCount": "Кол-во сообщений",
-            "timeRanges": {
-                "1day": "За 1 день",
-                "3days": "За 3 дня",
-                "1week": "За 7 дней",
-                "1month": "За 30 дней"
-            }
-        },
-        "platformStat": {
-            "title": "Статистика по платформам",
-            "subtitle": "Распределение сообщений по платформам",
-            "total": "Всего",
-            "noData": "Нет данных по платформам",
-            "messageUnit": "шт.",
-            "platformCount": "Кол-во платформ",
-            "mostActive": "Самый активный",
-            "totalPercentage": "Доля от общего числа"
-        }
+    "runningTime": {
+      "title": "Время работы",
+      "subtitle": "Продолжительность непрерывной работы",
+      "format": "{hours} ч {minutes} мин {seconds} с"
+    },
+    "memoryUsage": {
+      "title": "Использование памяти",
+      "subtitle": "Текущая загрузка оперативной памяти",
+      "cpuLoad": "Загрузка ЦП",
+      "status": {
+        "good": "В норме",
+        "normal": "Умеренная",
+        "high": "Высокая"
+      }
     }
+  },
+  "charts": {
+    "messageTrend": {
+      "title": "Динамика сообщений",
+      "subtitle": "Изменение количества сообщений во времени",
+      "totalMessages": "Всего сообщений",
+      "dailyAverage": "В среднем за день",
+      "growthRate": "Прирост",
+      "timeLabel": "Время",
+      "messageCount": "Количество сообщений",
+      "timeRanges": {
+        "1day": "За сутки",
+        "3days": "За 3 дня",
+        "1week": "За неделю",
+        "1month": "За месяц"
+      }
+    },
+    "platformStat": {
+      "title": "Сообщения по платформам",
+      "subtitle": "Распределение сообщений между платформами",
+      "total": "Всего",
+      "noData": "Данных по платформам нет",
+      "messageUnit": "сообщ.",
+      "platformCount": "Платформ",
+      "mostActive": "Самая активная",
+      "totalPercentage": "Доля от общего числа"
+    }
+  }
 }

@@ -59,6 +59,7 @@
     "cancelSelection": "Cancel",
     "confirmSelection": "Confirm Selection",
     "selectPersonaPool": "Select Persona Pool...",
+    "editPersona": "Edit",
     "rootFolder": "All Personas",
     "emptyFolder": "This folder is empty"
   },
