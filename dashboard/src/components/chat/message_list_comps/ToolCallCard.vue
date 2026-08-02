@@ -17,21 +17,21 @@
 
     <div v-if="isExpanded" class="tool-call-details">
       <div v-if="toolCall.id" class="tool-call-detail-row">
-        <span class="detail-label">ID:</span>
+        <span class="detail-label">{{ tm('toolCall.id') }}</span>
         <code class="detail-value">
           {{ toolCall.id }}
         </code>
       </div>
 
       <div class="tool-call-detail-row">
-        <span class="detail-label">Args:</span>
+        <span class="detail-label">{{ tm('toolCall.args') }}</span>
         <pre class="detail-value detail-json">{{
           JSON.stringify(toolCall.args, null, 2)
         }}</pre>
       </div>
 
       <div v-if="toolCall.result" class="tool-call-detail-row">
-        <span class="detail-label">Result:</span>
+        <span class="detail-label">{{ tm('toolCall.result') }}</span>
         <pre class="detail-value detail-json detail-result">{{
           formattedResult
         }}</pre>

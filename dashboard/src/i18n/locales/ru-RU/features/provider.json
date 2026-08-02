@@ -181,5 +181,10 @@
   "manualModelDialog": {
     "cancel": "Отмена",
     "add": "Добавить"
+  },
+  "modelMenu": {
+    "loading": "Загрузка моделей…",
+    "noAvailable": "Доступных моделей нет",
+    "search": "Поиск моделей"
   }
 }

@@ -445,7 +445,11 @@
     "readonly": "只读",
     "unsaved": "未保存",
     "noFileSelected": "未选择文件",
-    "discardChanges": "当前文件有未保存修改，确定要丢弃吗？"
+    "discardChanges": "当前文件有未保存修改，确定要丢弃吗？",
+    "neoTitle": "Neo Skills",
+    "stageCanary": "Canary",
+    "stageStable": "Stable",
+    "payload": "Payload"
   },
   "card": {
     "actions": {

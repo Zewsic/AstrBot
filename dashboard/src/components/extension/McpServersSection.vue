@@ -68,7 +68,7 @@
                         color="primary"
                         @click="isActive.value = false"
                       >
-                        Close
+                        {{ tm('dialogs.serverDetail.buttons.close') }}
                       </v-btn>
                     </v-card-actions>
                   </v-card>

@@ -181,5 +181,10 @@
   "manualModelDialog": {
     "cancel": "Cancel",
     "add": "Add"
+  },
+  "modelMenu": {
+    "loading": "Loading models...",
+    "noAvailable": "No available models",
+    "search": "Search models"
   }
 }

@@ -445,7 +445,11 @@
     "readonly": "Только чтение",
     "unsaved": "Не сохранено",
     "noFileSelected": "Файл не выбран",
-    "discardChanges": "В файле есть несохранённые изменения. Отменить их?"
+    "discardChanges": "В файле есть несохранённые изменения. Отменить их?",
+    "neoTitle": "Навыки Neo",
+    "stageCanary": "Canary",
+    "stageStable": "Стабильная",
+    "payload": "Полезная нагрузка"
   },
   "card": {
     "actions": {

@@ -231,5 +231,15 @@
     "notSignedIn": "You are not signed in. Sign in first.",
     "connectionTimeout": "WebSocket connection timed out",
     "processingError": "Processing error: {error}"
+  },
+  "toolCall": {
+    "id": "ID:",
+    "args": "Arguments:",
+    "result": "Result:"
+  },
+  "htmlPreview": {
+    "preview": "Preview",
+    "source": "Source",
+    "previewTitle": "Generated HTML UI preview"
   }
 }

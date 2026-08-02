@@ -125,7 +125,8 @@
     "charCount": "{count} characters",
     "searchSuccess": "Search completed, found {count} results",
     "searchFailed": "Search failed",
-    "queryRequired": "Please enter a query"
+    "queryRequired": "Please enter a query",
+    "debugTsne": "Debug (t-SNE)"
   },
   "settings": {
     "title": "Knowledge Base Settings",

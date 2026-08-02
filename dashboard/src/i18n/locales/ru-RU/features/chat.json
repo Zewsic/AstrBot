@@ -231,5 +231,15 @@
     "notSignedIn": "Вы не авторизованы. Сначала войдите.",
     "connectionTimeout": "Истекло время ожидания подключения WebSocket",
     "processingError": "Ошибка обработки: {error}"
+  },
+  "toolCall": {
+    "id": "Идентификатор:",
+    "args": "Аргументы:",
+    "result": "Результат:"
+  },
+  "htmlPreview": {
+    "preview": "Просмотр",
+    "source": "Исходный код",
+    "previewTitle": "Предпросмотр сгенерированного HTML-интерфейса"
   }
 }

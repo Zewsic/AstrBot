@@ -1,19 +1,20 @@
 <script setup>
 import { logApi } from '@/api/v1';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { useModuleI18n } from '@/i18n/composables';
 </script>
 
 <template>
   <div class="trace-wrapper">
     <div class="trace-table" ref="scrollEl" :style="{ height: tableHeight }">
       <div class="trace-row trace-header">
-        <div class="trace-cell time">Time</div>
-        <div class="trace-cell span">Event ID</div>
-        <div class="trace-cell umo">UMO</div>
+        <div class="trace-cell time">{{ tm('table.time') }}</div>
+        <div class="trace-cell span">{{ tm('table.eventId') }}</div>
+        <div class="trace-cell umo">{{ tm('table.umo') }}</div>
         <!-- <div class="trace-cell count">Records</div> -->
         <!-- <div class="trace-cell last">Last</div> -->
-        <div class="trace-cell sender">Sender</div>
-        <div class="trace-cell outline">Outline</div>
+        <div class="trace-cell sender">{{ tm('table.sender') }}</div>
+        <div class="trace-cell outline">{{ tm('table.outline') }}</div>
         <div class="trace-cell fields"></div>
       </div>
       <div class="trace-group" :class="{ highlight: highlightMap[event.span_id] }" v-for="event in events"
@@ -54,18 +55,22 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
           </div>
           <div class="event-more" v-if="event.visibleCount < event.records.length">
             <v-btn size="x-small" variant="tonal" color="primary" @click="showMore(event.span_id)">
-              Show more
+              {{ tm('table.showMore') }}
             </v-btn>
           </div>
         </div>
       </div>
-      <div v-if="events.length === 0" class="trace-empty">No trace data yet.</div>
+      <div v-if="events.length === 0" class="trace-empty">{{ tm('table.empty') }}</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  setup() {
+    const { tm } = useModuleI18n('features/trace');
+    return { tm };
+  },
   name: 'TraceDisplayer',
   props: {
     autoScroll: {

@@ -40,7 +40,7 @@
                 <template v-slot:label>
                   <span class="text-caption">
                     <v-icon size="small" class="mr-1">mdi-bug</v-icon>
-                    Debug (t-SNE)
+                    {{ t('retrieval.debugTsne') }}
                   </span>
                 </template>
               </v-switch>

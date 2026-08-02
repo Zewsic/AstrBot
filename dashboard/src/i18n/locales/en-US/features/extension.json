@@ -445,7 +445,11 @@
     "readonly": "Read-only",
     "unsaved": "Unsaved",
     "noFileSelected": "No file selected",
-    "discardChanges": "This file has unsaved changes. Discard them?"
+    "discardChanges": "This file has unsaved changes. Discard them?",
+    "neoTitle": "Neo Skills",
+    "stageCanary": "Canary",
+    "stageStable": "Stable",
+    "payload": "Payload"
   },
   "card": {
     "actions": {

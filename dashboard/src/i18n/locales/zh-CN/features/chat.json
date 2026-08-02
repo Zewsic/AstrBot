@@ -231,5 +231,15 @@
     "notSignedIn": "未登录，请先登录",
     "connectionTimeout": "WebSocket 连接超时",
     "processingError": "处理出错: {error}"
+  },
+  "toolCall": {
+    "id": "ID:",
+    "args": "参数:",
+    "result": "结果:"
+  },
+  "htmlPreview": {
+    "preview": "预览",
+    "source": "源码",
+    "previewTitle": "生成的 HTML 界面预览"
   }
 }

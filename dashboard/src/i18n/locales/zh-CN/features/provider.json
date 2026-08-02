@@ -181,5 +181,10 @@
   "manualModelDialog": {
     "cancel": "取消",
     "add": "添加"
+  },
+  "modelMenu": {
+    "loading": "正在加载模型...",
+    "noAvailable": "暂无可用模型",
+    "search": "搜索模型"
   }
 }

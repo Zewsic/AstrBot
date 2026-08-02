@@ -125,7 +125,8 @@
     "charCount": "символов: {count}",
     "searchSuccess": "Поиск завершён, найдено результатов: {count}",
     "searchFailed": "Не удалось выполнить поиск",
-    "queryRequired": "Введите запрос"
+    "queryRequired": "Введите запрос",
+    "debugTsne": "Отладка (t-SNE)"
   },
   "settings": {
     "title": "Настройки базы знаний",

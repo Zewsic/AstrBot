@@ -30,7 +30,7 @@
       <div class="provider-menu-body">
         <v-text-field
           v-model="searchQuery"
-          placeholder="Search models"
+          :placeholder="tm('modelMenu.search')"
           hide-details
           variant="outlined"
           density="compact"
@@ -126,10 +126,10 @@
         </v-list>
 
         <div v-if="loadingProviders" class="empty-hint">
-          Loading models...
+          {{ tm('modelMenu.loading') }}
         </div>
         <div v-else-if="filteredProviders.length === 0" class="empty-hint">
-          No available models
+          {{ tm('modelMenu.noAvailable') }}
         </div>
       </div>
     </v-card>

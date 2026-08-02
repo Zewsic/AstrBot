@@ -125,7 +125,8 @@
     "charCount": "{count} 字符",
     "searchSuccess": "检索完成,找到 {count} 条结果",
     "searchFailed": "检索失败",
-    "queryRequired": "请输入检索查询"
+    "queryRequired": "请输入检索查询",
+    "debugTsne": "调试 (t-SNE)"
   },
   "settings": {
     "title": "知识库设置",
