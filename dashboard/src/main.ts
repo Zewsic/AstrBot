@@ -102,7 +102,7 @@ function setupThemeSync(pinia: ReturnType<typeof createPinia>) {
 
 // 初始化新的i18n系统，等待完成后再挂载应用
 setupI18n().then(async () => {
-  console.log('🌍 新i18n系统初始化完成');
+  console.log('i18n initialised');
 
   const app = createApp(App);
   const pinia = createPinia();
@@ -117,7 +117,7 @@ setupI18n().then(async () => {
 
   setupThemeSync(pinia);
 }).catch(error => {
-  console.error('❌ 新i18n系统初始化失败:', error);
+  console.error('Failed to initialise i18n:', error);
 
   // 即使i18n初始化失败，也要挂载应用（使用回退机制）
   const app = createApp(App);

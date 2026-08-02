@@ -145,11 +145,11 @@ async function loadKnowledgeBases() {
     if (response.data.status === 'ok') {
       knowledgeBaseList.value = response.data.data.items || []
     } else {
-      console.error('加载知识库列表失败:', response.data.message)
+      console.error('Failed to load the knowledge base list:', response.data.message)
       knowledgeBaseList.value = []
     }
   } catch (error) {
-    console.error('加载知识库列表失败:', error)
+    console.error('Failed to load the knowledge base list:', error)
     knowledgeBaseList.value = []
   } finally {
     loading.value = false

@@ -108,11 +108,11 @@ const labels = computed(() => ({
   defaultItem: tm('personaSelector.defaultPersona'),
   noDescription: tm('personaSelector.noDescription'),
   createButton: tm('personaSelector.createPersona'),
-  editButton: tm('personaSelector.editPersona') || 'Edit',
+  editButton: tm('personaSelector.editPersona'),
   confirmButton: t('core.common.confirm'),
   cancelButton: t('core.common.cancel'),
-  rootFolder: tm('personaSelector.rootFolder') || '全部人格',
-  emptyFolder: tm('personaSelector.emptyFolder') || '此文件夹为空'
+  rootFolder: tm('personaSelector.rootFolder'),
+  emptyFolder: tm('personaSelector.emptyFolder')
 }))
 
 // 格式化显示值
@@ -137,7 +137,7 @@ async function loadFolderTree() {
       folderTree.value = response.data.data || []
     }
   } catch (error) {
-    console.error('加载文件夹树失败:', error)
+    console.error('Failed to load the folder tree:', error)
     folderTree.value = []
   } finally {
     treeLoading.value = false
@@ -153,7 +153,7 @@ async function loadPersonasInFolder(folderId: string | null) {
       currentPersonas.value = response.data.data || []
     }
   } catch (error) {
-    console.error('加载人格列表失败:', error)
+    console.error('Failed to load the persona list:', error)
     currentPersonas.value = []
   } finally {
     itemsLoading.value = false
@@ -180,7 +180,7 @@ function openEditPersona(persona: Persona) {
 
 // 人格保存成功（创建或编辑）
 async function handlePersonaSaved(message: string) {
-  console.log('人格保存成功:', message)
+  console.log('Persona saved:', message)
   const savedPersonaId = editingPersona.value?.persona_id || ''
   showPersonaDialog.value = false
   editingPersona.value = null
@@ -195,7 +195,7 @@ async function handlePersonaSaved(message: string) {
 
 // 错误处理
 function handleError(error: string) {
-  console.error('创建人格失败:', error)
+  console.error('Failed to create the persona:', error)
 }
 
 // 初始化加载文件夹树

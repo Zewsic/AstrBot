@@ -454,7 +454,7 @@ const saveTemplate = async () => {
     }
   } catch (error) {
     const msg = error?.response?.data?.message || error?.message || String(error)
-    console.error('保存模板失败:', msg)
+    console.error('Failed to save the template:', msg)
     toast.error(msg)
   } finally {
     saveLoading.value = false
@@ -468,7 +468,7 @@ const setActiveTemplate = async (name) => {
     activeTemplate.value = name
   } catch (error) {
     const msg = error?.response?.data?.message || error?.message || String(error)
-    console.error(`应用模板 '${name}' 失败:`, msg)
+    console.error(`Failed to apply template '${name}':`, msg)
     toast.error(msg)
   } finally {
     applyLoading.value = false
@@ -491,7 +491,7 @@ const confirmDelete = async () => {
     selectedTemplate.value = 'base'
   } catch (error) {
     const msg = error?.response?.data?.message || error?.message || String(error)
-    console.error(`删除模板失败:`, msg)
+    console.error('Failed to delete the template:', msg)
     toast.error(msg)
   } finally {
     saveLoading.value = false
@@ -511,7 +511,7 @@ const confirmReset = async () => {
     }
   } catch (error) {
     const msg = error?.response?.data?.message || error?.message || String(error)
-    console.error('重置模板失败:', msg)
+    console.error('Failed to reset the template:', msg)
     toast.error(msg)
   } finally {
     resetLoading.value = false

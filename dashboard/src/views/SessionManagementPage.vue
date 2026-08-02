@@ -1685,7 +1685,7 @@ export default {
           this.groups = response.data.data.groups || []
         }
       } catch (error) {
-        console.error('加载分组失败:', error)
+        console.error('Failed to load groups:', error)
       }
       this.groupsLoading = false
     },
@@ -1700,7 +1700,7 @@ export default {
           this.availableUmos = response.data.data.umos || []
         }
       } catch (error) {
-        console.error('加载会话列表失败:', error)
+        console.error('Failed to load the session list:', error)
       }
       this.loadingUmos = false
     },

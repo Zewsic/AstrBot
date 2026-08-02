@@ -183,7 +183,7 @@ async function loadPlugins() {
         })
     }
   } catch (error) {
-    console.error('加载插件列表失败:', error)
+    console.error('Failed to load the plugin list:', error)
     pluginList.value = []
   } finally {
     loading.value = false

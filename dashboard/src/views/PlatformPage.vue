@@ -355,7 +355,7 @@ export default {
           this.platformStats = stats;
         }
       }).catch((err) => {
-        console.warn('获取平台统计信息失败:', err);
+        console.warn('Failed to load platform statistics:', err);
       });
     },
 

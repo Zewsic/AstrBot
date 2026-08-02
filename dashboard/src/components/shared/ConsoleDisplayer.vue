@@ -117,7 +117,7 @@ export default {
         this.eventSource = null;
       }
 
-      console.log(`正在连接日志流... (尝试次数: ${this.retryAttempts})`);
+      console.log(`Connecting to the log stream... (attempt ${this.retryAttempts})`);
       
       const token = localStorage.getItem('token');
 
@@ -130,7 +130,7 @@ export default {
       });
 
       this.eventSource.onopen = () => {
-        console.log('日志流连接成功！');
+        console.log('Log stream connected');
         this.retryAttempts = 0;
 
         if (!this.lastEventId) {
@@ -147,17 +147,17 @@ export default {
           const payload = JSON.parse(event.data);
           this.processNewLogs([payload]);
         } catch (e) {
-          console.error('解析日志失败:', e);
+          console.error('Failed to parse a log entry:', e);
         }
       };
 
       this.eventSource.onerror = (err) => {
 
         if (err.status === 401) {
-            console.error('鉴权失败 (401)，可能是 Token 过期了。');
+            console.error('Authentication failed (401); the token may have expired.');
 
         } else {
-            console.warn('日志流连接错误:', err);
+            console.warn('Log stream connection error:', err);
         }
         
         if (this.eventSource) {
@@ -166,7 +166,7 @@ export default {
         }
 
         if (this.retryAttempts >= this.maxRetryAttempts) {
-            console.error('❌ 已达到最大重试次数，停止重连。请刷新页面重试。');
+            console.error('Maximum retries reached, reconnection stopped. Refresh the page to try again.');
             return; 
         }
 
@@ -175,7 +175,7 @@ export default {
             30000
         );
         
-        console.log(`⏳ ${delay}ms 后尝试第 ${this.retryAttempts + 1} 次重连...`);
+        console.log(`Reconnect attempt ${this.retryAttempts + 1} in ${delay}ms...`);
 
         if (this.retryTimer) {
           clearTimeout(this.retryTimer);
