@@ -86,7 +86,8 @@
       "testError": "Test failed for {id}: {error}",
       "providerDisabled": "This provider is not enabled",
       "update": "Failed to update",
-      "add": "Failed to add"
+      "add": "Failed to add",
+      "templateNotFound": "No matching template configuration found"
     },
     "confirm": {
       "delete": "Are you sure you want to delete service provider {id}?"

@@ -86,7 +86,8 @@
       "testError": "测试 {id} 失败: {error}",
       "providerDisabled": "该提供商未被用户启用",
       "update": "更新失败!",
-      "add": "添加失败!"
+      "add": "添加失败!",
+      "templateNotFound": "未找到对应的模板配置"
     },
     "confirm": {
       "delete": "确定要删除模型提供商 {id} 吗?"

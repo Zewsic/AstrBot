@@ -147,7 +147,15 @@
       "renameSuccess": "Папка переименована",
       "renameError": "Не удалось переименовать папку",
       "deleteSuccess": "Папка удалена",
-      "deleteError": "Не удалось удалить папку"
+      "deleteError": "Не удалось удалить папку",
+      "loadTreeFailed": "Не удалось загрузить дерево папок",
+      "movePersonaFailed": "Не удалось переместить персону",
+      "moveFolderFailed": "Не удалось переместить папку",
+      "createFolderFailed": "Не удалось создать папку",
+      "updateFolderFailed": "Не удалось обновить папку",
+      "deleteFolderFailed": "Не удалось удалить папку",
+      "deletePersonaFailed": "Не удалось удалить персону",
+      "updateOrderFailed": "Не удалось сохранить порядок"
     }
   },
   "moveDialog": {

@@ -205,5 +205,16 @@
     "occurredAt": "Время возникновения",
     "traceback": "Трассировка стека",
     "close": "Закрыть"
+  },
+  "catalog": {
+    "communityProvided": "Адаптер от {author}.",
+    "displayNames": {
+      "qq_official": "официальная платформа ботов QQ",
+      "weixin_official_account": "официальный аккаунт WeChat",
+      "wecom": "приложение WeCom",
+      "wecom_ai_bot": "ИИ-бот WeCom",
+      "lark": "Feishu / Lark",
+      "dingtalk": "DingTalk"
+    }
   }
 }

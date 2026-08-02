@@ -58,11 +58,13 @@ import { useTheme } from 'vuetify';
 import { chatApi } from '@/api/v1';
 import { useVADRecording } from '@/composables/useVADRecording';
 import SiriOrb from './LiveOrb.vue';
+import { useModuleI18n } from '@/i18n/composables';
 
 const emit = defineEmits<{
     'close': [];
 }>();
 
+const { tm } = useModuleI18n('features/chat');
 const theme = useTheme();
 const isDark = computed(() => theme.global.current.value.dark);
 
@@ -118,11 +120,11 @@ const metrics = ref<LiveMetrics>({});
 let currentStamp = '';
 
 const statusText = computed(() => {
-    if (!isActive.value) return 'Astr Live';
-    if (isProcessing.value) return '正在处理...';
-    if (isSpeaking.value) return '正在说话...';
-    if (isListening.value) return '正在听...';
-    return '准备就绪';
+    if (!isActive.value) return tm('liveMode.idle');
+    if (isProcessing.value) return tm('liveMode.processing');
+    if (isSpeaking.value) return tm('liveMode.speaking');
+    if (isListening.value) return tm('liveMode.listening');
+    return tm('liveMode.ready');
 });
 
 const getIcon = computed(() => {
@@ -184,7 +186,7 @@ async function startLiveMode() {
         await vadRecording.startRecording(
             // onSpeechStart 回调
             () => {
-                console.log('[Live Mode] VAD 检测到开始说话');
+                console.log('[Live Mode] VAD detected speech start');
                 isListening.value = false;
                 currentStamp = generateStamp();
 
@@ -199,7 +201,7 @@ async function startLiveMode() {
             },
             // onSpeechEnd 回调
             (audio: Float32Array) => {
-                console.log('[Live Mode] VAD 检测到语音结束，音频长度:', audio.length);
+                console.log('[Live Mode] VAD detected speech end, audio length:', audio.length);
 
                 // 将完整音频转换为 PCM16 并发送
                 if (ws && ws.readyState === WebSocket.OPEN) {
@@ -240,8 +242,8 @@ async function startLiveMode() {
         isListening.value = true;
 
     } catch (error) {
-        console.error('启动 Live Mode 失败:', error);
-        alert('启动失败，请检查麦克风权限或网络连接');
+        console.error('Failed to start Live Mode:', error);
+        alert(tm('liveMode.startFailed'));
         await stopLiveMode();
     }
 }
@@ -277,7 +279,7 @@ function connectWebSocket(): Promise<void> {
         // 获取存储的 token
         const token = localStorage.getItem('token');
         if (!token) {
-            reject(new Error('未登录，请先登录'));
+            reject(new Error(tm('liveMode.notSignedIn')));
             return;
         }
 
@@ -286,25 +288,25 @@ function connectWebSocket(): Promise<void> {
         ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
-            console.log('[Live Mode] WebSocket 连接成功');
+            console.log('[Live Mode] WebSocket connected');
             resolve();
         };
 
         ws.onerror = (error) => {
-            console.error('[Live Mode] WebSocket 错误:', error);
+            console.error('[Live Mode] WebSocket error:', error);
             reject(error);
         };
 
         ws.onmessage = handleWebSocketMessage;
 
         ws.onclose = () => {
-            console.log('[Live Mode] WebSocket 连接关闭');
+            console.log('[Live Mode] WebSocket closed');
         };
 
         // 超时处理
         setTimeout(() => {
             if (ws?.readyState !== WebSocket.OPEN) {
-                reject(new Error('WebSocket 连接超时'));
+                reject(new Error(tm('liveMode.connectionTimeout')));
             }
         }, 5000);
     });
@@ -358,8 +360,8 @@ function handleWebSocketMessage(event: MessageEvent) {
                 break;
 
             case 'error':
-                console.error('[Live Mode] 错误:', message.data);
-                alert('处理出错: ' + message.data);
+                console.error('[Live Mode] error:', message.data);
+                alert(tm('liveMode.processingError', { error: message.data }));
                 isProcessing.value = false;
                 isListening.value = true;
                 break;
@@ -369,7 +371,7 @@ function handleWebSocketMessage(event: MessageEvent) {
                 break;
         }
     } catch (error) {
-        console.error('[Live Mode] 处理消息失败:', error);
+        console.error('[Live Mode] Failed to handle message:', error);
     }
 }
 
@@ -391,7 +393,7 @@ function playAudioChunk(base64Data: string) {
         processRawAudioQueue();
 
     } catch (error) {
-        console.error('[Live Mode] 接收音频数据失败:', error);
+        console.error('[Live Mode] Failed to receive audio data:', error);
     }
 }
 
@@ -415,7 +417,7 @@ async function processRawAudioQueue() {
                     playNextAudio();
                 }
             } catch (err) {
-                console.error('[Live Mode] 解码音频失败:', err);
+                console.error('[Live Mode] Failed to decode audio:', err);
             }
         }
     } finally {
@@ -463,7 +465,7 @@ function playNextAudio() {
         };
 
     } catch (error) {
-        console.error('[Live Mode] 播放音频失败:', error);
+        console.error('[Live Mode] Failed to play audio:', error);
         isPlayingAudio = false;
         isPlaying.value = false;
         playNextAudio(); // 尝试播放下一个

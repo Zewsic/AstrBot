@@ -22,13 +22,14 @@
   "voice": {
     "start": "Начать запись",
     "stop": "Остановить запись",
-    "recording": "Записать заново",
+    "recording": "Идёт запись…",
     "processing": "Обработка…",
     "error": "Не удалось записать звук",
     "listening": "Слушаю…",
     "speaking": "Говорит",
     "startRecording": "Начать голосовой ввод",
-    "liveMode": "Живой режим"
+    "liveMode": "Живой режим",
+    "inputPlaceholder": "Поле ввода"
   },
   "welcome": {
     "title": "О чём поговорим сегодня?",
@@ -219,5 +220,16 @@
     "exit": "Выйти",
     "partialFailure": "Не удалось удалить {failed} диалогов из {total}",
     "requestFailed": "Не удалось удалить диалоги. Повторите попытку."
+  },
+  "liveMode": {
+    "idle": "Astr Live",
+    "processing": "Обработка…",
+    "speaking": "Говорит…",
+    "listening": "Слушаю…",
+    "ready": "Готово",
+    "startFailed": "Не удалось запустить. Проверьте доступ к микрофону и подключение к сети.",
+    "notSignedIn": "Вы не авторизованы. Сначала войдите.",
+    "connectionTimeout": "Истекло время ожидания подключения WebSocket",
+    "processingError": "Ошибка обработки: {error}"
   }
 }

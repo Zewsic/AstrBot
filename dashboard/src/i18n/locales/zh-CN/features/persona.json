@@ -147,7 +147,15 @@
       "renameSuccess": "文件夹重命名成功",
       "renameError": "重命名文件夹失败",
       "deleteSuccess": "文件夹删除成功",
-      "deleteError": "删除文件夹失败"
+      "deleteError": "删除文件夹失败",
+      "loadTreeFailed": "获取文件夹树失败",
+      "movePersonaFailed": "移动人格失败",
+      "moveFolderFailed": "移动文件夹失败",
+      "createFolderFailed": "创建文件夹失败",
+      "updateFolderFailed": "更新文件夹失败",
+      "deleteFolderFailed": "删除文件夹失败",
+      "deletePersonaFailed": "删除人格失败",
+      "updateOrderFailed": "更新排序失败"
     }
   },
   "moveDialog": {
