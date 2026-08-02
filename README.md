@@ -40,6 +40,23 @@
 
 AstrBot is an open-source all-in-one Agent chatbot platform that integrates with mainstream instant messaging apps. It provides reliable and scalable conversational AI infrastructure for individuals, developers, and teams. Whether you're building a personal AI companion, intelligent customer service, automation assistant, or enterprise knowledge base, AstrBot enables you to quickly build production-ready AI applications within your IM platform workflows.
 
+> [!IMPORTANT]
+> ## Этот репозиторий — форк AstrBot
+> Это форк [AstrBotDevs/AstrBot](https://github.com/AstrBotDevs/AstrBot), в котором собраны доработки, ориентированные прежде всего на Telegram и сценарии, полезные русскоязычным пользователям. Исходный проект остаётся основным источником документации, релизов и базовой функциональности.
+>
+> Изменения форка поддерживаются поверх `master` upstream-проекта. При обновлении сначала сверяйте совместимость локальных доработок с актуальным AstrBot и используйте собственную сборку из этого репозитория.
+
+### Что изменено в этом форке
+
+Ниже перечислены все добавленные в текущую историю форка изменения:
+
+- **Telegram Guest Messages** — обработка упоминаний бота в гостевом режиме и ответ через редактируемое Rich Message; настройка `enable_guest_messages` включена по умолчанию.
+- **Rich Messages для Telegram** — отправка текста через Rich Markdown / Rich Message Draft API, отдельная настройка `use_rich_messages` и исправления изоляции черновиков при потоковом ответе и скрытых вызовах инструментов.
+- **Статус вызовов инструментов** — агрегированное отображение хода выполнения tool calls непосредственно в Telegram; управляется настройкой `show_tool_calling_execution`.
+- **Локальный Telegram Bot API** — поддержка локальных путей файлов, возвращаемых локальным Bot API server, а также возможность явно переопределить режим загрузки файлов.
+- **Покрытие тестами** — добавлены и расширены тесты Telegram-адаптера и потоковой обработки черновиков.
+
+
 ![screenshot_1 5x_postspark_2026-02-27_22-37-45](https://github.com/user-attachments/assets/f17cdb90-52d7-4773-be2e-ff64b566af6b)
 
 ## Key Features
