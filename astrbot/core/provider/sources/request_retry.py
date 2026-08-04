@@ -20,6 +20,14 @@ REQUEST_RETRY_ATTEMPTS = 5  # default value
 REQUEST_RETRY_WAIT_MIN_S = 0.2
 REQUEST_RETRY_WAIT_MAX_S = 30
 REQUEST_RETRY_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504, 529}
+# Some OpenAI-compatible providers report an exhausted prepaid balance as a
+# generic 403 PermissionDeniedError. A balance can be replenished while the
+# request retry loop is running, so treat only this specific 403 as transient.
+INSUFFICIENT_BALANCE_ERROR_MARKERS = (
+    "insufficient account balance",
+    "insufficient balance",
+    "account balance is insufficient",
+)
 
 
 def _get_status_code(error: BaseException) -> int | None:
@@ -37,6 +45,15 @@ def _get_status_code(error: BaseException) -> int | None:
     return None
 
 
+def _is_insufficient_balance_error(error: BaseException) -> bool:
+    """Return whether an OpenAI-compatible error explicitly reports no balance."""
+    if _get_status_code(error) != 403:
+        return False
+
+    error_text = str(error).lower()
+    return any(marker in error_text for marker in INSUFFICIENT_BALANCE_ERROR_MARKERS)
+
+
 def _is_retryable_provider_request_error(
     error: BaseException,
     *,
@@ -47,6 +64,9 @@ def _is_retryable_provider_request_error(
 
     error_type_name = type(error).__name__
     if error_type_name in {"APIConnectionError", "APITimeoutError"}:
+        return True
+
+    if _is_insufficient_balance_error(error):
         return True
 
     status_code = _get_status_code(error)
